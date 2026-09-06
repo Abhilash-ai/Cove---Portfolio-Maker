@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JwtPayload } from '@am-studio/shared';
+import { JwtPayload } from '@cove/shared';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'am-studio-super-secret-jwt-key-for-development-382910';
+const JWT_SECRET = process.env.JWT_SECRET || 'cove-super-secret-jwt-key-for-development-382910';
 const JWT_EXPIRES_IN = '7d';
 
 export async function hashPassword(password: string): Promise<string> {

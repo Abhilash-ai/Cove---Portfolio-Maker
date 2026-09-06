@@ -1,5 +1,5 @@
 {
-  "name": "am-studio",
+  "name": "cove",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -10,10 +10,10 @@
   "scripts": {
     "dev:db": "tsx apps/server/src/db-server.ts",
     "dev:server": "tsx --watch apps/server/src/index.ts",
-    "dev:web": "npm run dev --workspace=@am-studio/web",
+    "dev:web": "npm run dev --workspace=@cove/web",
     "dev": "npm run dev:server",
-    "prisma:generate": "npm run prisma:generate --workspace=@am-studio/server",
-    "prisma:migrate": "npm run prisma:migrate --workspace=@am-studio/server",
+    "prisma:generate": "npm run prisma:generate --workspace=@cove/server",
+    "prisma:migrate": "npm run prisma:migrate --workspace=@cove/server",
     "test:auth": "tsx apps/server/src/scripts/test-auth.ts"
   },
   "devDependencies": {
@@ -25,7 +25,6 @@
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@prisma/adapter-pg": "^5.22.0",
-    "@prisma/client": "^5.22.0",
     "embedded-postgres": "^18.4.0-beta.17",
     "pglite-server": "^0.1.5"
   }

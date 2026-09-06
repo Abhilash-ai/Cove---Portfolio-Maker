@@ -44,7 +44,7 @@ function makeRequest(path: string, options: { method: string; body?: any; token?
 
 async function runTests() {
   console.log('\n========================================');
-  console.log('   AM STUDIO PHASE 1 AUTH & OWNERSHIP TEST');
+  console.log('      COVE PHASE 1 AUTH & OWNERSHIP TEST');
   console.log('========================================\n');
 
   await ensurePostgresRunning(5433);
@@ -55,8 +55,8 @@ async function runTests() {
 
   try {
     const randomSuffix = Math.floor(Math.random() * 10000);
-    const aliceEmail = `alice_${randomSuffix}@amstudio.test`;
-    const bobEmail = `bob_${randomSuffix}@amstudio.test`;
+    const aliceEmail = `alice_${randomSuffix}@cove.test`;
+    const bobEmail = `bob_${randomSuffix}@cove.test`;
 
     // 1. Health check
     console.log('[1/10] Testing GET /api/v1/health ...');

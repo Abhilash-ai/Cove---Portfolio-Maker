@@ -23,7 +23,7 @@ async function startServer() {
 
     // 3. Start listening for incoming HTTP requests
     app.listen(PORT, () => {
-      console.log(`[Server] AM Studio backend listening at http://localhost:${PORT}`);
+      console.log(`[Server] Cove backend listening at http://localhost:${PORT}`);
       console.log(`[Server] Health check: http://localhost:${PORT}/api/v1/health`);
     });
   } catch (err) {

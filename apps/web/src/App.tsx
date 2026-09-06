@@ -24,7 +24,7 @@ export default function App() {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('am_token'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   // Protected data states
@@ -95,7 +95,7 @@ export default function App() {
       }
 
       const authToken = result.data.token;
-      localStorage.setItem('am_token', authToken);
+      localStorage.setItem('cove_token', authToken);
       setToken(authToken);
       setCurrentUser(result.data.user);
       loadPortfolios(authToken);
@@ -151,7 +151,7 @@ export default function App() {
   }
 
   function handleLogout() {
-    localStorage.removeItem('am_token');
+    localStorage.removeItem('cove_token');
     setToken(null);
     setCurrentUser(null);
     setPortfolios([]);
@@ -167,8 +167,8 @@ export default function App() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-mono uppercase tracking-wider mb-3">
             Phase 1 Review Gate
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">AM Studio</h1>
-          <p className="text-sm text-zinc-400 mt-1">Data Model, Migrations & Server-Side Authorization Verification</p>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Cove</h1>
+          <p className="text-sm text-zinc-400 mt-1">Portfolio Maker — Data Model, Migrations & Authorization</p>
         </div>
 
         {currentUser ? (

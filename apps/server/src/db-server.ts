@@ -59,6 +59,9 @@ export async function ensurePostgresRunning(port = 5433): Promise<void> {
     }
     await pgInstance.start();
     try {
+      await pgInstance.createDatabase('cove');
+    } catch {}
+    try {
       await pgInstance.createDatabase('amstudio');
     } catch {}
     console.log(`[Database] PostgreSQL initialized and ready on port ${port}`);
