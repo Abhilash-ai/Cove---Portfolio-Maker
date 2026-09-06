@@ -16,6 +16,8 @@ interface Props {
   onSaveNow: () => void;
   onBack: () => void;
   onPreviewPublic: () => void;
+  onExportPdf?: () => void;
+  onOpenCopilot?: () => void;
 }
 
 export function EditorTopBar({
@@ -32,6 +34,8 @@ export function EditorTopBar({
   onSaveNow,
   onBack,
   onPreviewPublic,
+  onExportPdf,
+  onOpenCopilot,
 }: Props) {
   // Global keyboard shortcuts: Ctrl+Z for undo, Ctrl+Y or Ctrl+Shift+Z for redo
   useEffect(() => {
@@ -207,6 +211,30 @@ export function EditorTopBar({
             </>
           )}
         </button>
+
+        {/* Export PDF button */}
+        {onExportPdf && (
+          <button
+            onClick={onExportPdf}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-zinc-700 bg-zinc-800/80 text-zinc-200 hover:bg-zinc-700 hover:text-white transition-all shadow-sm"
+            title="Export as paginated PDF"
+          >
+            <span>📄</span>
+            <span className="hidden sm:inline">PDF</span>
+          </button>
+        )}
+
+        {/* Cove Copilot Assistant button */}
+        {onOpenCopilot && (
+          <button
+            onClick={onOpenCopilot}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 hover:bg-indigo-900/60 hover:text-white transition-all shadow-sm"
+            title="Open Cove Copilot AI Writing Assistant"
+          >
+            <span>✨</span>
+            <span className="hidden sm:inline">Copilot</span>
+          </button>
+        )}
 
         {/* Live Site link if published or configured */}
         {portfolio?.slug && (

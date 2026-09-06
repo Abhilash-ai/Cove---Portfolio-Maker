@@ -9,6 +9,7 @@ import { projectRouter } from './modules/project/project.router.js';
 import { mediaRouter } from './modules/media/media.router.js';
 import { resumeRouter } from './modules/resume/resume.router.js';
 import { publicRouter } from './modules/public/public.router.js';
+import { aiRouter } from './modules/ai/ai.router.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,6 +40,7 @@ app.use('/api/v1/public', publicRouter);
 app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/portfolios', portfolioRouter);
 app.use('/api/v1/resume', resumeRouter);
+app.use('/api/v1/ai', aiRouter);
 app.use('/api/v1', projectRouter);
 app.use('/api/v1', mediaRouter);
 

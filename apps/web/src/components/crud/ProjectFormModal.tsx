@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ProjectDto, ProjectMediaDto } from '@cove/shared';
+import { CoveCopilotModal } from '../copilot/CoveCopilotModal.js';
 
 interface Props {
   portfolioId: string;
@@ -28,6 +29,10 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
   const [customSectionOrderStr, setCustomSectionOrderStr] = useState(
     project?.customSectionOrder ? project.customSectionOrder.join(', ') : ''
   );
+
+  // Copilot assistant state
+  const [showCopilot, setShowCopilot] = useState(false);
+  const [copilotField, setCopilotField] = useState<'title' | 'shortDescription' | 'fullDescription'>('fullDescription');
 
   // Media state
   const [mediaList, setMediaList] = useState<ProjectMediaDto[]>(project?.media || []);
@@ -311,7 +316,19 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
 
           {/* Short Description */}
           <div>
-            <label className="block text-zinc-400 mb-1 font-medium">Short Description</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-zinc-400 font-medium">Short Description</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setCopilotField('shortDescription');
+                  setShowCopilot(true);
+                }}
+                className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/30 transition-colors"
+              >
+                <span>✨</span> Cove Copilot
+              </button>
+            </div>
             <input
               type="text"
               value={shortDescription}
@@ -323,9 +340,21 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
 
           {/* Full Description */}
           <div>
-            <label className="block text-zinc-400 mb-1 font-medium">Full Description / Case Narrative</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-zinc-400 font-medium">Full Description / Case Narrative</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setCopilotField('fullDescription');
+                  setShowCopilot(true);
+                }}
+                className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/30 transition-colors"
+              >
+                <span>✨</span> Cove Copilot (Case Study / Tone)
+              </button>
+            </div>
             <textarea
-              rows={3}
+              rows={4}
               value={fullDescription}
               onChange={(e) => setFullDescription(e.target.value)}
               placeholder="In-depth project breakdown, methodology, and context..."
@@ -543,6 +572,34 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
           </div>
         </form>
       </div>
+
+      {/* Cove Copilot Assistant Modal */}
+      {showCopilot && (
+        <CoveCopilotModal
+          token={token}
+          contextTitle={title || 'Project Draft'}
+          initialText={copilotField === 'shortDescription' ? shortDescription : fullDescription}
+          contextType="project"
+          metadata={{
+            title,
+            category,
+            role,
+            tools: toolsStr ? toolsStr.split(',').map((s) => s.trim()) : [],
+            images: mediaList.map((m) => ({ id: m.id, url: m.url, caption: m.caption || undefined, altText: m.altText || undefined }))
+          }}
+          onApply={(newText, metaUpdates) => {
+            if (copilotField === 'shortDescription') {
+              setShortDescription(newText);
+            } else {
+              setFullDescription(newText);
+              if (metaUpdates?.caseStudy?.outcome && !outcome) {
+                setOutcome(metaUpdates.caseStudy.outcome);
+              }
+            }
+          }}
+          onClose={() => setShowCopilot(false)}
+        />
+      )}
     </div>
   );
 }

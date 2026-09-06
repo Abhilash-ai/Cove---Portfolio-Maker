@@ -5,6 +5,8 @@ import { EditorSidebar } from './EditorSidebar.js';
 import { EditorCanvas } from './EditorCanvas.js';
 import { PortfolioRenderer } from '../engine/renderer/PortfolioRenderer.js';
 import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
+import { PdfExportView } from '../components/export/PdfExportView.js';
+import { CoveCopilotModal } from '../components/copilot/CoveCopilotModal.js';
 
 interface Props {
   portfolioId?: string;
@@ -15,6 +17,8 @@ interface Props {
 export function VisualEditor({ portfolioId, token, onBack }: Props) {
   const store = useCustomizerStore({ portfolioId, token });
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [showPdfExport, setShowPdfExport] = useState(false);
+  const [showCopilot, setShowCopilot] = useState(false);
 
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === store.templateId) || SEEDED_TEMPLATES[0];
 
@@ -35,6 +39,8 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
         onSaveNow={store.saveNow}
         onBack={onBack}
         onPreviewPublic={() => setShowFullPreview(true)}
+        onExportPdf={() => setShowPdfExport(true)}
+        onOpenCopilot={token ? () => setShowCopilot(true) : undefined}
       />
 
       {/* 2. Workspace Split-Screen: Sidebar Controls on Left, Live Canvas on Right */}
@@ -102,6 +108,32 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
             forcedTouchMode={false}
           />
         </div>
+      )}
+
+      {/* 4. Real Print / PDF Export Canvas */}
+      {showPdfExport && store.portfolio && (
+        <PdfExportView
+          portfolio={{
+            ...store.portfolio,
+            projects: store.projects,
+          }}
+          profile={store.profile}
+          onClose={() => setShowPdfExport(false)}
+        />
+      )}
+
+      {/* 5. Cove Copilot Assistant Modal */}
+      {showCopilot && token && (
+        <CoveCopilotModal
+          token={token}
+          contextTitle={store.portfolio?.title || 'Portfolio'}
+          initialText={store.profile?.bio || store.portfolio?.title || ''}
+          contextType="portfolio"
+          onApply={(newText) => {
+            console.log('Cove Copilot proposal applied:', newText);
+          }}
+          onClose={() => setShowCopilot(false)}
+        />
       )}
     </div>
   );

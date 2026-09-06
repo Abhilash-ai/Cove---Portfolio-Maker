@@ -92,6 +92,8 @@ export interface FullProfileDto {
   updatedAt: string;
 }
 
+export type ProfileDto = FullProfileDto;
+
 export interface ProjectMediaDto {
   id: string;
   projectId: string;
@@ -157,3 +159,45 @@ export interface ApiResponse<T = any> {
     details?: any;
   };
 }
+
+export type CopilotCommand =
+  | 'make_professional'
+  | 'make_shorter'
+  | 'suggest_title'
+  | 'turn_case_study'
+  | 'which_images';
+
+export interface CopilotInput {
+  command: CopilotCommand;
+  contextType: 'project' | 'profile' | 'portfolio';
+  text: string;
+  metadata?: {
+    title?: string;
+    category?: string;
+    role?: string;
+    tools?: string[];
+    images?: { id?: string; url: string; caption?: string; altText?: string }[];
+  };
+}
+
+export interface CopilotOutput {
+  command: CopilotCommand;
+  suggestion: string;
+  titles?: string[];
+  caseStudy?: {
+    problem: string;
+    approach: string;
+    solution: string;
+    outcome: string;
+  };
+  imageRecommendations?: {
+    imageIndex: number;
+    recommendedRole: 'hero' | 'detail' | 'process';
+    rationale: string;
+  }[];
+  rationale: string;
+  diffSummary: string;
+  provider: 'claude' | 'local_demo';
+  undoToken: string;
+}
+
