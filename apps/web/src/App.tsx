@@ -3,14 +3,15 @@ import { PortfolioSummary, AuthenticatedUser } from '@cove/shared';
 import { PortfolioManager } from './components/crud/PortfolioManager.js';
 import { ProjectManager } from './components/crud/ProjectManager.js';
 import { ProfileEditor } from './components/crud/ProfileEditor.js';
+import { DesignEngineCanvas } from './components/preview/DesignEngineCanvas.js';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
   const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Tab State: 'portfolios' | 'projects' | 'profile'
-  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile'>('portfolios');
+  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine'
+  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine'>('portfolios');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
 
   // Auth Form State
@@ -101,7 +102,7 @@ export default function App() {
               <h1 className="text-lg font-bold tracking-tight text-white font-mono">COVE</h1>
             </div>
             <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              Phase 2 Content Engine
+              Phase 3 Design Engine
             </span>
           </div>
 
@@ -132,6 +133,16 @@ export default function App() {
                   }`}
                 >
                   Profile
+                </button>
+                <button
+                  onClick={() => setActiveTab('design-engine')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition border ${
+                    activeTab === 'design-engine'
+                      ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
+                      : 'text-blue-400 border-blue-500/30 hover:bg-blue-500/10'
+                  }`}
+                >
+                  ✨ Design Engine (Phase 3)
                 </button>
               </nav>
 
@@ -169,6 +180,10 @@ export default function App() {
 
             {activeTab === 'profile' && (
               <ProfileEditor token={token} />
+            )}
+
+            {activeTab === 'design-engine' && (
+              <DesignEngineCanvas portfolio={activePortfolio} token={token} />
             )}
           </div>
         ) : (
