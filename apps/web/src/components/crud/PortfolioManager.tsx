@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PortfolioSummary } from '@cove/shared';
+import { EmptyState } from '../common/EmptyState.js';
 
 interface Props {
   token: string;
@@ -202,9 +203,11 @@ export function PortfolioManager({ token, onSelectPortfolio, onOpenEditor, activ
         {loading ? (
           <div className="p-8 text-center text-xs font-mono text-zinc-400">Loading portfolios...</div>
         ) : portfolios.length === 0 ? (
-          <div className="p-8 text-center border border-dashed border-zinc-800 rounded-lg text-xs text-zinc-500">
-            No portfolios created yet. Use the form above to start.
-          </div>
+          <EmptyState
+            icon="🎨"
+            title="No Portfolios Yet"
+            description="Create your first portfolio using the form above, or import a resume to automatically generate your showcase."
+          />
         ) : (
           <div className="space-y-4">
             {portfolios.map((p) => {

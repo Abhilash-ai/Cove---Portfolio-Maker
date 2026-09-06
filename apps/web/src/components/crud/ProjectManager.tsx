@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ProjectDto, PortfolioSummary } from '@cove/shared';
 import { ProjectFormModal } from './ProjectFormModal.js';
+import { EmptyState } from '../common/EmptyState.js';
 
 interface Props {
   portfolio: PortfolioSummary;
@@ -130,10 +131,16 @@ export function ProjectManager({ portfolio, token }: Props) {
       {loading ? (
         <div className="p-8 text-center text-xs font-mono text-zinc-400">Loading project records...</div>
       ) : projects.length === 0 ? (
-        <div className="p-12 text-center border border-dashed border-zinc-800 rounded-lg">
-          <p className="text-zinc-400 text-sm font-medium">No projects added to this portfolio yet.</p>
-          <p className="text-zinc-600 text-xs mt-1">Click "+ Add New Project" to populate your work.</p>
-        </div>
+        <EmptyState
+          icon="💼"
+          title="No Projects Added Yet"
+          description="Populate your portfolio with your case studies, client work, or personal projects to impress clients and recruiters."
+          actionLabel="+ Add New Project"
+          onAction={() => {
+            setEditingProject(null);
+            setModalOpen(true);
+          }}
+        />
       ) : (
         <div className="space-y-3">
           {projects.map((pr, idx) => (

@@ -8,6 +8,7 @@ import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
 import { PdfExportView } from '../components/export/PdfExportView.js';
 import { CoveCopilotModal } from '../components/copilot/CoveCopilotModal.js';
 import { TemplateDiscoveryModal } from '../components/templates/TemplateDiscoveryModal.js';
+import { PortfolioCriticModal } from '../components/critic/PortfolioCriticModal.js';
 
 interface Props {
   portfolioId?: string;
@@ -21,6 +22,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
   const [showPdfExport, setShowPdfExport] = useState(false);
   const [showCopilot, setShowCopilot] = useState(false);
   const [showDiscovery, setShowDiscovery] = useState(false);
+  const [showCritic, setShowCritic] = useState(false);
 
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === store.templateId) || SEEDED_TEMPLATES[0];
 
@@ -43,6 +45,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
         onPreviewPublic={() => setShowFullPreview(true)}
         onExportPdf={() => setShowPdfExport(true)}
         onOpenCopilot={token ? () => setShowCopilot(true) : undefined}
+        onOpenCritic={token && store.portfolio?.id ? () => setShowCritic(true) : undefined}
       />
 
       {/* 2. Workspace Split-Screen: Sidebar Controls on Left, Live Canvas on Right */}
@@ -151,6 +154,16 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
             store.selectTemplate(newTplId);
           }}
           onClose={() => setShowDiscovery(false)}
+        />
+      )}
+
+      {/* 7. AI Portfolio Critic Modal */}
+      {showCritic && store.portfolio && (
+        <PortfolioCriticModal
+          portfolioId={store.portfolio.id}
+          portfolioTitle={store.portfolio.title}
+          token={token}
+          onClose={() => setShowCritic(false)}
         />
       )}
     </div>

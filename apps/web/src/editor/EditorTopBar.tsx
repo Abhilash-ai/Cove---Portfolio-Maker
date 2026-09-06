@@ -18,6 +18,7 @@ interface Props {
   onPreviewPublic: () => void;
   onExportPdf?: () => void;
   onOpenCopilot?: () => void;
+  onOpenCritic?: () => void;
 }
 
 export function EditorTopBar({
@@ -36,6 +37,7 @@ export function EditorTopBar({
   onPreviewPublic,
   onExportPdf,
   onOpenCopilot,
+  onOpenCritic,
 }: Props) {
   // Global keyboard shortcuts: Ctrl+Z for undo, Ctrl+Y or Ctrl+Shift+Z for redo
   useEffect(() => {
@@ -233,6 +235,18 @@ export function EditorTopBar({
           >
             <span>✨</span>
             <span className="hidden sm:inline">Copilot</span>
+          </button>
+        )}
+
+        {/* AI Portfolio Critic button */}
+        {onOpenCritic && (
+          <button
+            onClick={onOpenCritic}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-violet-500/40 bg-violet-950/40 text-violet-300 hover:bg-violet-900/60 hover:text-white transition-all shadow-sm"
+            title="Open AI Portfolio Critic"
+          >
+            <span>🎯</span>
+            <span className="hidden sm:inline">Critic</span>
           </button>
         )}
 

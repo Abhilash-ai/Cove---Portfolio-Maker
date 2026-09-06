@@ -26,6 +26,7 @@ export function TemplateDiscoveryModal({
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedProfession, setSelectedProfession] = useState('all');
   const [selectedInteraction, setSelectedInteraction] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(24);
   const [recommendations, setRecommendations] = useState<TemplateRecommendationDto[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null);
@@ -193,11 +194,14 @@ export function TemplateDiscoveryModal({
             <span className="text-zinc-500 text-[11px] font-medium mr-1">Filter:</span>
 
             {/* Category */}
-            {['all', 'minimal', 'editorial', 'studio'].map((cat) => (
+            {['all', 'minimal', 'editorial', 'studio', 'brutalist', 'swiss', 'cinematic', 'monochrome', 'academic', 'luxury', 'playful'].map((cat) => (
               <button
                 key={cat}
                 type="button"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setVisibleCount(24);
+                }}
                 className={`px-3 py-1 rounded-lg border capitalize transition-all ${
                   selectedCategory === cat
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm font-semibold'
@@ -344,7 +348,7 @@ export function TemplateDiscoveryModal({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {filteredTemplates.map((t) => {
+              {filteredTemplates.slice(0, visibleCount).map((t) => {
                 const isFav = favorites.includes(t.id);
                 const isCurrent = activeTemplateId === t.id;
 
@@ -420,6 +424,19 @@ export function TemplateDiscoveryModal({
                 );
               })}
             </div>
+
+            {/* Load More Archetypes Button */}
+            {filteredTemplates.length > visibleCount && (
+              <div className="flex items-center justify-center pt-4 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((prev) => prev + 24)}
+                  className="px-6 py-2.5 bg-zinc-900 hover:bg-zinc-850 text-zinc-300 hover:text-white border border-zinc-700/80 rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-105 active:scale-95"
+                >
+                  Show More Archetypes ({filteredTemplates.length - visibleCount} remaining) ↓
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { prisma } from '../../prisma.js';
 import { authenticateToken, AuthenticatedRequest } from '../../middleware/auth.js';
 import { aiService } from '../../services/ai/ai.service.js';
+import { criticService } from '../../services/ai/critic.service.js';
 import { CopilotInput } from '@cove/shared';
 
 export const aiRouter = Router();
@@ -153,3 +154,106 @@ aiRouter.post('/copilot/undo', async (req: AuthenticatedRequest, res: Response):
     res.status(500).json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Failed to revert action' } });
   }
 });
+
+// 4. POST /api/v1/ai/critic/:portfolioId - AI Portfolio Critic Evaluation
+aiRouter.post('/critic/:portfolioId', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const { portfolioId } = req.params;
+
+    if (!portfolioId) {
+      res.status(400).json({
+        success: false,
+        error: { code: 'MISSING_PORTFOLIO_ID', message: 'Portfolio ID is required' }
+      });
+      return;
+    }
+
+    // Strict ownership verification
+    const portfolio = await prisma.portfolio.findFirst({
+      where: {
+        id: portfolioId,
+        userId
+      },
+      include: {
+        projects: {
+          orderBy: { sortOrder: 'asc' },
+          include: { media: true }
+        }
+      }
+    });
+
+    if (!portfolio) {
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'PORTFOLIO_NOT_FOUND',
+          message: 'Portfolio not found or access denied.'
+        }
+      });
+      return;
+    }
+
+    // Retrieve creator profile context
+    const userRecord = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: true,
+        skills: { orderBy: { sortOrder: 'asc' } },
+        experiences: { orderBy: { sortOrder: 'asc' } },
+        socialLinks: { orderBy: { sortOrder: 'asc' } }
+      }
+    });
+
+    const report = await criticService.evaluatePortfolio({
+      portfolio: {
+        id: portfolio.id,
+        title: portfolio.title,
+        slug: portfolio.slug,
+        activeTemplateId: portfolio.activeTemplateId,
+        sectionOrder: portfolio.sectionOrder as string[] | undefined,
+        projects: portfolio.projects.map((p) => ({
+          id: p.id,
+          title: p.title,
+          role: p.role,
+          category: p.category,
+          shortDescription: p.shortDescription,
+          fullDescription: p.fullDescription,
+          coverImage: p.coverImage,
+          media: p.media.map((m) => ({
+            id: m.id,
+            url: m.url,
+            altText: m.altText,
+            caption: m.caption
+          }))
+        }))
+      },
+      profile: userRecord?.profile
+        ? {
+            name: userRecord.name || '',
+            headline: userRecord.profile.headline || undefined,
+            bio: userRecord.profile.bio || undefined,
+            avatarUrl: userRecord.profile.photoUrl || undefined,
+            location: userRecord.profile.location || undefined,
+            skills: userRecord.skills.map((s) => ({ name: s.name })),
+            experiences: userRecord.experiences.map((e) => ({ company: e.company, position: e.position })),
+            socialLinks: userRecord.socialLinks.map((l) => ({ platform: l.platform, url: l.url }))
+          }
+        : null
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        report
+      }
+    });
+  } catch (err: any) {
+    console.error('Portfolio Critic error:', err);
+    res.status(500).json({
+      success: false,
+      error: { code: 'CRITIC_EVALUATION_ERROR', message: err.message || 'Failed to evaluate portfolio' }
+    });
+  }
+});
+

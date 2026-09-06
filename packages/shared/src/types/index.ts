@@ -232,3 +232,41 @@ export interface TemplateDiscoveryFilter {
   query?: string;
 }
 
+export type CriticSeverity = 'high' | 'medium' | 'low';
+export type CriticCategory =
+  | 'narrative'
+  | 'completeness'
+  | 'visual_hierarchy'
+  | 'mobile'
+  | 'contact';
+
+export interface CriticFeedbackItem {
+  id: string;
+  category: CriticCategory;
+  severity: CriticSeverity;
+  title: string;
+  description: string;
+  actionableRecommendation: string;
+  affectedSection?: string;
+  affectedProjectId?: string;
+}
+
+export interface CriticScoreBreakdown {
+  completeness: number; // 0-100
+  storytelling: number; // 0-100
+  visualHierarchy: number; // 0-100
+  mobileReadiness: number; // 0-100
+  contactClarity: number; // 0-100
+}
+
+export interface CriticReportDto {
+  portfolioId: string;
+  overallScore: number; // 0-100
+  breakdown: CriticScoreBreakdown;
+  strengths: string[];
+  feedbackItems: CriticFeedbackItem[];
+  analyzedAt: string;
+  provider: 'claude' | 'local_demo';
+}
+
+
