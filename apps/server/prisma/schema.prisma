@@ -1,0 +1,447 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum PortfolioStatus {
+  draft
+  published
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  PDF
+  DRAWING
+  RENDER
+}
+
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  passwordHash        String
+  name                String?
+  role                Role                 @default(USER)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  profile             Profile?
+  portfolios          Portfolio[]
+  projects            Project[]
+  skills              Skill[]
+  experiences         Experience[]
+  educations          Education[]
+  certifications      Certification[]
+  achievements        Achievement[]
+  publications        Publication[]
+  socialLinks         SocialLink[]
+  resumeDocuments     ResumeDocument[]
+  assets              Asset[]
+  aiConversations     AIConversation[]
+  exports             Export[]
+  themeConfigurations ThemeConfiguration[]
+
+  @@map("users")
+}
+
+model Profile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headline         String?
+  photoUrl         String?
+  bio              String?
+  location         String?
+  contactEmail     String?
+  contactPhone     String?
+  availableForWork Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("profiles")
+}
+
+model Portfolio {
+  id                   String              @id @default(uuid())
+  userId               String
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title                String
+  slug                 String              @unique
+  status               PortfolioStatus     @default(draft)
+  sectionOrder         Json?               @default("[\"hero\",\"projects\",\"skills\",\"experience\",\"about\",\"contact\"]")
+  activeTemplateId     String?
+  activeTemplate       Template?           @relation(fields: [activeTemplateId], references: [id], onDelete: SetNull)
+  themeConfigurationId String?
+  themeConfiguration   ThemeConfiguration? @relation(fields: [themeConfigurationId], references: [id], onDelete: SetNull)
+  publishedAt          DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  projects             Project[]
+  sections             PortfolioSection[]
+  exports              Export[]
+
+  @@index([slug])
+  @@index([userId])
+  @@map("portfolios")
+}
+
+model PortfolioSection {
+  id           String    @id @default(uuid())
+  portfolioId  String
+  portfolio    Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  sectionKey   String
+  title        String?
+  isEnabled    Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  customConfig Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([portfolioId])
+  @@map("portfolio_sections")
+}
+
+model Project {
+  id                 String           @id @default(uuid())
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolioId        String?
+  portfolio          Portfolio?       @relation(fields: [portfolioId], references: [id], onDelete: SetNull)
+  title              String
+  coverImage         String?
+  year               String?
+  category           String?
+  location           String?
+  shortDescription   String?
+  fullDescription    String?
+  role               String?
+  duration           String?
+  outcome            String?
+  githubLink         String?
+  tools              Json?            @default("[]")
+  collaborators      Json?            @default("[]")
+  externalLinks      Json?            @default("[]")
+  customSectionOrder Json?
+  sortOrder          Int              @default(0)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  sections           ProjectSection[]
+  media              ProjectMedia[]
+
+  @@index([userId])
+  @@index([portfolioId])
+  @@map("projects")
+}
+
+model ProjectSection {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title     String
+  type      String   @default("TEXT")
+  content   Json
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@map("project_sections")
+}
+
+model ProjectMedia {
+  id        String    @id @default(uuid())
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url       String
+  type      MediaType @default(IMAGE)
+  caption   String?
+  altText   String?
+  isCover   Boolean   @default(false)
+  sortOrder Int       @default(0)
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([projectId])
+  @@map("project_media")
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  category  String?
+  level     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("skills")
+}
+
+model Experience {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company     String
+  position    String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  description String?
+  highlights  Json?     @default("[]")
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("experiences")
+}
+
+model Education {
+  id           String    @id @default(uuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution  String
+  degree       String
+  fieldOfStudy String
+  startDate    DateTime
+  endDate      DateTime?
+  grade        String?
+  activities   String?
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("educations")
+}
+
+model Certification {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  issuer        String
+  issueDate     DateTime
+  expiryDate    DateTime?
+  credentialUrl String?
+  credentialId  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("certifications")
+}
+
+model Achievement {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  date        DateTime?
+  url         String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("achievements")
+}
+
+model Publication {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String
+  publisher       String
+  publicationDate DateTime?
+  url             String?
+  description     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("publications")
+}
+
+model SocialLink {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform  String
+  url       String
+  label     String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("social_links")
+}
+
+model Template {
+  id                   String            @id @default(uuid())
+  name                 String
+  category             String
+  supportedProfessions Json              @default("[]")
+  description          String
+  previewImageUrl      String?
+  designTokens         Json              @default("{}")
+  layoutRules          Json              @default("{}")
+  supportedSections    Json              @default("[]")
+  interactionProfile   Json              @default("{}")
+  tags                 Json              @default("[]")
+  isActive             Boolean           @default(true)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  versions             TemplateVersion[]
+  portfolios           Portfolio[]
+
+  @@map("templates")
+}
+
+model TemplateVersion {
+  id         String   @id @default(uuid())
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  version    String
+  changelog  String?
+  definition Json
+  createdAt  DateTime @default(now())
+
+  @@index([templateId])
+  @@map("template_versions")
+}
+
+model ThemeConfiguration {
+  id                String      @id @default(uuid())
+  userId            String
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolioId       String?
+  name              String?
+  typographyTokens  Json        @default("{}")
+  spacingTokens     Json        @default("{}")
+  colorTokens       Json        @default("{}")
+  interactionTokens Json        @default("{}")
+  mode              String      @default("dark")
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  portfolios        Portfolio[]
+
+  @@index([userId])
+  @@map("theme_configurations")
+}
+
+model ResumeDocument {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName      String
+  fileUrl       String
+  fileSize      Int
+  mimeType      String
+  extractedData Json?
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@map("resume_documents")
+}
+
+model Asset {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String
+  url       String
+  size      Int
+  mimeType  String
+  category  String   @default("general")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("assets")
+}
+
+model AIConversation {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String?
+  contextType String      @default("portfolio")
+  contextId   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  messages    AIMessage[]
+  actions     AIAction[]
+
+  @@index([userId])
+  @@map("ai_conversations")
+}
+
+model AIMessage {
+  id             String         @id @default(uuid())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  metadata       Json?
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId])
+  @@map("ai_messages")
+}
+
+model AIAction {
+  id             String         @id @default(uuid())
+  conversationId String
+  conversation   AIConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  command        String
+  targetEntity   String
+  targetId       String
+  beforeState    Json
+  proposedState  Json
+  status         String         @default("pending")
+  appliedAt      DateTime?
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId])
+  @@map("ai_actions")
+}
+
+model Export {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  format      String    @default("pdf")
+  fileUrl     String
+  fileSize    Int?
+  status      String    @default("completed")
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([portfolioId])
+  @@map("exports")
+}
