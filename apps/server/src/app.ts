@@ -1,7 +1,15 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { authRouter } from './modules/auth/auth.router.js';
 import { portfolioRouter } from './modules/portfolio/portfolio.router.js';
+import { profileRouter } from './modules/profile/profile.router.js';
+import { projectRouter } from './modules/project/project.router.js';
+import { mediaRouter } from './modules/media/media.router.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const app = express();
 
@@ -10,6 +18,9 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Serve static uploaded files locally
+app.use('/uploads', express.static(path.resolve(__dirname, '../uploads')));
 
 // Health check endpoint
 app.get('/api/v1/health', (_req, res) => {
@@ -22,7 +33,10 @@ app.get('/api/v1/health', (_req, res) => {
 
 // Mount module routers
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/portfolios', portfolioRouter);
+app.use('/api/v1', projectRouter);
+app.use('/api/v1', mediaRouter);
 
 // Fallback 404 handler
 app.use((_req, res) => {

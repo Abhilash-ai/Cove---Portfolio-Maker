@@ -14,7 +14,8 @@
     "dev": "npm run dev:server",
     "prisma:generate": "npm run prisma:generate --workspace=@cove/server",
     "prisma:migrate": "npm run prisma:migrate --workspace=@cove/server",
-    "test:auth": "tsx apps/server/src/scripts/test-auth.ts"
+    "test:auth": "tsx apps/server/src/scripts/test-auth.ts",
+    "test:crud": "tsx apps/server/src/scripts/test-crud.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
