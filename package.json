@@ -20,7 +20,8 @@
     "test:editor": "tsx apps/server/src/scripts/test-visual-editor.ts",
     "test:resume": "tsx apps/server/src/scripts/test-resume-parser.ts",
     "test:public": "tsx apps/server/src/scripts/test-public-analytics.ts",
-    "test:copilot": "tsx apps/server/src/scripts/test-copilot-export.ts"
+    "test:copilot": "tsx apps/server/src/scripts/test-copilot-export.ts",
+    "test:recommender": "tsx apps/server/src/scripts/test-template-recommender.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

@@ -7,6 +7,7 @@ import { PortfolioRenderer } from '../engine/renderer/PortfolioRenderer.js';
 import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
 import { PdfExportView } from '../components/export/PdfExportView.js';
 import { CoveCopilotModal } from '../components/copilot/CoveCopilotModal.js';
+import { TemplateDiscoveryModal } from '../components/templates/TemplateDiscoveryModal.js';
 
 interface Props {
   portfolioId?: string;
@@ -19,6 +20,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
   const [showFullPreview, setShowFullPreview] = useState(false);
   const [showPdfExport, setShowPdfExport] = useState(false);
   const [showCopilot, setShowCopilot] = useState(false);
+  const [showDiscovery, setShowDiscovery] = useState(false);
 
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === store.templateId) || SEEDED_TEMPLATES[0];
 
@@ -62,6 +64,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
           onSetProjectLayout={store.setProjectLayout}
           onMoveSection={store.moveSection}
           onToggleSectionVisibility={store.toggleSectionVisibility}
+          onOpenDiscovery={() => setShowDiscovery(true)}
         />
 
         <EditorCanvas
@@ -133,6 +136,21 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
             console.log('Cove Copilot proposal applied:', newText);
           }}
           onClose={() => setShowCopilot(false)}
+        />
+      )}
+
+      {/* 6. Template Discovery & AI Recommender Modal */}
+      {showDiscovery && (
+        <TemplateDiscoveryModal
+          token={token}
+          portfolio={store.portfolio}
+          projects={store.projects}
+          profile={store.profile}
+          activeTemplateId={store.templateId}
+          onSelectTemplate={(newTplId) => {
+            store.selectTemplate(newTplId);
+          }}
+          onClose={() => setShowDiscovery(false)}
         />
       )}
     </div>

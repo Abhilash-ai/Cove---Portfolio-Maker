@@ -201,3 +201,34 @@ export interface CopilotOutput {
   undoToken: string;
 }
 
+export interface ProfileSignals {
+  profession?: string;
+  portfolioPurpose?: 'job_search' | 'freelance' | 'academic' | 'studio' | 'personal';
+  yearsOfExperience?: number;
+  projectCount?: number;
+  textDensity?: 'minimal' | 'balanced' | 'rich';
+  mediaDensity?: 'minimal' | 'balanced' | 'rich';
+  desiredPersonality?: string;
+}
+
+export interface TemplateRecommendationDto {
+  templateId: string;
+  name: string;
+  score: number;
+  matchPercentage: number;
+  rationale: string;
+  suitableProfessions: string[];
+  interactionStyle: string;
+  contentFitSummary: string;
+  category: string;
+}
+
+export interface TemplateDiscoveryFilter {
+  category?: string;
+  profession?: string;
+  style?: string;
+  interactionLevel?: 'subtle' | 'standard' | 'expressive';
+  theme?: 'light' | 'dark' | 'adaptive';
+  query?: string;
+}
+

@@ -21,6 +21,7 @@ interface Props {
   onSetProjectLayout: (layout: 'grid' | 'list') => void;
   onMoveSection: (index: number, dir: 'up' | 'down') => void;
   onToggleSectionVisibility: (sectionKey: string) => void;
+  onOpenDiscovery?: () => void;
 }
 
 const HEADING_FONTS = [
@@ -77,6 +78,7 @@ export function EditorSidebar({
   onSetProjectLayout,
   onMoveSection,
   onToggleSectionVisibility,
+  onOpenDiscovery,
 }: Props) {
   const [activeTab, setActiveTab] = useState<EditorTab>('templates');
 
@@ -92,7 +94,7 @@ export function EditorSidebar({
               : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
           }`}
         >
-          Preset
+          Templates
         </button>
         <button
           onClick={() => setActiveTab('typography')}
@@ -102,7 +104,7 @@ export function EditorSidebar({
               : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
           }`}
         >
-          Type
+          Typography
         </button>
         <button
           onClick={() => setActiveTab('colors')}
@@ -141,12 +143,24 @@ export function EditorSidebar({
         {/* TAB 1: TEMPLATES */}
         {activeTab === 'templates' && (
           <div className="space-y-4">
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Design Presets</h3>
-              <p className="text-xs text-zinc-500 mt-1">
-                Select a curated foundational style. Your portfolio content remains 100% untouched.
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Design Presets</h3>
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Your portfolio content remains 100% untouched.
+                </p>
+              </div>
             </div>
+
+            {onOpenDiscovery && (
+              <button
+                type="button"
+                onClick={onOpenDiscovery}
+                className="w-full p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 hover:bg-indigo-950/60 text-indigo-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm"
+              >
+                <span>✨</span> Browse All & AI Recommendations
+              </button>
+            )}
 
             <div className="space-y-3">
               {SEEDED_TEMPLATES.map((tpl) => {

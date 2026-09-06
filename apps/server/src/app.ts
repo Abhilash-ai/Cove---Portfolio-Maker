@@ -10,6 +10,7 @@ import { mediaRouter } from './modules/media/media.router.js';
 import { resumeRouter } from './modules/resume/resume.router.js';
 import { publicRouter } from './modules/public/public.router.js';
 import { aiRouter } from './modules/ai/ai.router.js';
+import { templatesRouter } from './modules/templates/templates.router.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,6 +38,7 @@ app.get('/api/v1/health', (_req, res) => {
 // Mount module routers
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/public', publicRouter);
+app.use('/api/v1/templates', templatesRouter);
 app.use('/api/v1/profile', profileRouter);
 app.use('/api/v1/portfolios', portfolioRouter);
 app.use('/api/v1/resume', resumeRouter);
