@@ -3,6 +3,7 @@ import { ThemeTokens } from '@cove/shared';
 import { EditorTab } from './editorTypes.js';
 import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
 import { HeroVariant } from '../engine/primitives/Hero.js';
+import { ProjectLayout } from '../engine/templates/templateTypes.js';
 
 interface Props {
   tokens: ThemeTokens;
@@ -10,7 +11,7 @@ interface Props {
   sectionOrder: string[];
   hiddenSections: string[];
   heroVariant: HeroVariant;
-  projectLayout: 'grid' | 'list';
+  projectLayout: ProjectLayout;
   onSelectTemplate: (id: string) => void;
   onUpdateColor: (key: keyof ThemeTokens['colors'], hex: string) => void;
   onUpdateFontHeading: (font: string) => void;
@@ -18,7 +19,7 @@ interface Props {
   onUpdateRadius: (radius: string) => void;
   onUpdateContainerMax: (width: string) => void;
   onSetHeroVariant: (variant: HeroVariant) => void;
-  onSetProjectLayout: (layout: 'grid' | 'list') => void;
+  onSetProjectLayout: (layout: ProjectLayout) => void;
   onMoveSection: (index: number, dir: 'up' | 'down') => void;
   onToggleSectionVisibility: (sectionKey: string) => void;
   onOpenDiscovery?: () => void;

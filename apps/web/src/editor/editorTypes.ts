@@ -1,5 +1,6 @@
 import { ThemeTokens, PortfolioSummary, ProjectDto, FullProfileDto } from '@cove/shared';
 import { HeroVariant } from '../engine/primitives/Hero.js';
+import { ProjectLayout } from '../engine/templates/templateTypes.js';
 
 export type ViewportMode = 'desktop' | 'tablet' | 'mobile';
 
@@ -16,7 +17,7 @@ export interface EditorState {
   sectionOrder: string[];
   hiddenSections: string[];
   heroVariant: HeroVariant;
-  projectLayout: 'grid' | 'list';
+  projectLayout: ProjectLayout;
   viewport: ViewportMode;
   scale: number;
   saveStatus: SaveStatus;

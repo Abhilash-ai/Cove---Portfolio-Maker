@@ -1,10 +1,14 @@
 import React from 'react';
 import { ProjectDto, FullProfileDto, PortfolioSummary, ThemeTokens } from '@cove/shared';
-import { TemplateDefinition } from '../templates/templateTypes.js';
+import { TemplateDefinition, ProjectLayout } from '../templates/templateTypes.js';
 import { Hero, HeroVariant } from '../primitives/Hero.js';
 import { StickyNav } from '../primitives/StickyNav.js';
 import { ProjectGrid } from '../primitives/ProjectGrid.js';
 import { ProjectList } from '../primitives/ProjectList.js';
+import { ProjectMasonry } from '../primitives/ProjectMasonry.js';
+import { ProjectHorizontal } from '../primitives/ProjectHorizontal.js';
+import { ProjectTimeline } from '../primitives/ProjectTimeline.js';
+import { ProjectFeaturedGrid } from '../primitives/ProjectFeaturedGrid.js';
 import { Skills } from '../primitives/Skills.js';
 import { Experience } from '../primitives/Experience.js';
 import { Contact } from '../primitives/Contact.js';
@@ -17,7 +21,7 @@ interface Props {
   profile: FullProfileDto | null;
   template: TemplateDefinition;
   overrideHeroVariant?: HeroVariant;
-  overrideProjectLayout?: 'grid' | 'list';
+  overrideProjectLayout?: ProjectLayout;
   overrideSectionOrder?: string[];
   hiddenSections?: string[];
   overrideTokens?: ThemeTokens;
@@ -97,21 +101,63 @@ export function PortfolioRenderer({
               );
 
             case 'projects':
-              return activeProjectLayout === 'list' ? (
-                <ProjectList
-                  key="projects"
-                  projects={projects}
-                  tokens={activeTokens}
-                  forcedTouchMode={forcedTouchMode}
-                />
-              ) : (
-                <ProjectGrid
-                  key="projects"
-                  projects={projects}
-                  tokens={activeTokens}
-                  forcedTouchMode={forcedTouchMode}
-                />
-              );
+              switch (activeProjectLayout) {
+                case 'list':
+                  return (
+                    <ProjectList
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+                case 'masonry':
+                  return (
+                    <ProjectMasonry
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+                case 'horizontal-scroll':
+                  return (
+                    <ProjectHorizontal
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+                case 'timeline-stack':
+                  return (
+                    <ProjectTimeline
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+                case 'featured-plus-grid':
+                  return (
+                    <ProjectFeaturedGrid
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+                case 'grid':
+                default:
+                  return (
+                    <ProjectGrid
+                      key="projects"
+                      projects={projects}
+                      tokens={activeTokens}
+                      forcedTouchMode={forcedTouchMode}
+                    />
+                  );
+              }
 
             case 'skills':
               return <Skills key="skills" profile={profile} tokens={activeTokens} />;

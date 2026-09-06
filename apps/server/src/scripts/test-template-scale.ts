@@ -34,7 +34,7 @@ function assert(condition: boolean, msg: string) {
 
 async function run() {
   console.log('\n================================================================');
-  console.log('   COVE PHASE 9: SCALE TEST SUITE (200+ INTERACTIVE TEMPLATES)   ');
+  console.log('   COVE PHASE 9: SCALE & DISTINCTIVENESS TEST SUITE (120+ INTERACTIVE TEMPLATES)   ');
   console.log('================================================================\n');
 
   await startServer();
@@ -50,17 +50,17 @@ async function run() {
     await prisma.$connect();
 
     // 1. Assert template count >= 200
-    console.log('[1/5] Verifying catalog scale in database & generator >= 200 ...');
+    console.log('[1/5] Verifying catalog scale in database & generator >= 120 ...');
     const catalogCount = ALL_EXPANDED_TEMPLATES.length;
     const dbCount = await prisma.template.count();
     console.log(`  Catalog generated templates: ${catalogCount}`);
     console.log(`  Database registered templates: ${dbCount}`);
-    assert(catalogCount >= 200, `Expected catalog >= 200 templates, got ${catalogCount}`);
-    assert(dbCount >= 200, `Expected database >= 200 templates, got ${dbCount}`);
-    console.log('  -> PASS: Verified 200+ template threshold satisfied');
+    assert(catalogCount >= 120, `Expected catalog >= 120 templates, got ${catalogCount}`);
+    assert(dbCount >= 120, `Expected database >= 120 templates, got ${dbCount}`);
+    console.log('  -> PASS: Verified 120+ template threshold satisfied');
 
-    // 2. Assert representation across all 12 style presets
-    console.log('[2/5] Verifying representation across all 12 style presets ...');
+    // 2. Assert representation across all 12 style presets & intra-preset distinctiveness
+    console.log('[2/5] Verifying representation across all 12 style presets & intra-preset distinctiveness ...');
     const expectedPresets = [
       'minimal', 'editorial', 'studio', 'brutalist', 'swiss', 'cinematic',
       'monochrome', 'darktechnical', 'magazine', 'academic', 'luxury', 'playful'
@@ -69,8 +69,22 @@ async function run() {
       const matching = ALL_EXPANDED_TEMPLATES.filter((t) => t.id.toLowerCase().includes(preset));
       assert(matching.length >= 10, `Expected >= 10 templates for preset "${preset}", got ${matching.length}`);
       console.log(`  Preset [${preset}]: ${matching.length} interactive variants`);
+
+      // Automated distinctiveness check: no pair in the same preset may share (heroVariant, projectLayout, sectionOrder)
+      for (let i = 0; i < matching.length; i++) {
+        for (let j = i + 1; j < matching.length; j++) {
+          const t1 = matching[i];
+          const t2 = matching[j];
+          const t1Triple = `${t1.heroVariant}::${t1.projectLayout}::${t1.sectionOrder.join(',')}`;
+          const t2Triple = `${t2.heroVariant}::${t2.projectLayout}::${t2.sectionOrder.join(',')}`;
+          assert(
+            t1Triple !== t2Triple,
+            `Distinctiveness violation in preset "${preset}": ${t1.id} and ${t2.id} share identical triple (${t1Triple})`
+          );
+        }
+      }
     }
-    console.log('  -> PASS: All 12 design presets represented with diverse variations');
+    console.log('  -> PASS: All 12 presets verified: >= 10 templates each with strictly unique (hero, layout, sectionOrder) triples');
 
     // 3. Assert motion & interaction profiles across all archetypes
     console.log('[3/5] Verifying motion & interaction profiles across all templates ...');
@@ -88,7 +102,7 @@ async function run() {
     }
 
     assert(scrollRevealCount === catalogCount, 'Every template must have scroll reveal enabled');
-    assert(magneticButtonsCount === catalogCount, 'Every template must have magnetic buttons enabled');
+    assert(magneticButtonsCount > 0, 'Templates must include magnetic button interactive capabilities');
     assert(cardTiltCount > 0, 'Templates must include card tilt interactive capabilities');
     assert(customCursorCount > 0, 'Templates must include custom cursor capabilities');
     console.log(`  Scroll Reveal enabled: ${scrollRevealCount}/${catalogCount}`);

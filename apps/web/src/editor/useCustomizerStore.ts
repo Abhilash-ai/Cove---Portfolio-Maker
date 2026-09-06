@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ThemeTokens, PortfolioSummary, ProjectDto, FullProfileDto, MINIMAL_PRESET, EDITORIAL_PRESET, STUDIO_PRESET } from '@cove/shared';
 import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
 import { HeroVariant } from '../engine/primitives/Hero.js';
+import { ProjectLayout } from '../engine/templates/templateTypes.js';
 import { ViewportMode, SaveStatus } from './editorTypes.js';
 
 const API_BASE = 'http://localhost:4000/api/v1';
@@ -21,7 +22,7 @@ export function useCustomizerStore({ portfolioId, token }: CustomizerConfig) {
   const [sectionOrder, setSectionOrder] = useState<string[]>(['hero', 'projects', 'skills', 'experience', 'contact']);
   const [hiddenSections, setHiddenSections] = useState<string[]>([]);
   const [heroVariant, setHeroVariant] = useState<HeroVariant>('centered');
-  const [projectLayout, setProjectLayout] = useState<'grid' | 'list'>('grid');
+  const [projectLayout, setProjectLayout] = useState<ProjectLayout>('grid');
 
   const [viewport, setViewport] = useState<ViewportMode>('desktop');
   const [scale, setScale] = useState<number>(1);

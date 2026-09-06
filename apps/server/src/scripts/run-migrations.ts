@@ -46,7 +46,7 @@ async function main() {
   const userCount = await prisma.user.count();
   console.log(`Connection successful! Current user count: ${userCount}`);
 
-  console.log('Seeding all 200+ interactive archetypes into database...');
+  console.log(`Seeding curated interactive templates (${ALL_EXPANDED_TEMPLATES.length} archetypes) into database...`);
   for (const tpl of ALL_EXPANDED_TEMPLATES) {
     await prisma.template.upsert({
       where: { id: tpl.id },
@@ -54,6 +54,25 @@ async function main() {
       create: { id: tpl.id, name: tpl.name, category: tpl.category, description: tpl.description }
     });
   }
+
+  // Prune uncurated legacy templates if not referenced by portfolios
+  const validIds = new Set(ALL_EXPANDED_TEMPLATES.map((t) => t.id));
+  const allInDb = await prisma.template.findMany({ select: { id: true } });
+  const orphanIds = allInDb.filter((t) => !validIds.has(t.id)).map((t) => t.id);
+  if (orphanIds.length > 0) {
+    const portfoliosUsingOrphans = await prisma.portfolio.findMany({
+      where: { activeTemplateId: { in: orphanIds } },
+      select: { activeTemplateId: true }
+    });
+    const protectedIds = new Set(portfoliosUsingOrphans.map((p) => p.activeTemplateId));
+    const safeToDelete = orphanIds.filter((id) => !protectedIds.has(id));
+    if (safeToDelete.length > 0) {
+      await prisma.template.deleteMany({
+        where: { id: { in: safeToDelete } }
+      });
+    }
+  }
+
   const seededCount = await prisma.template.count();
   console.log(`Templates seeded successfully. Total in database: ${seededCount}`);
 

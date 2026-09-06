@@ -4,14 +4,37 @@ import { ProjectDto, ThemeTokens } from '@cove/shared';
 import { ScrollReveal } from '../interactions/ScrollReveal.js';
 import { CaseStudyModal } from './CaseStudyModal.js';
 import { useDeviceCapabilities } from '../interactions/useDeviceCapabilities.js';
+import { ProjectLayout } from '../templates/templateTypes.js';
+import { ProjectMasonry } from './ProjectMasonry.js';
+import { ProjectHorizontal } from './ProjectHorizontal.js';
+import { ProjectTimeline } from './ProjectTimeline.js';
+import { ProjectFeaturedGrid } from './ProjectFeaturedGrid.js';
+import { ProjectGrid } from './ProjectGrid.js';
 
 interface Props {
   projects: ProjectDto[];
   tokens: ThemeTokens;
   forcedTouchMode?: boolean;
+  variant?: ProjectLayout;
 }
 
-export function ProjectList({ projects, tokens, forcedTouchMode = false }: Props) {
+export function ProjectList({ projects, tokens, forcedTouchMode = false, variant = 'list' }: Props) {
+  if (variant === 'masonry') {
+    return <ProjectMasonry projects={projects} tokens={tokens} forcedTouchMode={forcedTouchMode} />;
+  }
+  if (variant === 'horizontal-scroll') {
+    return <ProjectHorizontal projects={projects} tokens={tokens} forcedTouchMode={forcedTouchMode} />;
+  }
+  if (variant === 'timeline-stack') {
+    return <ProjectTimeline projects={projects} tokens={tokens} forcedTouchMode={forcedTouchMode} />;
+  }
+  if (variant === 'featured-plus-grid') {
+    return <ProjectFeaturedGrid projects={projects} tokens={tokens} forcedTouchMode={forcedTouchMode} />;
+  }
+  if (variant === 'grid') {
+    return <ProjectGrid projects={projects} tokens={tokens} forcedTouchMode={forcedTouchMode} />;
+  }
+
   const [selectedProject, setSelectedProject] = useState<ProjectDto | null>(null);
   const [hoveredProject, setHoveredProject] = useState<ProjectDto | null>(null);
   const { isTouch, isPointerFine } = useDeviceCapabilities();

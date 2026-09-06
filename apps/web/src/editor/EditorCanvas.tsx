@@ -4,6 +4,7 @@ import { ThemeTokens, PortfolioSummary, ProjectDto, FullProfileDto } from '@cove
 import { SEEDED_TEMPLATES } from '../engine/templates/seededTemplates.js';
 import { PortfolioRenderer } from '../engine/renderer/PortfolioRenderer.js';
 import { HeroVariant } from '../engine/primitives/Hero.js';
+import { ProjectLayout } from '../engine/templates/templateTypes.js';
 
 interface Props {
   viewport: ViewportMode;
@@ -13,7 +14,7 @@ interface Props {
   sectionOrder: string[];
   hiddenSections: string[];
   heroVariant: HeroVariant;
-  projectLayout: 'grid' | 'list';
+  projectLayout: ProjectLayout;
   portfolio: PortfolioSummary | null;
   projects: ProjectDto[];
   profile: FullProfileDto | null;

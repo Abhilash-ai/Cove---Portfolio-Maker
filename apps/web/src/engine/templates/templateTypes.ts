@@ -1,5 +1,24 @@
 import { ThemeTokens } from '@cove/shared';
-import { HeroVariant } from '../primitives/Hero.js';
+
+export type HeroVariant =
+  | 'centered'
+  | 'split'
+  | 'fullscreen-image'
+  | 'minimal-text'
+  | 'asymmetric-offset'
+  | 'stacked-media'
+  | 'marquee-text'
+  | 'side-panel-nav'
+  | 'video-background'
+  | 'diagonal-split';
+
+export type ProjectLayout =
+  | 'grid'
+  | 'list'
+  | 'masonry'
+  | 'horizontal-scroll'
+  | 'timeline-stack'
+  | 'featured-plus-grid';
 
 export interface InteractionProfile {
   customCursor: boolean;
@@ -14,7 +33,7 @@ export interface TemplateDefinition {
   category: 'minimal' | 'editorial' | 'studio';
   description: string;
   heroVariant: HeroVariant;
-  projectLayout: 'grid' | 'list';
+  projectLayout: ProjectLayout;
   tokens: ThemeTokens;
   interactionProfile: InteractionProfile;
   supportedSections: string[];
