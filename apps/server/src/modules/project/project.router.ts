@@ -3,7 +3,7 @@ import { prisma } from '../../prisma.js';
 import { authenticateToken, AuthenticatedRequest } from '../../middleware/auth.js';
 
 export const projectRouter = Router();
-projectRouter.use(authenticateToken);
+projectRouter.use(['/portfolios', '/projects'], authenticateToken);
 
 // Helper to format project output
 function formatProject(pr: any) {

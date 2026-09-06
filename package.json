@@ -18,7 +18,8 @@
     "test:auth": "tsx apps/server/src/scripts/test-auth.ts",
     "test:crud": "tsx apps/server/src/scripts/test-crud.ts",
     "test:editor": "tsx apps/server/src/scripts/test-visual-editor.ts",
-    "test:resume": "tsx apps/server/src/scripts/test-resume-parser.ts"
+    "test:resume": "tsx apps/server/src/scripts/test-resume-parser.ts",
+    "test:public": "tsx apps/server/src/scripts/test-public-analytics.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

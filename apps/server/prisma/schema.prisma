@@ -90,6 +90,7 @@ model Portfolio {
   projects             Project[]
   sections             PortfolioSection[]
   exports              Export[]
+  analyticsEvents      AnalyticsEvent[]
 
   @@index([slug])
   @@index([userId])
@@ -445,4 +446,21 @@ model Export {
   @@index([userId])
   @@index([portfolioId])
   @@map("exports")
+}
+
+model AnalyticsEvent {
+  id          String    @id @default(uuid())
+  portfolioId String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  eventType   String    @default("view") // "view" | "project_click" | "link_click" | "resume_download"
+  visitorHash String
+  deviceType  String    @default("desktop") // "desktop" | "tablet" | "mobile"
+  referrer    String?
+  targetUrl   String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+
+  @@index([portfolioId, createdAt])
+  @@index([portfolioId, eventType])
+  @@map("analytics_events")
 }

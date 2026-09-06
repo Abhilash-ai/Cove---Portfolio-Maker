@@ -6,7 +6,7 @@ import { authenticateToken, AuthenticatedRequest } from '../../middleware/auth.j
 import { MediaType } from '@prisma/client';
 
 export const mediaRouter = Router();
-mediaRouter.use(authenticateToken);
+mediaRouter.use(['/media', '/projects'], authenticateToken);
 
 const upload = multer({
   storage: multer.memoryStorage(),

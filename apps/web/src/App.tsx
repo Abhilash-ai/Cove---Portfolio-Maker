@@ -5,14 +5,25 @@ import { ProjectManager } from './components/crud/ProjectManager.js';
 import { ProfileEditor } from './components/crud/ProfileEditor.js';
 import { DesignEngineCanvas } from './components/preview/DesignEngineCanvas.js';
 import { VisualEditor } from './editor/VisualEditor.js';
+import { PublicPortfolioPage } from './pages/PublicPortfolioPage.js';
+import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard.js';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
   const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor'
-  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor'>('portfolios');
+  // Detect public portfolio slug from URL e.g. /p/:slug or ?p=:slug
+  const [publicSlug, setPublicSlug] = useState<string | null>(() => {
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/p\/([a-zA-Z0-9-_]+)/);
+    if (match) return match[1];
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get('p');
+  });
+
+  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'
+  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'>('portfolios');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
 
   // Auth Form State
@@ -97,7 +108,20 @@ export default function App() {
     setActiveTab('visual-editor');
   }
 
-  // If in Visual Editor mode, render full-screen IDE experience
+  // 1. If public portfolio route is active, render public viewer
+  if (publicSlug) {
+    return (
+      <PublicPortfolioPage
+        slug={publicSlug}
+        onGoHome={() => {
+          window.history.pushState({}, '', '/');
+          setPublicSlug(null);
+        }}
+      />
+    );
+  }
+
+  // 2. If in Visual Editor mode, render full-screen IDE experience
   if (currentUser && token && activeTab === 'visual-editor') {
     return (
       <VisualEditor
@@ -119,7 +143,7 @@ export default function App() {
               <h1 className="text-lg font-bold tracking-tight text-white font-mono">COVE</h1>
             </div>
             <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              Phase 4 Visual Editor
+              Phase 6 Publishing & Analytics
             </span>
           </div>
 
@@ -159,7 +183,16 @@ export default function App() {
                       : 'text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10'
                   }`}
                 >
-                  🎨 Visual Editor (Phase 4)
+                  🎨 Editor
+                </button>
+                <button
+                  onClick={() => { if (activePortfolio) setActiveTab('analytics'); }}
+                  disabled={!activePortfolio}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition disabled:opacity-40 ${
+                    activeTab === 'analytics' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  📊 Analytics
                 </button>
                 <button
                   onClick={() => setActiveTab('design-engine')}
@@ -167,7 +200,7 @@ export default function App() {
                     activeTab === 'design-engine' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
                   }`}
                 >
-                  Proof Canvas
+                  Canvas
                 </button>
               </nav>
 
@@ -206,6 +239,16 @@ export default function App() {
 
             {activeTab === 'profile' && (
               <ProfileEditor token={token} />
+            )}
+
+            {activeTab === 'analytics' && activePortfolio && (
+              <AnalyticsDashboard
+                portfolio={activePortfolio}
+                token={token}
+                onRefreshPortfolio={() => {
+                  fetchCurrentUser(token);
+                }}
+              />
             )}
 
             {activeTab === 'design-engine' && (

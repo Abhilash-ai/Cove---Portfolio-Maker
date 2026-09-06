@@ -137,6 +137,8 @@ export interface PortfolioSummary {
   slug: string;
   status: PortfolioStatus;
   sectionOrder: string[];
+  customTokens?: any;
+  activeTemplateId?: string | null;
   projectCount?: number;
   createdAt: string;
   updatedAt: string;
