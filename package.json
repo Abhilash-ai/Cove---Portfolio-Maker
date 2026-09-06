@@ -21,7 +21,8 @@
     "test:resume": "tsx apps/server/src/scripts/test-resume-parser.ts",
     "test:public": "tsx apps/server/src/scripts/test-public-analytics.ts",
     "test:copilot": "tsx apps/server/src/scripts/test-copilot-export.ts",
-    "test:recommender": "tsx apps/server/src/scripts/test-template-recommender.ts"
+    "test:recommender": "tsx apps/server/src/scripts/test-template-recommender.ts",
+    "test:scale": "tsx apps/server/src/scripts/test-template-scale.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

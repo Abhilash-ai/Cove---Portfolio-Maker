@@ -64,12 +64,12 @@ async function run() {
     // Test text search
     const searchRes = await fetch(`${baseUrl}/templates?q=pure`);
     const searchData = await searchRes.json();
-    assert(searchData.data.templates.length === 1 && searchData.data.templates[0].id === 'tpl-minimal-pure', 'Search query failed');
+    assert(searchData.data.templates.length >= 1 && searchData.data.templates.some((t: any) => t.id === 'tpl-minimal-pure'), 'Search query failed');
 
     // Test category filter
     const catRes = await fetch(`${baseUrl}/templates?category=editorial`);
     const catData = await catRes.json();
-    assert(catData.data.templates.length === 1 && catData.data.templates[0].id === 'tpl-editorial-journal', 'Category filter failed');
+    assert(catData.data.templates.length >= 1 && catData.data.templates.some((t: any) => t.id === 'tpl-editorial-journal'), 'Category filter failed');
 
     // Test profession filter
     const profRes = await fetch(`${baseUrl}/templates?profession=architect`);

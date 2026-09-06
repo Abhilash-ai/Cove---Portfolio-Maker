@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
+import { ALL_EXPANDED_TEMPLATES } from '../../../web/src/engine/templates/expandedTemplates.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,21 +46,16 @@ async function main() {
   const userCount = await prisma.user.count();
   console.log(`Connection successful! Current user count: ${userCount}`);
 
-  console.log('Seeding foundational templates into database...');
-  const templates = [
-    { id: 'tpl-minimal-pure', name: 'Minimalist Pure', category: 'minimal', description: 'Clean grotesque typography and refined grid micro-interactions.' },
-    { id: 'tpl-editorial-journal', name: 'Editorial Journal', category: 'editorial', description: 'Warm editorial serifs, two-column split narrative, and list previews.' },
-    { id: 'tpl-studio-neo-dark', name: 'Studio Neo-Dark', category: 'studio', description: 'Immersive full-bleed header, electric blue accents, and 3D card tilt.' }
-  ];
-
-  for (const tpl of templates) {
+  console.log('Seeding all 200+ interactive archetypes into database...');
+  for (const tpl of ALL_EXPANDED_TEMPLATES) {
     await prisma.template.upsert({
       where: { id: tpl.id },
       update: { name: tpl.name, category: tpl.category, description: tpl.description },
       create: { id: tpl.id, name: tpl.name, category: tpl.category, description: tpl.description }
     });
   }
-  console.log('Foundational templates seeded successfully.');
+  const seededCount = await prisma.template.count();
+  console.log(`Templates seeded successfully. Total in database: ${seededCount}`);
 
   await prisma.$disconnect();
   console.log('--- Migration & Verification Complete! ---');
