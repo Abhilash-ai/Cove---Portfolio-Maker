@@ -44,6 +44,23 @@ async function main() {
   await prisma.$connect();
   const userCount = await prisma.user.count();
   console.log(`Connection successful! Current user count: ${userCount}`);
+
+  console.log('Seeding foundational templates into database...');
+  const templates = [
+    { id: 'tpl-minimal-pure', name: 'Minimalist Pure', category: 'minimal', description: 'Clean grotesque typography and refined grid micro-interactions.' },
+    { id: 'tpl-editorial-journal', name: 'Editorial Journal', category: 'editorial', description: 'Warm editorial serifs, two-column split narrative, and list previews.' },
+    { id: 'tpl-studio-neo-dark', name: 'Studio Neo-Dark', category: 'studio', description: 'Immersive full-bleed header, electric blue accents, and 3D card tilt.' }
+  ];
+
+  for (const tpl of templates) {
+    await prisma.template.upsert({
+      where: { id: tpl.id },
+      update: { name: tpl.name, category: tpl.category, description: tpl.description },
+      create: { id: tpl.id, name: tpl.name, category: tpl.category, description: tpl.description }
+    });
+  }
+  console.log('Foundational templates seeded successfully.');
+
   await prisma.$disconnect();
   console.log('--- Migration & Verification Complete! ---');
   process.exit(0);

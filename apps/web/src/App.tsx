@@ -4,14 +4,15 @@ import { PortfolioManager } from './components/crud/PortfolioManager.js';
 import { ProjectManager } from './components/crud/ProjectManager.js';
 import { ProfileEditor } from './components/crud/ProfileEditor.js';
 import { DesignEngineCanvas } from './components/preview/DesignEngineCanvas.js';
+import { VisualEditor } from './editor/VisualEditor.js';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
   const [currentUser, setCurrentUser] = useState<AuthenticatedUser | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine'
-  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine'>('portfolios');
+  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor'
+  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor'>('portfolios');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
 
   // Auth Form State
@@ -91,6 +92,22 @@ export default function App() {
     setActiveTab('projects');
   }
 
+  function handleOpenEditor(p: PortfolioSummary) {
+    setActivePortfolio(p);
+    setActiveTab('visual-editor');
+  }
+
+  // If in Visual Editor mode, render full-screen IDE experience
+  if (currentUser && token && activeTab === 'visual-editor') {
+    return (
+      <VisualEditor
+        portfolioId={activePortfolio?.id}
+        token={token}
+        onBack={() => setActiveTab('portfolios')}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0A0A0C] text-zinc-100 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Top Navigation Bar */}
@@ -102,7 +119,7 @@ export default function App() {
               <h1 className="text-lg font-bold tracking-tight text-white font-mono">COVE</h1>
             </div>
             <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              Phase 3 Design Engine
+              Phase 4 Visual Editor
             </span>
           </div>
 
@@ -135,14 +152,22 @@ export default function App() {
                   Profile
                 </button>
                 <button
-                  onClick={() => setActiveTab('design-engine')}
+                  onClick={() => setActiveTab('visual-editor')}
                   className={`px-3 py-1.5 text-xs font-medium rounded-md transition border ${
-                    activeTab === 'design-engine'
+                    activeTab === 'visual-editor'
                       ? 'bg-blue-600 text-white border-blue-500 shadow-sm'
-                      : 'text-blue-400 border-blue-500/30 hover:bg-blue-500/10'
+                      : 'text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/10'
                   }`}
                 >
-                  ✨ Design Engine (Phase 3)
+                  🎨 Visual Editor (Phase 4)
+                </button>
+                <button
+                  onClick={() => setActiveTab('design-engine')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition ${
+                    activeTab === 'design-engine' ? 'bg-blue-600 text-white' : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  Proof Canvas
                 </button>
               </nav>
 
@@ -170,6 +195,7 @@ export default function App() {
               <PortfolioManager
                 token={token}
                 onSelectPortfolio={handleSelectPortfolio}
+                onOpenEditor={handleOpenEditor}
                 activePortfolioId={activePortfolio?.id}
               />
             )}

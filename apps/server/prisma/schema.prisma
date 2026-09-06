@@ -78,6 +78,7 @@ model Portfolio {
   slug                 String              @unique
   status               PortfolioStatus     @default(draft)
   sectionOrder         Json?               @default("[\"hero\",\"projects\",\"skills\",\"experience\",\"about\",\"contact\"]")
+  customTokens         Json?
   activeTemplateId     String?
   activeTemplate       Template?           @relation(fields: [activeTemplateId], references: [id], onDelete: SetNull)
   themeConfigurationId String?

@@ -14,8 +14,10 @@
     "dev": "npm run dev:server",
     "prisma:generate": "npm run prisma:generate --workspace=@cove/server",
     "prisma:migrate": "npm run prisma:migrate --workspace=@cove/server",
+    "db:push": "tsx apps/server/src/scripts/run-migrations.ts",
     "test:auth": "tsx apps/server/src/scripts/test-auth.ts",
-    "test:crud": "tsx apps/server/src/scripts/test-crud.ts"
+    "test:crud": "tsx apps/server/src/scripts/test-crud.ts",
+    "test:editor": "tsx apps/server/src/scripts/test-visual-editor.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

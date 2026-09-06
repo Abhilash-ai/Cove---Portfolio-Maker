@@ -17,6 +17,9 @@ interface Props {
   profile: FullProfileDto | null;
   template: TemplateDefinition;
   overrideHeroVariant?: HeroVariant;
+  overrideProjectLayout?: 'grid' | 'list';
+  overrideSectionOrder?: string[];
+  hiddenSections?: string[];
   overrideTokens?: ThemeTokens;
   forcedTouchMode?: boolean;
 }
@@ -27,21 +30,27 @@ export function PortfolioRenderer({
   profile,
   template,
   overrideHeroVariant,
+  overrideProjectLayout,
+  overrideSectionOrder,
+  hiddenSections = [],
   overrideTokens,
   forcedTouchMode = false
 }: Props) {
   const activeTokens = overrideTokens || template.tokens;
   const activeHeroVariant = overrideHeroVariant || template.heroVariant;
+  const activeProjectLayout = overrideProjectLayout || template.projectLayout;
 
   function scrollToContact() {
     const el = document.getElementById('contact');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Section sequence based on template order or portfolio custom order
-  const sections = portfolio.sectionOrder && portfolio.sectionOrder.length > 0
-    ? portfolio.sectionOrder
-    : template.sectionOrder;
+  // Section sequence based on override order, portfolio order, or template order
+  const rawSections = overrideSectionOrder && overrideSectionOrder.length > 0
+    ? overrideSectionOrder
+    : (portfolio.sectionOrder && portfolio.sectionOrder.length > 0 ? portfolio.sectionOrder : template.sectionOrder);
+
+  const sections = rawSections.filter((s) => !hiddenSections.includes(s));
 
   return (
     <div
@@ -88,7 +97,7 @@ export function PortfolioRenderer({
               );
 
             case 'projects':
-              return template.projectLayout === 'list' ? (
+              return activeProjectLayout === 'list' ? (
                 <ProjectList
                   key="projects"
                   projects={projects}

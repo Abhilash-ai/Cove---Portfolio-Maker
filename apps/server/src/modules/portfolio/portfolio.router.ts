@@ -32,6 +32,8 @@ portfolioRouter.get('/mine', async (req: AuthenticatedRequest, res: Response): P
           slug: p.slug,
           status: p.status,
           sectionOrder: (p.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
+          customTokens: p.customTokens,
+          activeTemplateId: p.activeTemplateId,
           projectCount: p._count.projects,
           createdAt: p.createdAt.toISOString(),
           updatedAt: p.updatedAt.toISOString()
@@ -135,6 +137,8 @@ portfolioRouter.get('/:id', async (req: AuthenticatedRequest, res: Response): Pr
           slug: portfolio.slug,
           status: portfolio.status,
           sectionOrder: (portfolio.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
+          customTokens: portfolio.customTokens,
+          activeTemplateId: portfolio.activeTemplateId,
           projects: portfolio.projects.map((pr) => ({
             id: pr.id,
             userId: pr.userId,
@@ -185,7 +189,7 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
   try {
     const callerId = req.user!.id;
     const { id } = req.params;
-    const { title, slug, status, sectionOrder } = req.body;
+    const { title, slug, status, sectionOrder, customTokens, activeTemplateId } = req.body;
 
     const existing = await prisma.portfolio.findUnique({ where: { id } });
     if (!existing) {
@@ -215,6 +219,8 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
         slug: normalizedSlug !== undefined ? normalizedSlug : undefined,
         status: status === 'published' || status === 'draft' ? status : undefined,
         sectionOrder: Array.isArray(sectionOrder) ? sectionOrder : undefined,
+        customTokens: customTokens !== undefined ? customTokens : undefined,
+        activeTemplateId: activeTemplateId !== undefined ? activeTemplateId : undefined,
         publishedAt: status === 'published' && existing.status !== 'published' ? new Date() : undefined
       }
     });
@@ -229,6 +235,8 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
           slug: updated.slug,
           status: updated.status,
           sectionOrder: (updated.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
+          customTokens: updated.customTokens,
+          activeTemplateId: updated.activeTemplateId,
           createdAt: updated.createdAt.toISOString(),
           updatedAt: updated.updatedAt.toISOString()
         }

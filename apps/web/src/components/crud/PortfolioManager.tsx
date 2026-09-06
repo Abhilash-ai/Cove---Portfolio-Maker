@@ -4,10 +4,11 @@ import { PortfolioSummary } from '@cove/shared';
 interface Props {
   token: string;
   onSelectPortfolio: (portfolio: PortfolioSummary) => void;
+  onOpenEditor?: (portfolio: PortfolioSummary) => void;
   activePortfolioId?: string;
 }
 
-export function PortfolioManager({ token, onSelectPortfolio, activePortfolioId }: Props) {
+export function PortfolioManager({ token, onSelectPortfolio, onOpenEditor, activePortfolioId }: Props) {
   const [portfolios, setPortfolios] = useState<PortfolioSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -316,6 +317,14 @@ export function PortfolioManager({ token, onSelectPortfolio, activePortfolioId }
                         >
                           {isSelected ? 'Managing Projects' : 'Select Portfolio'}
                         </button>
+                        {onOpenEditor && (
+                          <button
+                            onClick={() => onOpenEditor(p)}
+                            className="px-3 py-1.5 text-xs font-semibold rounded bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-sm transition flex items-center gap-1"
+                          >
+                            <span>🎨 Editor</span>
+                          </button>
+                        )}
                         <button
                           onClick={() => startEdit(p)}
                           className="px-3 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded transition"
