@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { FullProfileDto, SkillDto, ExperienceDto, SocialLinkDto } from '@cove/shared';
+import { ResumeUploadModal } from '../resume/ResumeUploadModal.js';
 
 interface Props {
   token: string;
 }
 
 export function ProfileEditor({ token }: Props) {
-  const [, setProfile] = useState<FullProfileDto | null>(null);
+  const [profile, setProfile] = useState<FullProfileDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [showResumeModal, setShowResumeModal] = useState(false);
 
   // Form states
   const [name, setName] = useState('');
@@ -158,12 +160,37 @@ export function ProfileEditor({ token }: Props) {
           <h2 className="text-xl font-bold text-white">Creator Profile</h2>
           <p className="text-xs text-zinc-400 mt-0.5">Manage full professional details, skills, experience, and links</p>
         </div>
-        {statusMsg && (
-          <span className="text-xs font-mono px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded">
-            {statusMsg}
-          </span>
-        )}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowResumeModal(true)}
+            className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-sm transition flex items-center gap-1.5"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>Import from Resume</span>
+          </button>
+          {statusMsg && (
+            <span className="text-xs font-mono px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded">
+              {statusMsg}
+            </span>
+          )}
+        </div>
       </div>
+
+      {showResumeModal && (
+        <ResumeUploadModal
+          token={token}
+          currentProfile={profile}
+          onClose={() => setShowResumeModal(false)}
+          onSuccess={() => {
+            loadProfile();
+            setStatusMsg('Profile successfully updated from resume!');
+            setTimeout(() => setStatusMsg(null), 4000);
+          }}
+        />
+      )}
 
       <form onSubmit={handleSave} className="space-y-6">
         {/* Core Info */}
