@@ -7,6 +7,8 @@ import { DesignEngineCanvas } from './components/preview/DesignEngineCanvas.js';
 import { VisualEditor } from './editor/VisualEditor.js';
 import { PublicPortfolioPage } from './pages/PublicPortfolioPage.js';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard.js';
+import { AdminDashboardModal } from './components/admin/AdminDashboardModal.js';
+import { UserSettingsModal } from './components/settings/UserSettingsModal.js';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
@@ -25,6 +27,8 @@ export default function App() {
   // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'
   const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'>('portfolios');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   // Auth Form State
   const [isLogin, setIsLogin] = useState(true);
@@ -205,7 +209,21 @@ export default function App() {
               </nav>
 
               <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-zinc-800 text-xs">
-                <span className="text-zinc-400 truncate max-w-xs">{currentUser.email}</span>
+                {currentUser.role === 'ADMIN' && (
+                  <button
+                    onClick={() => setShowAdminModal(true)}
+                    className="px-2.5 py-1 text-xs font-medium text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 rounded border border-amber-500/30 transition flex items-center gap-1"
+                  >
+                    ⚙️ Admin
+                  </button>
+                )}
+                <button
+                  onClick={() => setShowSettingsModal(true)}
+                  className="px-2.5 py-1 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded border border-zinc-700 transition flex items-center gap-1"
+                >
+                  🛡️ Settings
+                </button>
+                <span className="text-zinc-500 truncate max-w-xs">{currentUser.email}</span>
                 <button
                   onClick={handleLogout}
                   className="px-2.5 py-1 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded border border-red-500/20 transition"
@@ -339,6 +357,27 @@ export default function App() {
               </form>
             </div>
           </div>
+        )}
+
+        {/* Admin Dashboard Modal */}
+        {token && (
+          <AdminDashboardModal
+            isOpen={showAdminModal}
+            onClose={() => setShowAdminModal(false)}
+            token={token}
+          />
+        )}
+
+        {/* User Settings Modal */}
+        {token && (
+          <UserSettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            token={token}
+            userEmail={currentUser?.email}
+            userName={currentUser?.name || undefined}
+            onLogout={handleLogout}
+          />
         )}
       </main>
 

@@ -23,7 +23,8 @@
     "test:copilot": "tsx apps/server/src/scripts/test-copilot-export.ts",
     "test:recommender": "tsx apps/server/src/scripts/test-template-recommender.ts",
     "test:scale": "tsx apps/server/src/scripts/test-template-scale.ts",
-    "test:critic": "tsx apps/server/src/scripts/test-critic-hardening.ts"
+    "test:critic": "tsx apps/server/src/scripts/test-critic-hardening.ts",
+    "test:final-qa": "tsx apps/server/src/scripts/test-final-qa.ts"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",

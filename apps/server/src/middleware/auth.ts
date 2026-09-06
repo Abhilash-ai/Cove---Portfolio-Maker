@@ -65,3 +65,22 @@ export async function authenticateToken(
     });
   }
 }
+
+export function requireAdmin(
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void {
+  if (!req.user || req.user.role !== 'ADMIN') {
+    res.status(403).json({
+      success: false,
+      error: {
+        code: 'FORBIDDEN',
+        message: 'Administrative privileges required to access this resource'
+      }
+    });
+    return;
+  }
+  next();
+}
+
