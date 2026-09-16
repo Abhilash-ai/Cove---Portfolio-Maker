@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ThemeTokens, FullProfileDto, PortfolioSummary } from '@cove/shared';
 import { MagneticButton } from '../interactions/MagneticButton.js';
 import { TiltCard } from '../interactions/TiltCard.js';
@@ -24,6 +25,17 @@ export function Hero({
   forcedTouchMode = false,
   onContactClick
 }: Props) {
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Motion.dev scroll-driven parallax: background depth & graceful fade on scroll
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start']
+  });
+  const heroMediaY = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  const heroMediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const heroFadeOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.25]);
+
   const displayName = profile?.name || 'Anonymous Creator';
   const headline = profile?.headline || 'Spatial Designer & Computational Architect';
   const bio = profile?.bio || 'Designing enduring spaces, systems, and structures at the intersection of human scale and digital precision.';
@@ -31,6 +43,8 @@ export function Hero({
   const available = profile?.availableForWork ?? true;
 
   // 1. SPLIT VARIANT
+  // Inspiration Reference: Supahero.io (Editorial Split) & Godly.website (Kinfolk / Apartamento editorial monograph)
+  // Two-column responsive balance between bold typographic narrative and portrait imagery.
   if (variant === 'split') {
     return (
       <section className="relative py-20 px-6 max-w-7xl mx-auto overflow-hidden">
@@ -140,18 +154,20 @@ export function Hero({
   }
 
   // 2. FULLSCREEN-IMAGE VARIANT
+  // Inspiration Reference: Godly.website (Studio Freight / Unseen Studio) & Supahero.io (The Verge immersive visual)
+  // Full-viewport photographic canvas with dark atmospheric gradient scrim and bottom meta rail.
   if (variant === 'fullscreen-image') {
     return (
-      <section className="relative min-h-[85vh] flex items-end p-8 md:p-16 overflow-hidden">
-        {/* Background Image / Render */}
-        <div className="absolute inset-0 z-0">
+      <section ref={heroRef} className="relative min-h-[85vh] flex items-end p-8 md:p-16 overflow-hidden">
+        {/* Background Image / Render with Motion.dev scroll parallax */}
+        <motion.div style={{ y: heroMediaY, scale: heroMediaScale }} className="absolute inset-0 z-0">
           {profile?.photoUrl ? (
             <img src={profile.photoUrl} alt={displayName} className="w-full h-full object-cover object-center filter brightness-50" />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-zinc-900 via-zinc-950 to-black" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        </div>
+        </motion.div>
 
         <div className="relative z-10 max-w-4xl space-y-4">
           <div
@@ -199,6 +215,8 @@ export function Hero({
   }
 
   // 3. MINIMAL-TEXT VARIANT
+  // Inspiration Reference: Minimal.gallery (Dieter Rams archive / Sindre Sorhus index) & Godly.website (Frank Chimero minimalist)
+  // Content-first editorial monograph with zero decorative overhead, pure typography and metadata tags.
   if (variant === 'minimal-text') {
     return (
       <section
@@ -244,7 +262,9 @@ export function Hero({
     );
   }
 
-  // 4. [NEW] ASYMMETRIC-OFFSET VARIANT
+  // 4. ASYMMETRIC-OFFSET VARIANT
+  // Inspiration Reference: Supahero.io (Linear / Raycast header architecture) & Godly.website (Cosmos.so off-grid layout)
+  // Asymmetric oversized display typography juxtaposed with floating status badge and architectural grid offset.
   if (variant === 'asymmetric-offset') {
     return (
       <section className="relative py-24 px-6 max-w-7xl mx-auto overflow-hidden">
@@ -311,7 +331,9 @@ export function Hero({
     );
   }
 
-  // 5. [NEW] STACKED-MEDIA VARIANT
+  // 5. STACKED-MEDIA VARIANT
+  // Inspiration Reference: Supahero.io (Family.co multi-card stack) & Godly.website (Studio Freight interactive filter)
+  // Fanned-out interactive visual preview cards elevating dynamically behind headline bio.
   if (variant === 'stacked-media') {
     return (
       <section className="py-20 px-6 max-w-6xl mx-auto text-center relative overflow-hidden">
@@ -382,7 +404,9 @@ export function Hero({
     );
   }
 
-  // 6. [NEW] MARQUEE-TEXT VARIANT
+  // 6. MARQUEE-TEXT VARIANT
+  // Inspiration Reference: Godly.website (Acne Studios / MSCHF portfolio filter) & Supahero.io (Basement.studio brutalist)
+  // High-velocity infinite horizontal typographic ticker with thick structural borders and raw contrast.
   if (variant === 'marquee-text') {
     return (
       <section className="py-16 overflow-hidden border-b" style={{ borderColor: tokens.colors.border }}>
@@ -423,7 +447,9 @@ export function Hero({
     );
   }
 
-  // 7. [NEW] SIDE-PANEL-NAV VARIANT
+  // 7. SIDE-PANEL-NAV VARIANT
+  // Inspiration Reference: Supahero.io (Diagram.com / ReadCV) & Godly.website (Paco Coursey minimalist portfolio)
+  // Persistent left-docked biographical card with anchor navigation beside spacious content canvas.
   if (variant === 'side-panel-nav') {
     return (
       <section className="py-16 px-6 max-w-7xl mx-auto">
@@ -548,7 +574,9 @@ export function Hero({
     );
   }
 
-  // 9. [NEW] DIAGONAL-SPLIT VARIANT
+  // 9. DIAGONAL-SPLIT VARIANT
+  // Inspiration Reference: Supahero.io (Stripe Press / Pitch design) & Godly.website (Daniel Spatzek creative portfolio)
+  // 12-degree angled geometric split canvas with dual-tone color blocking and high-contrast typography.
   if (variant === 'diagonal-split') {
     return (
       <section className="relative py-28 px-6 max-w-7xl mx-auto overflow-hidden">

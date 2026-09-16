@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ProjectDto, ThemeTokens } from '@cove/shared';
 import { TiltCard } from '../interactions/TiltCard.js';
 import { ScrollReveal } from '../interactions/ScrollReveal.js';
@@ -12,6 +13,18 @@ interface Props {
 
 export function ProjectMasonry({ projects, tokens, forcedTouchMode = false }: Props) {
   const [selectedProject, setSelectedProject] = useState<ProjectDto | null>(null);
+  const containerRef = useRef<HTMLElement>(null);
+
+  // Motion.dev scroll-driven columns: staggered velocities reminiscent of Godly interactive galleries
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start']
+  });
+
+  const colParallax0 = useTransform(scrollYProgress, [0, 1], [-24, 24]);
+  const colParallax1 = useTransform(scrollYProgress, [0, 1], [0, 0]);
+  const colParallax2 = useTransform(scrollYProgress, [0, 1], [24, -24]);
+  const colTransforms = [colParallax0, colParallax1, colParallax2];
 
   if (projects.length === 0) {
     return (
@@ -28,7 +41,7 @@ export function ProjectMasonry({ projects, tokens, forcedTouchMode = false }: Pr
   const columns = [col1, col2, col3];
 
   return (
-    <section id="work" className="py-24 px-6 max-w-7xl mx-auto">
+    <section ref={containerRef} id="work" className="py-24 px-6 max-w-7xl mx-auto">
       <ScrollReveal>
         <div
           className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 border-b pb-4"
@@ -52,7 +65,11 @@ export function ProjectMasonry({ projects, tokens, forcedTouchMode = false }: Pr
       {/* Masonry Columns Container */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         {columns.map((colProjects, colIdx) => (
-          <div key={colIdx} className="flex flex-col gap-6">
+          <motion.div
+            key={colIdx}
+            style={{ y: colTransforms[colIdx] }}
+            className="flex flex-col gap-6"
+          >
             {colProjects.map((project, itemIdx) => {
               // Alternating height ratios per card
               const isTall = (colIdx + itemIdx) % 2 === 0;
@@ -116,7 +133,7 @@ export function ProjectMasonry({ projects, tokens, forcedTouchMode = false }: Pr
                 </ScrollReveal>
               );
             })}
-          </div>
+          </motion.div>
         ))}
       </div>
 

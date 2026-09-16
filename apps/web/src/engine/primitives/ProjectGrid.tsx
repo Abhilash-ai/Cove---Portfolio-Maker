@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { ProjectDto, ThemeTokens } from '@cove/shared';
 import { TiltCard } from '../interactions/TiltCard.js';
 import { ScrollReveal } from '../interactions/ScrollReveal.js';
@@ -12,6 +13,17 @@ interface Props {
 
 export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props) {
   const [selectedProject, setSelectedProject] = useState<ProjectDto | null>(null);
+  const containerRef = useRef<HTMLElement>(null);
+
+  // Motion.dev scroll-driven transform: cards subtly shift velocity as user scrolls
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start']
+  });
+
+  // Staggered parallax translation across column groups
+  const scrollParallaxEven = useTransform(scrollYProgress, [0, 1], [-16, 16]);
+  const scrollParallaxOdd = useTransform(scrollYProgress, [0, 1], [16, -16]);
 
   if (projects.length === 0) {
     return (
@@ -22,7 +34,7 @@ export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props
   }
 
   return (
-    <section id="work" className="py-20 px-6 max-w-7xl mx-auto">
+    <section ref={containerRef} id="work" className="py-20 px-6 max-w-7xl mx-auto">
       <ScrollReveal>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 border-b pb-4"
           style={{ borderColor: tokens.colors.border }}
@@ -47,6 +59,13 @@ export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {projects.map((project, idx) => (
           <ScrollReveal key={project.id} delay={idx * 0.08}>
+            <motion.div
+              style={{ y: idx % 2 === 0 ? scrollParallaxEven : scrollParallaxOdd }}
+              whileHover={{ y: -6 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+              className="h-full"
+            >
             <TiltCard
               forcedTouchMode={forcedTouchMode}
               maxTilt={7}
@@ -127,6 +146,7 @@ export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props
                 </div>
               </div>
             </TiltCard>
+            </motion.div>
           </ScrollReveal>
         ))}
       </div>
