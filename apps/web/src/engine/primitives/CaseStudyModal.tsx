@@ -10,7 +10,7 @@ interface Props {
 
 export function CaseStudyModal({ project, tokens, onClose }: Props) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md" style={{ backgroundColor: "rgba(0,0,0,0.85)" }} overflow-y-auto">
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -48,7 +48,7 @@ export function CaseStudyModal({ project, tokens, onClose }: Props) {
         <div className="p-6 sm:p-8 space-y-8 max-h-[75vh] overflow-y-auto">
           {/* Main Visual Cover */}
           {project.coverImage && (
-            <div className="rounded-xl overflow-hidden h-80 w-full bg-zinc-950 border"
+            <div className="rounded-xl overflow-hidden h-80 w-full border" style={{ backgroundColor: tokens.colors.surface, borderColor: tokens.colors.border }}"
               style={{ borderColor: tokens.colors.border }}
             >
               <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover" />
@@ -152,7 +152,7 @@ export function CaseStudyModal({ project, tokens, onClose }: Props) {
               <h4 className="text-xs font-mono uppercase text-zinc-500">Media Artifacts ({project.media.length})</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {project.media.map((m) => (
-                  <div key={m.id} className="rounded-xl overflow-hidden border bg-zinc-950"
+                  <div key={m.id} className="rounded-xl overflow-hidden border" style={{ backgroundColor: tokens.colors.surface, borderColor: tokens.colors.border }}"
                     style={{ borderColor: tokens.colors.border }}
                   >
                     {m.type === 'IMAGE' ? (

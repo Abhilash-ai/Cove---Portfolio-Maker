@@ -77,7 +77,7 @@ export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props
               }}
             >
               {/* Card Image Container with Hover Scale */}
-              <div className="h-64 w-full bg-zinc-950 overflow-hidden relative">
+              <div className="h-64 w-full overflow-hidden relative" style={{ backgroundColor: tokens.colors.surface }}">
                 {project.coverImage ? (
                   <img
                     src={project.coverImage}
