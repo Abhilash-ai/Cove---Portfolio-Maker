@@ -13,6 +13,80 @@ interface Props {
   onClose: () => void;
 }
 
+const DEMO_PORTFOLIO: PortfolioSummary = {
+  id: 'demo-portfolio',
+  userId: 'demo-user',
+  title: 'Design & Engineering Showcase',
+  slug: 'demo',
+  themeId: 'neo-brutalist',
+  colorPalette: 'ocean-drift',
+  customFont: 'Space Grotesk',
+  sectionOrder: ['hero', 'projects', 'experience', 'skills', 'contact'],
+  isPublished: true,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
+
+const DEMO_PROFILE: ProfileDto = {
+  name: 'Alex Rivera',
+  headline: 'Product Designer & Creative Technologist',
+  bio: 'Building tactile digital experiences at the intersection of interaction design, machine intelligence, and spatial computing.',
+  location: 'Brooklyn, NY',
+  contactEmail: 'alex@cove.design',
+  contactPhone: '+1 (555) 234-5678',
+  photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80',
+  availableForWork: true,
+  skills: [
+    { name: 'Design Systems', category: 'Design' },
+    { name: 'React & TypeScript', category: 'Engineering' },
+    { name: 'Creative Tech', category: 'Engineering' },
+  ],
+  experiences: [
+    {
+      company: 'Kinetic Labs',
+      position: 'Senior Interaction Designer',
+      startDate: '2023-01-01',
+      isCurrent: true,
+      highlights: ['Led core UI redesign', 'Designed real-time canvas'],
+    },
+  ],
+  socialLinks: [
+    { platform: 'github', url: 'https://github.com' },
+    { platform: 'twitter', url: 'https://twitter.com' },
+  ],
+};
+
+const DEMO_PROJECTS: ProjectDto[] = [
+  {
+    id: 'demo-1',
+    portfolioId: 'demo-portfolio',
+    title: 'AeroSense Telemetry Platform',
+    category: 'Robotics UI',
+    year: '2025',
+    role: 'Lead Designer & Front-End Architect',
+    shortDescription: 'Hardware telemetry dashboard and ground control interface for autonomous environmental inspection drones.',
+    fullDescription: 'Comprehensive control interface providing telemetry monitoring, waypoint navigation, and live LiDAR feed visualization for fleet deployments across hazardous terrain.',
+    coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80',
+    sortOrder: 0,
+    isFeatured: true,
+    media: [],
+  },
+  {
+    id: 'demo-2',
+    portfolioId: 'demo-portfolio',
+    title: 'PulseFlow Bio-Acoustic Scanner',
+    category: 'Health Tech',
+    year: '2026',
+    role: 'Product Designer',
+    shortDescription: 'Real-time cardiac rhythm analysis system utilizing mobile acoustic sensors.',
+    fullDescription: 'Diagnostic application translating raw audio data into real-time visual waveforms with clinical-grade anomaly detection.',
+    coverImage: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
+    sortOrder: 1,
+    isFeatured: false,
+    media: [],
+  },
+];
+
 export function TemplateDiscoveryModal({
   token,
   portfolio,
@@ -355,7 +429,8 @@ export function TemplateDiscoveryModal({
                 return (
                   <div
                     key={t.id}
-                    className={`p-4 rounded-xl border flex flex-col justify-between transition-all ${
+                    onClick={() => setPreviewTemplateId(t.id)}
+                    className={`p-4 rounded-xl border flex flex-col justify-between transition-all cursor-pointer ${
                       isCurrent
                         ? 'bg-zinc-900/90 border-indigo-500 shadow-md ring-1 ring-indigo-500/50'
                         : 'bg-zinc-900/40 border-zinc-800 hover:bg-zinc-900/80 hover:border-zinc-700'
@@ -453,8 +528,8 @@ export function TemplateDiscoveryModal({
         </div>
       </div>
 
-      {/* Live Interactive Preview Drawer with User's Real Content */}
-      {previewTemplate && portfolio && (
+      {/* Live Interactive Preview Drawer with User's Content or Sample Content */}
+      {previewTemplate && (
         <div className="fixed inset-0 z-[120] bg-black/90 flex flex-col">
           <div className="h-12 border-b border-zinc-800 bg-zinc-950 px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -462,7 +537,9 @@ export function TemplateDiscoveryModal({
                 Live Preview: {previewTemplate.name}
               </span>
               <span className="text-xs text-zinc-500 font-mono">
-                Rendered with your actual {projects.length} projects
+                {portfolio && projects.length > 0
+                  ? `Rendered with your actual ${projects.length} projects`
+                  : 'Rendered with live sample case studies & portfolio data'}
               </span>
             </div>
 
@@ -474,7 +551,7 @@ export function TemplateDiscoveryModal({
                   setPreviewTemplateId(null);
                   onClose();
                 }}
-                className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-lg shadow transition"
+                className="px-3.5 py-1.5 bg-[#FF6B4A] hover:bg-[#F04E27] text-white font-semibold text-xs rounded-lg shadow transition"
               >
                 Apply This Template
               </button>
@@ -490,14 +567,14 @@ export function TemplateDiscoveryModal({
 
           <div className="flex-1 overflow-y-auto">
             <PortfolioRenderer
-              portfolio={portfolio}
-              projects={projects}
-              profile={profile}
+              portfolio={portfolio || DEMO_PORTFOLIO}
+              projects={projects && projects.length > 0 ? projects : DEMO_PROJECTS}
+              profile={profile || DEMO_PROFILE}
               template={previewTemplate}
               overrideTokens={previewTemplate.tokens}
               overrideHeroVariant={previewTemplate.heroVariant}
               overrideProjectLayout={previewTemplate.projectLayout}
-              overrideSectionOrder={portfolio.sectionOrder}
+              overrideSectionOrder={(portfolio || DEMO_PORTFOLIO).sectionOrder}
               forcedTouchMode={false}
             />
           </div>
