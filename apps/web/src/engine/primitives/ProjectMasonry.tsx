@@ -101,7 +101,7 @@ export function ProjectMasonry({ projects, tokens, forcedTouchMode = false }: Pr
                           <span className="text-xs font-mono text-zinc-500">{project.title}</span>
                         </div>
                       )}
-                      <div className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}">
+                      <div className="absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}>
                         {project.category || 'Work'}
                       </div>
                     </div>

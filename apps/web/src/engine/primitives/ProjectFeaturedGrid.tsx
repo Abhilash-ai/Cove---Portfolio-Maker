@@ -54,7 +54,7 @@ export function ProjectFeaturedGrid({ projects, tokens }: Props) {
             style={{ backgroundColor: tokens.colors.surface, borderColor: tokens.colors.border }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-              <div className="lg:col-span-7 h-80 sm:h-96 lg:h-[28rem] overflow-hidden relative" style={{ backgroundColor: tokens.colors.surface }}">
+              <div className="lg:col-span-7 h-80 sm:h-96 lg:h-[28rem] overflow-hidden relative" style={{ backgroundColor: tokens.colors.surface }}>
                 {marqueeProject.coverImage ? (
                   <img
                     src={marqueeProject.coverImage}
@@ -66,7 +66,7 @@ export function ProjectFeaturedGrid({ projects, tokens }: Props) {
                     <span className="font-mono text-sm text-zinc-500">Marquee Visual</span>
                   </div>
                 )}
-                <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}">
+                <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}>
                   ★ Primary Landmark
                 </div>
               </div>
@@ -110,7 +110,7 @@ export function ProjectFeaturedGrid({ projects, tokens }: Props) {
               >
                 <div>
                   {project.coverImage && (
-                    <div className="h-52 w-full rounded-xl overflow-hidden mb-4" style={{ backgroundColor: tokens.colors.surface }}">
+                    <div className="h-52 w-full rounded-xl overflow-hidden mb-4" style={{ backgroundColor: tokens.colors.surface }}>
                       <img
                         src={project.coverImage}
                         alt={project.title}

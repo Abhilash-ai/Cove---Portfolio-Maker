@@ -49,8 +49,8 @@ export function ProjectTimeline({ projects, tokens }: Props) {
             <div className="relative group cursor-pointer" onClick={() => setSelectedProject(project)}>
               {/* Milestone Indicator Dot */}
               <div
-                className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-4 h-4 rounded-full border-2 transition group-hover:scale-125" style={{ backgroundColor: tokens.colors.background, borderColor: tokens.colors.accent }}"
-                style={{ borderColor: tokens.colors.accent }}
+                className="absolute -left-[31px] sm:-left-[47px] top-1.5 w-4 h-4 rounded-full border-2 transition group-hover:scale-125"
+                style={{ backgroundColor: tokens.colors.background, borderColor: tokens.colors.accent }}
               />
 
               <div
@@ -98,7 +98,7 @@ export function ProjectTimeline({ projects, tokens }: Props) {
                   </div>
 
                   {project.coverImage && (
-                    <div className="md:col-span-4 h-36 rounded-xl overflow-hidden border" style={{ backgroundColor: tokens.colors.surface, borderColor: tokens.colors.border }}" style={{ borderColor: tokens.colors.border }}>
+                    <div className="md:col-span-4 h-36 rounded-xl overflow-hidden border" style={{ backgroundColor: tokens.colors.surface, borderColor: tokens.colors.border }}>
                       <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
                     </div>
                   )}

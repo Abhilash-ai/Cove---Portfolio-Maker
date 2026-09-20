@@ -75,6 +75,36 @@ export function ProfileEditor({ token }: Props) {
     try {
       setSaving(true);
       setStatusMsg(null);
+
+      let currentSkills = [...skills];
+      if (newSkillName.trim()) {
+        currentSkills.push({ name: newSkillName.trim(), category: newSkillCategory.trim() || 'General' });
+        setSkills(currentSkills);
+        setNewSkillName('');
+        setNewSkillCategory('');
+      }
+
+      let currentExperiences = [...experiences];
+      if (newExpCompany.trim() && newExpPosition.trim()) {
+        currentExperiences.push({
+          company: newExpCompany.trim(),
+          position: newExpPosition.trim(),
+          startDate: new Date().toISOString().split('T')[0],
+          isCurrent: true,
+          highlights: [],
+        });
+        setExperiences(currentExperiences);
+        setNewExpCompany('');
+        setNewExpPosition('');
+      }
+
+      let currentSocialLinks = [...socialLinks];
+      if (newUrl.trim()) {
+        currentSocialLinks.push({ platform: newPlatform, url: newUrl.trim() });
+        setSocialLinks(currentSocialLinks);
+        setNewUrl('');
+      }
+
       const res = await fetch('/api/v1/profile/me', {
         method: 'PUT',
         headers: {
@@ -90,14 +120,15 @@ export function ProfileEditor({ token }: Props) {
           contactPhone,
           photoUrl,
           availableForWork,
-          skills,
-          experiences,
-          socialLinks,
+          skills: currentSkills,
+          experiences: currentExperiences,
+          socialLinks: currentSocialLinks,
         }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
         setStatusMsg('Profile successfully saved!');
+        await loadProfile();
         setTimeout(() => setStatusMsg(null), 3500);
       } else {
         setStatusMsg(data.error?.message || 'Save failed');
@@ -262,6 +293,12 @@ export function ProfileEditor({ token }: Props) {
               placeholder="Skill (e.g. React & TypeScript)"
               value={newSkillName}
               onChange={(e) => setNewSkillName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addSkill();
+                }
+              }}
               className="flex-1 px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <input
@@ -269,6 +306,12 @@ export function ProfileEditor({ token }: Props) {
               placeholder="Category (e.g. Engineering)"
               value={newSkillCategory}
               onChange={(e) => setNewSkillCategory(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addSkill();
+                }
+              }}
               className="w-full sm:w-40 px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <button

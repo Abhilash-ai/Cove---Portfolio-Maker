@@ -103,7 +103,7 @@ export function ProjectList({ projects, tokens, forcedTouchMode = false, variant
 
                 {/* Inline thumbnail for touch devices */}
                 {isTouchDevice && project.coverImage && (
-                  <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0" style={{ backgroundColor: tokens.colors.surface }}">
+                  <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0" style={{ backgroundColor: tokens.colors.surface }}>
                     <img src={project.coverImage} alt={project.title} className="w-full h-full object-cover" />
                   </div>
                 )}

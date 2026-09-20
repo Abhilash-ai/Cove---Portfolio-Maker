@@ -84,7 +84,7 @@ export function ProjectHorizontal({ projects, tokens }: Props) {
               borderColor: tokens.colors.border
             }}
           >
-            <div className="h-64 sm:h-72 w-full overflow-hidden relative" style={{ backgroundColor: tokens.colors.surface }}">
+            <div className="h-64 sm:h-72 w-full overflow-hidden relative" style={{ backgroundColor: tokens.colors.surface }}>
               {project.coverImage ? (
                 <img
                   src={project.coverImage}
@@ -96,7 +96,7 @@ export function ProjectHorizontal({ projects, tokens }: Props) {
                   <span className="text-xs font-mono text-zinc-500">{project.title}</span>
                 </div>
               )}
-              <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}">
+              <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-mono backdrop-blur-md border" style={{ backgroundColor: tokens.colors.badgeBg, color: tokens.colors.badgeText, borderColor: tokens.colors.border }}>
                 {String(idx + 1).padStart(2, '0')} • {project.category || 'Design'}
               </div>
             </div>

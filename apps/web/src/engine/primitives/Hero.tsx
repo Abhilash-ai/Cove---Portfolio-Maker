@@ -130,7 +130,7 @@ export function Hero({
                 className="rounded-2xl border p-2"
                 style={{ borderColor: tokens.colors.border, backgroundColor: tokens.colors.surface }}
               >
-                <div className="h-96 w-full rounded-xl overflow-hidden relative flex items-center justify-center" style={{ backgroundColor: tokens.colors.surface }}">
+                <div className="h-96 w-full rounded-xl overflow-hidden relative flex items-center justify-center" style={{ backgroundColor: tokens.colors.surface }}>
                   {profile?.photoUrl ? (
                     <img src={profile.photoUrl} alt={displayName} className="w-full h-full object-cover" />
                   ) : (
@@ -164,7 +164,7 @@ export function Hero({
           {profile?.photoUrl ? (
             <img src={profile.photoUrl} alt={displayName} className="w-full h-full object-cover object-center filter brightness-50" />
           ) : (
-            <div className="w-full h-full " style={{ backgroundColor: tokens.colors.background }}" />
+            <div className="w-full h-full" style={{ backgroundColor: tokens.colors.background }} />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         </motion.div>
@@ -361,7 +361,7 @@ export function Hero({
             className="absolute w-72 h-52 sm:w-96 sm:h-64 rounded-2xl border shadow-2xl transform -rotate-6 -translate-x-12 opacity-70 transition hover:opacity-100 hover:rotate-0 hover:z-30 overflow-hidden"
             style={{ borderColor: tokens.colors.border, backgroundColor: tokens.colors.surface }}
           >
-            <div className="w-full h-full flex items-center justify-center p-4" style={{ backgroundColor: tokens.colors.surface }}">
+            <div className="w-full h-full flex items-center justify-center p-4" style={{ backgroundColor: tokens.colors.surface }}>
               <span className="font-mono text-xs text-zinc-500">Selected Works Archive</span>
             </div>
           </div>
@@ -369,7 +369,7 @@ export function Hero({
             className="absolute w-72 h-52 sm:w-96 sm:h-64 rounded-2xl border shadow-2xl transform rotate-6 translate-x-12 opacity-80 transition hover:opacity-100 hover:rotate-0 hover:z-30 overflow-hidden"
             style={{ borderColor: tokens.colors.border, backgroundColor: tokens.colors.surface }}
           >
-            <div className="w-full h-full bg-zinc-800 flex items-center justify-center p-4">
+            <div className="w-full h-full flex items-center justify-center p-4" style={{ backgroundColor: tokens.colors.surface }}>
               <span className="font-mono text-xs text-zinc-400">Exhibition & Spatial Design</span>
             </div>
           </div>
@@ -521,7 +521,7 @@ export function Hero({
     return (
       <section className="relative py-32 px-6 overflow-hidden flex items-center justify-center text-center">
         {/* Ambient Darkened Backdrop with Grain and Radial Glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: tokens.colors.background }}" />
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: tokens.colors.background }} />
         <div
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
@@ -634,11 +634,11 @@ export function Hero({
               className="w-full max-w-sm h-96 rounded-3xl border p-3 rotate-2 hover:rotate-0 transition-transform duration-500 shadow-2xl"
               style={{ borderColor: tokens.colors.border, backgroundColor: tokens.colors.surface }}
             >
-              <div className="w-full h-full rounded-2xl overflow-hidden flex flex-col justify-end p-6 relative" style={{ backgroundColor: tokens.colors.surface }}">
+              <div className="w-full h-full rounded-2xl overflow-hidden flex flex-col justify-end p-6 relative" style={{ backgroundColor: tokens.colors.surface }}>
                 {profile?.photoUrl ? (
                   <img src={profile.photoUrl} alt={displayName} className="absolute inset-0 w-full h-full object-cover opacity-80" />
                 ) : (
-                  <div className="absolute inset-0" style={{ backgroundColor: tokens.colors.surface, opacity: 0.8 }}" />
+                  <div className="absolute inset-0" style={{ backgroundColor: tokens.colors.surface, opacity: 0.8 }} />
                 )}
                 <div className="relative z-10 space-y-1">
                   <div className="text-xs font-bold text-white uppercase">{displayName}</div>
