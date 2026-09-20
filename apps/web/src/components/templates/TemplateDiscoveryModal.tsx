@@ -18,16 +18,17 @@ const DEMO_PORTFOLIO: PortfolioSummary = {
   userId: 'demo-user',
   title: 'Design & Engineering Showcase',
   slug: 'demo',
-  themeId: 'neo-brutalist',
-  colorPalette: 'ocean-drift',
-  customFont: 'Space Grotesk',
+  status: 'published',
   sectionOrder: ['hero', 'projects', 'experience', 'skills', 'contact'],
-  isPublished: true,
+  activeTemplateId: 'foundational-minimal',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };
 
 const DEMO_PROFILE: ProfileDto = {
+  id: 'demo-profile',
+  userId: 'demo-user',
+  email: 'alex@cove.design',
   name: 'Alex Rivera',
   headline: 'Product Designer & Creative Technologist',
   bio: 'Building tactile digital experiences at the intersection of interaction design, machine intelligence, and spatial computing.',
@@ -54,11 +55,17 @@ const DEMO_PROFILE: ProfileDto = {
     { platform: 'github', url: 'https://github.com' },
     { platform: 'twitter', url: 'https://twitter.com' },
   ],
+  educations: [],
+  certifications: [],
+  achievements: [],
+  publications: [],
+  updatedAt: new Date().toISOString(),
 };
 
 const DEMO_PROJECTS: ProjectDto[] = [
   {
     id: 'demo-1',
+    userId: 'demo-user',
     portfolioId: 'demo-portfolio',
     title: 'AeroSense Telemetry Platform',
     category: 'Robotics UI',
@@ -67,12 +74,17 @@ const DEMO_PROJECTS: ProjectDto[] = [
     shortDescription: 'Hardware telemetry dashboard and ground control interface for autonomous environmental inspection drones.',
     fullDescription: 'Comprehensive control interface providing telemetry monitoring, waypoint navigation, and live LiDAR feed visualization for fleet deployments across hazardous terrain.',
     coverImage: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop&q=80',
+    tools: ['React', 'TypeScript', 'WebGL', 'Tailwind'],
+    collaborators: ['Elena Rostova'],
+    externalLinks: [],
     sortOrder: 0,
-    isFeatured: true,
     media: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: 'demo-2',
+    userId: 'demo-user',
     portfolioId: 'demo-portfolio',
     title: 'PulseFlow Bio-Acoustic Scanner',
     category: 'Health Tech',
@@ -81,9 +93,13 @@ const DEMO_PROJECTS: ProjectDto[] = [
     shortDescription: 'Real-time cardiac rhythm analysis system utilizing mobile acoustic sensors.',
     fullDescription: 'Diagnostic application translating raw audio data into real-time visual waveforms with clinical-grade anomaly detection.',
     coverImage: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80',
+    tools: ['Figma', 'Framer Motion', 'Audio API'],
+    collaborators: ['Marcus Vance'],
+    externalLinks: [],
     sortOrder: 1,
-    isFeatured: false,
     media: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ];
 

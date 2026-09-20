@@ -4,6 +4,7 @@ import { ThemeTokens, FullProfileDto, PortfolioSummary } from '@cove/shared';
 import { MagneticButton } from '../interactions/MagneticButton.js';
 import { TiltCard } from '../interactions/TiltCard.js';
 import { ScrollReveal } from '../interactions/ScrollReveal.js';
+import { DecryptedText } from './DecryptedText.js';
 import { HeroVariant } from '../templates/templateTypes.js';
 
 export type { HeroVariant };
@@ -676,7 +677,14 @@ export function Hero({
             color: tokens.colors.textPrimary
           }}
         >
-          {displayName}
+          <DecryptedText
+            text={displayName}
+            speed={40}
+            maxIterations={12}
+            sequential={true}
+            style={{ color: tokens.colors.textPrimary }}
+            encryptedStyle={{ color: tokens.colors.accent, opacity: 0.8 }}
+          />
         </h1>
       </ScrollReveal>
 
