@@ -12,7 +12,8 @@ import { AdminDashboardModal } from './components/admin/AdminDashboardModal.js';
 import { UserSettingsModal } from './components/settings/UserSettingsModal.js';
 import { CoveLogo } from './assets/CoveLogo.js';
 import { ThemeToggle } from './components/common/ThemeToggle.js';
-import { Settings, Shield, LogOut, ArrowLeft } from 'lucide-react';
+import { CoveCopilotModal } from './components/copilot/CoveCopilotModal.js';
+import { Settings, Shield, LogOut, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
@@ -33,6 +34,7 @@ export default function App() {
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showCopilotModal, setShowCopilotModal] = useState(false);
 
   // Landing vs Auth view state for logged-out visitors
   const [showAuthScreen, setShowAuthScreen] = useState(false);
@@ -249,6 +251,13 @@ export default function App() {
 
               <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-[#E5E5E0] dark:border-zinc-800 text-xs">
                 <ThemeToggle />
+                <button
+                  onClick={() => setShowCopilotModal(true)}
+                  className="px-2.5 py-1.5 text-xs font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-950/30 rounded-xl border border-violet-200 dark:border-violet-900/50 transition flex items-center gap-1.5 bg-white dark:bg-zinc-900 shadow-soft"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
+                  <span>AI Copilot</span>
+                </button>
                 {currentUser.role === 'ADMIN' && (
                   <button
                     onClick={() => setShowAdminModal(true)}
@@ -463,6 +472,35 @@ export default function App() {
             userEmail={currentUser?.email}
             userName={currentUser?.name || undefined}
             onLogout={handleLogout}
+          />
+        )}
+
+        {/* Persistent Dashboard AI Copilot Floating Trigger */}
+        {currentUser && token && (
+          <div className="fixed bottom-6 right-6 z-40">
+            <button
+              type="button"
+              onClick={() => setShowCopilotModal(true)}
+              className="px-4 py-2.5 bg-gradient-to-r from-[#FF6B4A] via-[#FF886E] to-violet-600 hover:from-[#F04E27] hover:to-violet-700 text-white font-semibold text-xs rounded-full shadow-coral hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2 border border-white/20 group"
+            >
+              <Sparkles className="w-4 h-4 animate-pulse" />
+              <span>CoveCopilot</span>
+            </button>
+          </div>
+        )}
+
+        {/* Persistent CoveCopilotModal for Dashboard */}
+        {showCopilotModal && token && (
+          <CoveCopilotModal
+            token={token}
+            contextTitle={activePortfolio?.title || currentUser?.name || 'Portfolio Showcase'}
+            initialText={activePortfolio?.title || 'Creative Technologist building tactile digital interfaces.'}
+            contextType="portfolio"
+            onApply={(newText) => {
+              console.log('Copilot output applied:', newText);
+              setShowCopilotModal(false);
+            }}
+            onClose={() => setShowCopilotModal(false)}
           />
         )}
       </main>
