@@ -27,7 +27,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === store.templateId) || SEEDED_TEMPLATES[0];
 
   return (
-    <div className="w-full h-screen flex flex-col bg-zinc-950 text-white overflow-hidden select-none">
+    <div className="w-full h-screen flex flex-col bg-[#FAFAF8] dark:bg-zinc-950 text-zinc-900 dark:text-white overflow-hidden select-none">
       {/* 1. Header Navigation & Controls */}
       <EditorTopBar
         portfolio={store.portfolio}

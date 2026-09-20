@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ViewportMode, SaveStatus } from './editorTypes.js';
 import { PortfolioSummary } from '@cove/shared';
+import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Eye, FileText, Sparkles, Target, ExternalLink } from 'lucide-react';
 
 interface Props {
   portfolio: PortfolioSummary | null;
@@ -10,7 +11,7 @@ interface Props {
   canUndo: boolean;
   canRedo: boolean;
   onSetViewport: (v: ViewportMode) => void;
-  onSetScale: (s: number) => void;
+  onSetScale: (scale: number) => void;
   onUndo: () => void;
   onRedo: () => void;
   onSaveNow: () => void;
@@ -39,13 +40,17 @@ export function EditorTopBar({
   onOpenCopilot,
   onOpenCritic,
 }: Props) {
-  // Global keyboard shortcuts: Ctrl+Z for undo, Ctrl+Y or Ctrl+Shift+Z for redo
+  // Listen for keyboard shortcuts: Cmd/Ctrl + Z, Cmd/Ctrl + Shift + Z
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault();
-        if (canUndo) onUndo();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+        if (e.shiftKey) {
+          if (canRedo) onRedo();
+        } else {
+          if (canUndo) onUndo();
+        }
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'y') {
         e.preventDefault();
         if (canRedo) onRedo();
       }
@@ -55,28 +60,26 @@ export function EditorTopBar({
   }, [canUndo, canRedo, onUndo, onRedo]);
 
   return (
-    <header className="h-14 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0 select-none">
+    <header className="h-14 border-b border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0 select-none text-zinc-900 dark:text-white transition-colors">
       {/* 1. Left: Back & Portfolio Title */}
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white px-2.5 py-1.5 rounded-md hover:bg-zinc-900 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors font-medium"
           title="Back to Dashboard"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <ArrowLeft className="w-4 h-4" />
           <span>Dashboard</span>
         </button>
 
-        <div className="h-4 w-px bg-zinc-800" />
+        <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
 
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-sm text-zinc-100 truncate max-w-[180px] sm:max-w-xs">
+          <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100 truncate max-w-[180px] sm:max-w-xs">
             {portfolio ? portfolio.title : 'Loading...'}
           </span>
           {portfolio?.slug && (
-            <span className="text-[11px] font-mono text-zinc-500 bg-zinc-900 px-2 py-0.5 rounded border border-zinc-800">
+            <span className="text-[11px] font-mono text-[#FF6B4A] bg-[#FF6B4A]/10 px-2 py-0.5 rounded-md border border-[#FF6B4A]/20 font-semibold">
               /{portfolio.slug}
             </span>
           )}
@@ -84,66 +87,60 @@ export function EditorTopBar({
       </div>
 
       {/* 2. Center: Viewport Mode Switcher & Scale */}
-      <div className="flex items-center gap-1 bg-zinc-900/80 p-1 rounded-lg border border-zinc-800">
+      <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-900/80 p-1 rounded-xl border border-zinc-200 dark:border-zinc-800">
         <button
           onClick={() => onSetViewport('desktop')}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
             viewport === 'desktop'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200'
+              ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
           title="Desktop Full Fluid View"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+          <Monitor className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Desktop</span>
         </button>
 
         <button
           onClick={() => onSetViewport('tablet')}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
             viewport === 'tablet'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200'
+              ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
           title="Tablet 768px View"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
+          <Tablet className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Tablet</span>
           <span className="text-[10px] opacity-60">768</span>
         </button>
 
         <button
           onClick={() => onSetViewport('mobile')}
-          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
             viewport === 'mobile'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200'
+              ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
           title="Mobile 375px View (Simulates Touch Screen)"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-          </svg>
+          <Smartphone className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Mobile</span>
           <span className="text-[10px] opacity-60">375</span>
         </button>
 
-        <div className="h-3 w-px bg-zinc-800 mx-1" />
+        <div className="h-3 w-px bg-zinc-200 dark:bg-zinc-800 mx-1" />
 
         {/* Zoom controls */}
         <select
           value={scale}
           onChange={(e) => onSetScale(parseFloat(e.target.value))}
-          className="bg-transparent text-xs text-zinc-400 hover:text-zinc-200 focus:outline-none cursor-pointer pr-1"
+          className="bg-transparent text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 focus:outline-none cursor-pointer pr-1 font-mono"
         >
-          <option value={1} className="bg-zinc-900 text-white">100%</option>
-          <option value={0.85} className="bg-zinc-900 text-white">85%</option>
-          <option value={0.75} className="bg-zinc-900 text-white">75%</option>
-          <option value={0.5} className="bg-zinc-900 text-white">50%</option>
+          <option value={1} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">100%</option>
+          <option value={0.85} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">85%</option>
+          <option value={0.75} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">75%</option>
+          <option value={0.5} className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white">50%</option>
         </select>
       </div>
 
@@ -153,63 +150,54 @@ export function EditorTopBar({
         <button
           onClick={onUndo}
           disabled={!canUndo}
-          className={`p-1.5 rounded-md border text-xs transition-colors ${
+          className={`p-1.5 rounded-lg border text-xs transition-colors ${
             canUndo
-              ? 'border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800'
-              : 'border-transparent text-zinc-600 cursor-not-allowed'
+              ? 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 shadow-sm'
+              : 'border-transparent text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
           }`}
           title="Undo (Ctrl+Z)"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a5 5 0 015 5v2m0 0l-4-4m4 4l4-4" transform="matrix(-1 0 0 1 24 0)" />
-          </svg>
+          <Undo2 className="w-3.5 h-3.5" />
         </button>
 
         {/* Redo */}
         <button
           onClick={onRedo}
           disabled={!canRedo}
-          className={`p-1.5 rounded-md border text-xs transition-colors ${
+          className={`p-1.5 rounded-lg border text-xs transition-colors ${
             canRedo
-              ? 'border-zinc-800 bg-zinc-900 text-zinc-200 hover:bg-zinc-800'
-              : 'border-transparent text-zinc-600 cursor-not-allowed'
+              ? 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 shadow-sm'
+              : 'border-transparent text-zinc-300 dark:text-zinc-600 cursor-not-allowed'
           }`}
           title="Redo (Ctrl+Y)"
         >
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a5 5 0 00-5 5v2m0 0l4-4m-4 4l-4-4" />
-          </svg>
+          <Redo2 className="w-3.5 h-3.5" />
         </button>
 
-        <div className="h-4 w-px bg-zinc-800 mx-0.5" />
+        <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-0.5" />
 
         {/* Save indicator */}
         <button
           onClick={onSaveNow}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md bg-zinc-900/60 hover:bg-zinc-900 border border-zinc-800 text-zinc-400 transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg bg-zinc-100 dark:bg-zinc-900/60 hover:bg-zinc-200 dark:hover:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors font-medium"
           title="Click to force save"
         >
           {saveStatus === 'saving' && (
             <>
-              <svg className="animate-spin w-3 h-3 text-amber-400" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-              </svg>
-              <span className="text-amber-400">Saving...</span>
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+              <span className="text-amber-500 font-mono text-[11px]">Saving...</span>
             </>
           )}
           {saveStatus === 'saved' && (
             <>
-              <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
-              <span className="text-zinc-400 text-[11px]">Saved</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              <span className="text-zinc-600 dark:text-zinc-400 text-[11px] font-mono">Saved</span>
             </>
           )}
           {saveStatus === 'unsaved' && (
             <>
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-              <span className="text-blue-400 text-[11px]">Unsaved</span>
+              <span className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-pulse" />
+              <span className="text-[#FF6B4A] text-[11px] font-mono">Unsaved</span>
             </>
           )}
         </button>
@@ -218,10 +206,10 @@ export function EditorTopBar({
         {onExportPdf && (
           <button
             onClick={onExportPdf}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-zinc-700 bg-zinc-800/80 text-zinc-200 hover:bg-zinc-700 hover:text-white transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all shadow-sm"
             title="Export as paginated PDF"
           >
-            <span>📄</span>
+            <FileText className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">PDF</span>
           </button>
         )}
@@ -230,10 +218,10 @@ export function EditorTopBar({
         {onOpenCopilot && (
           <button
             onClick={onOpenCopilot}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500/40 bg-indigo-950/40 text-indigo-300 hover:bg-indigo-900/60 hover:text-white transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#FF6B4A]/30 bg-[#FF6B4A]/10 text-[#FF6B4A] hover:bg-[#FF6B4A]/20 transition-all shadow-sm"
             title="Open Cove Copilot AI Writing Assistant"
           >
-            <span>✨</span>
+            <Sparkles className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Copilot</span>
           </button>
         )}
@@ -242,15 +230,15 @@ export function EditorTopBar({
         {onOpenCritic && (
           <button
             onClick={onOpenCritic}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-violet-500/40 bg-violet-950/40 text-violet-300 hover:bg-violet-900/60 hover:text-white transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-300 hover:bg-violet-500/20 transition-all shadow-sm"
             title="Open AI Portfolio Critic"
           >
-            <span>🎯</span>
+            <Target className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Critic</span>
           </button>
         )}
 
-        {/* Live Site link if published or configured */}
+        {/* Live Site link */}
         {portfolio?.slug && (
           <a
             href={`/p/${portfolio.slug}`}
@@ -259,22 +247,18 @@ export function EditorTopBar({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition"
             title="View Live Public URL"
           >
-            <span>Live Site</span>
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
+            <span>Live</span>
+            <ExternalLink className="w-3.5 h-3.5" />
           </a>
         )}
 
         {/* Preview Modal button */}
         <button
           onClick={onPreviewPublic}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-100 text-zinc-900 hover:bg-white hover:shadow transition-all"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#FF6B4A] hover:bg-[#F04E27] text-white shadow-soft transition-all"
         >
+          <Eye className="w-3.5 h-3.5" />
           <span>Preview</span>
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
         </button>
       </div>
     </header>

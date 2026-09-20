@@ -221,25 +221,27 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-3xl shadow-2xl my-8">
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 sm:p-8 w-full max-w-3xl shadow-2xl my-8 text-zinc-900 dark:text-white">
+        <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
           <div>
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-zinc-900 dark:text-white">
               {isEdit ? `Edit Project: ${project?.title}` : 'Create New Project'}
             </h2>
-            <p className="text-xs text-zinc-400">Complete 16-field specification • Media upload with drag-and-drop</p>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              Add case study details, descriptions, and media gallery
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-white px-2 py-1 rounded hover:bg-zinc-800 font-mono text-xs"
+            className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white px-2.5 py-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs"
           >
             ✕ Close
           </button>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-lg">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs rounded-xl">
             {error}
           </div>
         )}
@@ -248,24 +250,24 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
           {/* Row 1: Title & Category */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Project Title *</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Project Title *</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Fjord Eco Pavilion"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Category</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Category</label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="e.g. Architecture, Spatial, Web"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
           </div>
@@ -273,43 +275,43 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
           {/* Row 2: Year, Location, Role, Duration */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Year</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Year</label>
               <input
                 type="text"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 placeholder="2026"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Location</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Location</label>
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Stockholm"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Your Role</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Your Role</label>
               <input
                 type="text"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 placeholder="Lead Designer"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Duration</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Duration</label>
               <input
                 type="text"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="6 months"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
           </div>
@@ -317,14 +319,14 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
           {/* Short Description */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-zinc-400 font-medium">Short Description</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 font-semibold">Short Description</label>
               <button
                 type="button"
                 onClick={() => {
                   setCopilotField('shortDescription');
                   setShowCopilot(true);
                 }}
-                className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/30 transition-colors"
+                className="text-[11px] font-semibold text-[#FF6B4A] hover:text-[#F04E27] flex items-center gap-1 bg-[#FF6B4A]/10 px-2.5 py-0.5 rounded-lg border border-[#FF6B4A]/20 transition-colors"
               >
                 <span>✨</span> Cove Copilot
               </button>
@@ -334,21 +336,21 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
               value={shortDescription}
               onChange={(e) => setShortDescription(e.target.value)}
               placeholder="One-line summary for project cards"
-              className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+              className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
 
           {/* Full Description */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-zinc-400 font-medium">Full Description / Case Narrative</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 font-semibold">Full Description / Case Narrative</label>
               <button
                 type="button"
                 onClick={() => {
                   setCopilotField('fullDescription');
                   setShowCopilot(true);
                 }}
-                className="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/30 transition-colors"
+                className="text-[11px] font-semibold text-[#FF6B4A] hover:text-[#F04E27] flex items-center gap-1 bg-[#FF6B4A]/10 px-2.5 py-0.5 rounded-lg border border-[#FF6B4A]/20 transition-colors"
               >
                 <span>✨</span> Cove Copilot (Case Study / Tone)
               </button>
@@ -358,30 +360,30 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
               value={fullDescription}
               onChange={(e) => setFullDescription(e.target.value)}
               placeholder="In-depth project breakdown, methodology, and context..."
-              className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+              className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
 
           {/* Tools & Collaborators */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Tools / Software (comma-separated)</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Tools / Software (comma-separated)</label>
               <input
                 type="text"
                 value={toolsStr}
                 onChange={(e) => setToolsStr(e.target.value)}
                 placeholder="Rhino, Blender, React, Figma"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Collaborators (comma-separated)</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Collaborators (comma-separated)</label>
               <input
                 type="text"
                 value={collaboratorsStr}
                 onChange={(e) => setCollaboratorsStr(e.target.value)}
                 placeholder="Studio ABC, Structural Engineering"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
           </div>
@@ -389,30 +391,30 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
           {/* Outcome & GitHub */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">Outcome / Results</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">Outcome / Results</label>
               <input
                 type="text"
                 value={outcome}
                 onChange={(e) => setOutcome(e.target.value)}
                 placeholder="Award winner, 50k users, completed on time"
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
             <div>
-              <label className="block text-zinc-400 mb-1 font-medium">GitHub / Source Repository Link</label>
+              <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">GitHub / Source Repository Link</label>
               <input
                 type="url"
                 value={githubLink}
                 onChange={(e) => setGithubLink(e.target.value)}
                 placeholder="https://github.com/..."
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white font-mono focus:border-blue-500"
+                className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
               />
             </div>
           </div>
 
           {/* Profession-Specific Section Order */}
           <div>
-            <label className="block text-zinc-400 mb-1 font-medium">
+            <label className="block text-zinc-700 dark:text-zinc-300 mb-1 font-semibold">
               Optional Custom Section Order (comma-separated)
             </label>
             <input
@@ -420,18 +422,18 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
               value={customSectionOrderStr}
               onChange={(e) => setCustomSectionOrderStr(e.target.value)}
               placeholder="e.g. Concept, Materiality, Plans, Sections, Renders"
-              className="w-full px-3 py-2 bg-zinc-950 border border-zinc-700 rounded-lg text-white font-mono focus:border-blue-500"
+              className="w-full px-3.5 py-2 bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
 
           {/* Media Upload Abstraction Section */}
-          <div className="p-4 bg-zinc-950/80 rounded-xl border border-zinc-800">
+          <div className="p-5 bg-[#FAFAF8] dark:bg-zinc-950/80 rounded-2xl border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-mono uppercase text-zinc-300 font-semibold text-[11px]">
+              <h3 className="font-mono uppercase text-zinc-800 dark:text-zinc-300 font-bold text-[11px]">
                 Project Media Gallery ({mediaList.length})
               </h3>
               {uploadProgress && (
-                <span className="text-[11px] font-mono text-blue-400 animate-pulse">{uploadProgress}</span>
+                <span className="text-[11px] font-mono text-[#FF6B4A] animate-pulse">{uploadProgress}</span>
               )}
             </div>
 
@@ -448,8 +450,8 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                   }}
                   className={`p-6 border-2 border-dashed rounded-xl text-center transition cursor-pointer ${
                     dragOver
-                      ? 'border-blue-500 bg-blue-500/10'
-                      : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+                      ? 'border-[#FF6B4A] bg-[#FF6B4A]/10'
+                      : 'border-zinc-300 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/50 hover:border-[#FF6B4A]/50'
                   }`}
                   onClick={() => document.getElementById('project-media-input')?.click()}
                 >
@@ -461,7 +463,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                     className="hidden"
                     onChange={(e) => handleFileUpload(e.target.files)}
                   />
-                  <p className="text-zinc-300 font-medium">
+                  <p className="text-zinc-700 dark:text-zinc-300 font-medium">
                     {uploading ? 'Processing file...' : 'Drag & drop media files here, or click to browse'}
                   </p>
                   <p className="text-[10px] text-zinc-500 font-mono mt-1">
@@ -475,18 +477,18 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                     {mediaList.map((m, idx) => (
                       <div
                         key={m.id}
-                        className={`p-2 rounded-lg border bg-zinc-900 relative ${
-                          m.isCover ? 'border-blue-500' : 'border-zinc-800'
+                        className={`p-2 rounded-xl border bg-white dark:bg-zinc-900 relative shadow-sm ${
+                          m.isCover ? 'border-[#FF6B4A]' : 'border-zinc-200 dark:border-zinc-800'
                         }`}
                       >
-                        <div className="h-28 bg-zinc-950 rounded overflow-hidden flex items-center justify-center mb-2 relative">
+                        <div className="h-28 bg-zinc-100 dark:bg-zinc-950 rounded-lg overflow-hidden flex items-center justify-center mb-2 relative">
                           {m.type === 'IMAGE' ? (
                             <img src={m.url} alt={m.altText || ''} className="w-full h-full object-cover" />
                           ) : (
-                            <div className="font-mono text-[10px] text-zinc-400 uppercase">{m.type} file</div>
+                            <div className="font-mono text-[10px] text-zinc-500 uppercase">{m.type} file</div>
                           )}
                           {m.isCover && (
-                            <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-blue-600 text-[9px] font-mono text-white rounded">
+                            <span className="absolute top-1.5 left-1.5 px-2 py-0.5 bg-[#FF6B4A] text-[9px] font-mono text-white rounded-md font-semibold">
                               COVER
                             </span>
                           )}
@@ -498,7 +500,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                           placeholder="Alt text"
                           defaultValue={m.altText || ''}
                           onBlur={(e) => handleUpdateAlt(m.id, e.target.value)}
-                          className="w-full px-2 py-1 text-[10px] bg-zinc-950 border border-zinc-800 rounded text-zinc-300 mb-1.5"
+                          className="w-full px-2 py-1 text-[10px] bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 mb-1.5"
                         />
 
                         {/* Controls */}
@@ -508,7 +510,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                               <button
                                 type="button"
                                 onClick={() => handleReorderMedia(idx, 'left')}
-                                className="px-1 py-0.5 bg-zinc-800 rounded text-zinc-300 hover:text-white"
+                                className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200"
                               >
                                 ←
                               </button>
@@ -517,7 +519,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                               <button
                                 type="button"
                                 onClick={() => handleReorderMedia(idx, 'right')}
-                                className="px-1 py-0.5 bg-zinc-800 rounded text-zinc-300 hover:text-white"
+                                className="px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200"
                               >
                                 →
                               </button>
@@ -528,7 +530,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                               <button
                                 type="button"
                                 onClick={() => handleSetCover(m.id)}
-                                className="px-1.5 py-0.5 text-blue-400 hover:text-blue-300 rounded hover:bg-blue-500/10"
+                                className="px-2 py-0.5 text-[#FF6B4A] hover:bg-[#FF6B4A]/10 rounded font-medium"
                               >
                                 Set Cover
                               </button>
@@ -536,7 +538,7 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
                             <button
                               type="button"
                               onClick={() => handleDeleteMedia(m.id)}
-                              className="px-1.5 py-0.5 text-red-400 hover:text-red-300 rounded hover:bg-red-500/10"
+                              className="px-1.5 py-0.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded"
                             >
                               ✕
                             </button>
@@ -554,18 +556,18 @@ export function ProjectFormModal({ portfolioId, token, project, onClose, onSaved
             )}
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg"
+              className="px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-xl font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg uppercase tracking-wider disabled:opacity-50"
+              className="px-6 py-2.5 bg-[#FF6B4A] hover:bg-[#F04E27] text-white font-semibold rounded-xl uppercase tracking-wider shadow-soft hover:shadow-coral disabled:opacity-50"
             >
               {saving ? 'Saving...' : isEdit ? 'Update Project' : 'Create Project'}
             </button>

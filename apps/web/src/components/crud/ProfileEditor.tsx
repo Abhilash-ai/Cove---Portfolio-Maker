@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FullProfileDto, SkillDto, ExperienceDto, SocialLinkDto } from '@cove/shared';
 import { ResumeUploadModal } from '../resume/ResumeUploadModal.js';
+import { FileText, Plus, Trash2, CheckCircle2 } from 'lucide-react';
 
 interface Props {
   token: string;
@@ -44,7 +45,7 @@ export function ProfileEditor({ token }: Props) {
     try {
       setLoading(true);
       const res = await fetch('/api/v1/profile/me', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -62,8 +63,8 @@ export function ProfileEditor({ token }: Props) {
         setExperiences(p.experiences || []);
         setSocialLinks(p.socialLinks || []);
       }
-    } catch (err: any) {
-      console.error('Failed to load profile:', err);
+    } catch {
+      setStatusMsg('Failed to load profile');
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export function ProfileEditor({ token }: Props) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name,
@@ -91,18 +92,18 @@ export function ProfileEditor({ token }: Props) {
           availableForWork,
           skills,
           experiences,
-          socialLinks
-        })
+          socialLinks,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setStatusMsg('Profile successfully saved to database!');
-        loadProfile();
+        setStatusMsg('Profile successfully saved!');
+        setTimeout(() => setStatusMsg(null), 3500);
       } else {
-        setStatusMsg(`Error: ${data.error?.message || 'Save failed'}`);
+        setStatusMsg(data.error?.message || 'Save failed');
       }
     } catch (err: any) {
-      setStatusMsg(`Network error: ${err.message}`);
+      setStatusMsg(err.message || 'Network error');
     } finally {
       setSaving(false);
     }
@@ -126,10 +127,10 @@ export function ProfileEditor({ token }: Props) {
       {
         company: newExpCompany.trim(),
         position: newExpPosition.trim(),
-        startDate: new Date().toISOString(),
+        startDate: new Date().toISOString().split('T')[0],
         isCurrent: true,
-        highlights: []
-      }
+        highlights: [],
+      },
     ]);
     setNewExpCompany('');
     setNewExpPosition('');
@@ -150,30 +151,31 @@ export function ProfileEditor({ token }: Props) {
   }
 
   if (loading) {
-    return <div className="p-8 text-center text-xs font-mono text-zinc-400">Loading profile data...</div>;
+    return <div className="p-10 text-center text-xs font-mono text-zinc-400">Loading profile data...</div>;
   }
 
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-xl max-w-4xl mx-auto">
-      <div className="flex items-center justify-between border-b border-zinc-800 pb-4 mb-6">
+    <div className="bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-soft transition-colors max-w-5xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-5 mb-6 gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">Creator Profile</h2>
-          <p className="text-xs text-zinc-400 mt-0.5">Manage full professional details, skills, experience, and links</p>
+          <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Creator Profile</h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            Manage your full professional details, skills, experience, and links
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setShowResumeModal(true)}
-            className="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-sm transition flex items-center gap-1.5"
+            className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#FF6B4A] hover:bg-[#F04E27] text-white shadow-soft hover:shadow-coral transition flex items-center gap-2"
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <FileText className="w-3.5 h-3.5" />
             <span>Import from Resume</span>
           </button>
           {statusMsg && (
-            <span className="text-xs font-mono px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded">
-              {statusMsg}
+            <span className="text-xs font-mono px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>{statusMsg}</span>
             </span>
           )}
         </div>
@@ -196,141 +198,167 @@ export function ProfileEditor({ token }: Props) {
         {/* Core Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Full Name</label>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Full Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Professional Headline</label>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+              Professional Headline
+            </label>
             <input
               type="text"
               value={headline}
-              placeholder="e.g. Architectural Designer & Urbanist"
+              placeholder="e.g. Product Designer & Creative Technologist"
               onChange={(e) => setHeadline(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Contact Email</label>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Contact Email</label>
             <input
               type="email"
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Location</label>
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Location</label>
             <input
               type="text"
               value={location}
-              placeholder="e.g. Stockholm, Sweden"
+              placeholder="e.g. Brooklyn, NY"
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-3 py-2 text-xs bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
             />
           </div>
         </div>
 
         {/* Bio */}
         <div>
-          <label className="block text-xs font-medium text-zinc-400 mb-1">Biography / About</label>
+          <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">Biography / About</label>
           <textarea
             rows={3}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Tell your professional story..."
-            className="w-full px-3 py-2 text-xs bg-zinc-950 border border-zinc-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
           />
         </div>
 
         {/* Skills Section */}
-        <div className="p-4 bg-zinc-950/60 border border-zinc-800 rounded-lg">
-          <h3 className="text-xs font-mono uppercase text-zinc-300 font-semibold mb-3">Skills & Capabilities</h3>
-          <div className="flex gap-2 mb-3">
+        <div className="p-5 bg-[#FAFAF8] dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <h3 className="text-xs font-mono uppercase text-zinc-800 dark:text-zinc-200 font-bold mb-3">
+            Skills & Capabilities
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <input
               type="text"
-              placeholder="Skill (e.g. Computational Geometry)"
+              placeholder="Skill (e.g. React & TypeScript)"
               value={newSkillName}
               onChange={(e) => setNewSkillName(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="flex-1 px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <input
               type="text"
-              placeholder="Category (e.g. Design)"
+              placeholder="Category (e.g. Engineering)"
               value={newSkillCategory}
               onChange={(e) => setNewSkillCategory(e.target.value)}
-              className="w-36 px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="w-full sm:w-40 px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <button
               type="button"
               onClick={addSkill}
-              className="px-3 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 text-white rounded font-medium"
+              className="px-4 py-2 text-xs bg-[#FF6B4A] hover:bg-[#F04E27] text-white rounded-xl font-semibold shadow-soft"
             >
               Add Skill
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
             {skills.map((s, idx) => (
-              <span key={idx} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-800 text-xs rounded border border-zinc-700 text-zinc-200">
+              <span
+                key={idx}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-zinc-800 text-xs rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 shadow-sm"
+              >
                 <span>{s.name}</span>
                 <span className="text-[10px] text-zinc-400">({s.category})</span>
-                <button type="button" onClick={() => removeSkill(idx)} className="text-zinc-500 hover:text-red-400 text-xs">×</button>
+                <button
+                  type="button"
+                  onClick={() => removeSkill(idx)}
+                  className="text-zinc-400 hover:text-red-500 text-xs ml-0.5"
+                >
+                  ×
+                </button>
               </span>
             ))}
           </div>
         </div>
 
         {/* Experience Section */}
-        <div className="p-4 bg-zinc-950/60 border border-zinc-800 rounded-lg">
-          <h3 className="text-xs font-mono uppercase text-zinc-300 font-semibold mb-3">Work Experience</h3>
-          <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="p-5 bg-[#FAFAF8] dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <h3 className="text-xs font-mono uppercase text-zinc-800 dark:text-zinc-200 font-bold mb-3">
+            Work Experience
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
             <input
               type="text"
               placeholder="Company / Studio"
               value={newExpCompany}
               onChange={(e) => setNewExpCompany(e.target.value)}
-              className="px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <input
               type="text"
               placeholder="Position / Title"
               value={newExpPosition}
               onChange={(e) => setNewExpPosition(e.target.value)}
-              className="px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
           </div>
           <button
             type="button"
             onClick={addExperience}
-            className="mb-3 px-3 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 text-white rounded font-medium"
+            className="mb-3 px-4 py-2 text-xs bg-[#FF6B4A] hover:bg-[#F04E27] text-white rounded-xl font-semibold shadow-soft"
           >
             Add Experience Record
           </button>
           <div className="space-y-2">
             {experiences.map((exp, idx) => (
-              <div key={idx} className="flex items-center justify-between p-2.5 bg-zinc-900 border border-zinc-800 rounded text-xs">
+              <div
+                key={idx}
+                className="flex items-center justify-between p-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs shadow-sm"
+              >
                 <div>
-                  <span className="font-semibold text-white">{exp.position}</span>
-                  <span className="text-zinc-400"> at {exp.company}</span>
+                  <span className="font-semibold text-zinc-900 dark:text-white">{exp.position}</span>
+                  <span className="text-zinc-500"> at {exp.company}</span>
                 </div>
-                <button type="button" onClick={() => removeExperience(idx)} className="text-red-400 hover:text-red-300">Delete</button>
+                <button
+                  type="button"
+                  onClick={() => removeExperience(idx)}
+                  className="text-red-500 hover:text-red-600 font-medium"
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
         </div>
 
         {/* Social Links */}
-        <div className="p-4 bg-zinc-950/60 border border-zinc-800 rounded-lg">
-          <h3 className="text-xs font-mono uppercase text-zinc-300 font-semibold mb-3">Social & External Links</h3>
-          <div className="flex gap-2 mb-3">
+        <div className="p-5 bg-[#FAFAF8] dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <h3 className="text-xs font-mono uppercase text-zinc-800 dark:text-zinc-200 font-bold mb-3">
+            Social & External Links
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-2 mb-3">
             <select
               value={newPlatform}
               onChange={(e) => setNewPlatform(e.target.value)}
-              className="px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             >
               <option value="github">GitHub</option>
               <option value="linkedin">LinkedIn</option>
@@ -344,22 +372,31 @@ export function ProfileEditor({ token }: Props) {
               placeholder="https://..."
               value={newUrl}
               onChange={(e) => setNewUrl(e.target.value)}
-              className="flex-1 px-3 py-1.5 text-xs bg-zinc-900 border border-zinc-700 rounded text-white"
+              className="flex-1 px-3 py-2 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white"
             />
             <button
               type="button"
               onClick={addSocialLink}
-              className="px-3 py-1.5 text-xs bg-zinc-800 hover:bg-zinc-700 text-white rounded font-medium"
+              className="px-4 py-2 text-xs bg-[#FF6B4A] hover:bg-[#F04E27] text-white rounded-xl font-semibold shadow-soft"
             >
               Add Link
             </button>
           </div>
           <div className="flex flex-wrap gap-2">
             {socialLinks.map((s, idx) => (
-              <span key={idx} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 text-xs rounded border border-zinc-800 text-zinc-300 font-mono">
-                <span className="uppercase text-[10px] text-blue-400">{s.platform}</span>
+              <span
+                key={idx}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-white dark:bg-zinc-900 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 font-mono shadow-sm"
+              >
+                <span className="uppercase text-[10px] text-[#FF6B4A] font-bold">{s.platform}</span>
                 <span className="truncate max-w-xs">{s.url}</span>
-                <button type="button" onClick={() => removeSocialLink(idx)} className="text-zinc-500 hover:text-red-400">×</button>
+                <button
+                  type="button"
+                  onClick={() => removeSocialLink(idx)}
+                  className="text-zinc-400 hover:text-red-500 ml-1"
+                >
+                  ×
+                </button>
               </span>
             ))}
           </div>
@@ -368,9 +405,9 @@ export function ProfileEditor({ token }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition disabled:opacity-50"
+          className="w-full py-3 px-4 bg-[#FF6B4A] hover:bg-[#F04E27] text-white text-xs font-semibold uppercase tracking-wider rounded-xl transition shadow-soft hover:shadow-coral disabled:opacity-50"
         >
-          {saving ? 'Persisting Profile...' : 'Save Profile Changes'}
+          {saving ? 'Saving Profile...' : 'Save Profile Changes'}
         </button>
       </form>
     </div>

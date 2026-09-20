@@ -84,55 +84,55 @@ export function EditorSidebar({
   const [activeTab, setActiveTab] = useState<EditorTab>('templates');
 
   return (
-    <aside className="w-80 sm:w-96 border-r border-zinc-800 bg-zinc-950 flex flex-col h-full shrink-0 select-none z-20">
+    <aside className="w-80 sm:w-96 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full shrink-0 select-none z-20 text-zinc-900 dark:text-white transition-colors">
       {/* 1. Sidebar Tab Navigation */}
-      <div className="flex border-b border-zinc-800 bg-zinc-900/50 p-1 gap-1 shrink-0 overflow-x-auto">
+      <div className="flex border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-1 gap-1 shrink-0 overflow-x-auto">
         <button
           onClick={() => setActiveTab('templates')}
-          className={`flex-1 min-w-[64px] py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             activeTab === 'templates'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              ? 'bg-white dark:bg-zinc-800 text-[#FF6B4A] dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
         >
           Templates
         </button>
         <button
           onClick={() => setActiveTab('typography')}
-          className={`flex-1 min-w-[64px] py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             activeTab === 'typography'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              ? 'bg-white dark:bg-zinc-800 text-[#FF6B4A] dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
         >
           Typography
         </button>
         <button
           onClick={() => setActiveTab('colors')}
-          className={`flex-1 min-w-[64px] py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             activeTab === 'colors'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              ? 'bg-white dark:bg-zinc-800 text-[#FF6B4A] dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
         >
           Colors
         </button>
         <button
           onClick={() => setActiveTab('layout')}
-          className={`flex-1 min-w-[64px] py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             activeTab === 'layout'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              ? 'bg-white dark:bg-zinc-800 text-[#FF6B4A] dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
         >
           Layout
         </button>
         <button
           onClick={() => setActiveTab('sections')}
-          className={`flex-1 min-w-[64px] py-1.5 text-xs font-medium rounded-md transition-colors ${
+          className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors ${
             activeTab === 'sections'
-              ? 'bg-zinc-800 text-white shadow-sm'
-              : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
+              ? 'bg-white dark:bg-zinc-800 text-[#FF6B4A] dark:text-white shadow-sm'
+              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
           }`}
         >
           Sections
@@ -146,8 +146,8 @@ export function EditorSidebar({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Design Presets</h3>
-                <p className="text-xs text-zinc-500 mt-0.5">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Design Presets</h3>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                   Your portfolio content remains 100% untouched.
                 </p>
               </div>
@@ -157,7 +157,7 @@ export function EditorSidebar({
               <button
                 type="button"
                 onClick={onOpenDiscovery}
-                className="w-full p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-950/30 hover:bg-indigo-950/60 text-indigo-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm"
+                className="w-full p-2.5 rounded-xl border border-[#FF6B4A]/30 bg-[#FF6B4A]/10 hover:bg-[#FF6B4A]/20 text-[#FF6B4A] text-xs font-semibold flex items-center justify-center gap-2 transition shadow-sm"
               >
                 <span>✨</span> Browse All & AI Recommendations
               </button>
@@ -170,24 +170,24 @@ export function EditorSidebar({
                   <div
                     key={tpl.id}
                     onClick={() => onSelectTemplate(tpl.id)}
-                    className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                    className={`p-3.5 rounded-2xl border cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-950/20 shadow-md ring-1 ring-blue-500'
-                        : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700 hover:bg-zinc-900'
+                        ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 shadow-soft ring-1 ring-[#FF6B4A]'
+                        : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-white">{tpl.name}</h4>
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                      <h4 className="text-sm font-bold text-zinc-900 dark:text-white">{tpl.name}</h4>
+                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
                         {tpl.category}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-400 mt-1.5 leading-relaxed">{tpl.description}</p>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed">{tpl.description}</p>
                     <div className="mt-3 flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: tpl.tokens.colors.background }} />
-                      <span className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: tpl.tokens.colors.surface }} />
-                      <span className="w-3 h-3 rounded-full border border-white/20" style={{ backgroundColor: tpl.tokens.colors.accent }} />
-                      <span className="text-[11px] text-zinc-500 ml-auto font-mono">
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.background }} />
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.surface }} />
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.accent }} />
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 ml-auto font-mono">
                         {tpl.heroVariant} • {tpl.projectLayout}
                       </span>
                     </div>
@@ -202,16 +202,16 @@ export function EditorSidebar({
         {activeTab === 'typography' && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Typography</h3>
-              <p className="text-xs text-zinc-500 mt-1">Choose distinctive display and editorial type pairings.</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Typography</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Choose distinctive display and editorial type pairings.</p>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Heading Font</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Heading Font</label>
               <select
                 value={tokens.typography.fontHeading}
                 onChange={(e) => onUpdateFontHeading(e.target.value)}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#FF6B4A]"
               >
                 {HEADING_FONTS.map((f) => (
                   <option key={f.label} value={f.value}>
@@ -222,11 +222,11 @@ export function EditorSidebar({
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Body Font</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Body Font</label>
               <select
                 value={tokens.typography.fontBody}
                 onChange={(e) => onUpdateFontBody(e.target.value)}
-                className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:border-blue-500"
+                className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-900 dark:text-zinc-200 focus:outline-none focus:border-[#FF6B4A]"
               >
                 {BODY_FONTS.map((f) => (
                   <option key={f.label} value={f.value}>
@@ -238,17 +238,17 @@ export function EditorSidebar({
 
             {/* Live Preview Card */}
             <div
-              className="p-4 rounded-xl border border-zinc-800 bg-zinc-900/60 space-y-2"
+              className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 space-y-2 shadow-sm"
               style={{ fontFamily: tokens.typography.fontBody }}
             >
-              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-500">Preview Specimen</span>
+              <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-400 dark:text-zinc-500">Preview Specimen</span>
               <h4
                 className="text-lg font-bold"
                 style={{ fontFamily: tokens.typography.fontHeading, color: tokens.colors.textPrimary }}
               >
                 Architectural Clarity & Motion
               </h4>
-              <p className="text-xs leading-relaxed text-zinc-400">
+              <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                 The visual cadence of thoughtful design speaks across every boundary and device.
               </p>
             </div>
@@ -259,13 +259,13 @@ export function EditorSidebar({
         {activeTab === 'colors' && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Color Palette</h3>
-              <p className="text-xs text-zinc-500 mt-1">Adjust tones, background contrast, and magnetic accents.</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Color Palette</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Adjust tones, background contrast, and magnetic accents.</p>
             </div>
 
             {/* Quick Swatches */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Quick Themes</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Quick Themes</label>
               <div className="grid grid-cols-2 gap-2">
                 {COLOR_PALETTES.map((p) => (
                   <button
@@ -275,10 +275,10 @@ export function EditorSidebar({
                       onUpdateColor('background', p.bg);
                       if (p.text) onUpdateColor('textPrimary', p.text);
                     }}
-                    className="p-2 rounded-lg border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-900 flex items-center gap-2 text-left"
+                    className="p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 hover:bg-zinc-100 dark:hover:bg-zinc-900 flex items-center gap-2 text-left shadow-sm"
                   >
                     <span className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: p.accent }} />
-                    <span className="text-[11px] text-zinc-300 truncate">{p.label}</span>
+                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300 font-medium truncate">{p.label}</span>
                   </button>
                 ))}
               </div>
@@ -288,95 +288,95 @@ export function EditorSidebar({
             <div className="space-y-3 pt-2">
               {/* Background */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Background</span>
+                <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">Background</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={tokens.colors.background.startsWith('#') ? tokens.colors.background : '#09090b'}
+                    value={tokens.colors.background.startsWith('#') ? tokens.colors.background : '#FAFAF8'}
                     onChange={(e) => onUpdateColor('background', e.target.value)}
-                    className="w-7 h-7 rounded border border-zinc-700 bg-transparent cursor-pointer p-0"
+                    className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 bg-transparent cursor-pointer p-0"
                   />
                   <input
                     type="text"
                     value={tokens.colors.background}
                     onChange={(e) => onUpdateColor('background', e.target.value)}
-                    className="w-20 px-2 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono"
+                    className="w-20 px-2 py-1 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 font-mono"
                   />
                 </div>
               </div>
 
               {/* Surface */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Surface Card</span>
+                <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">Surface Card</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={tokens.colors.surface.startsWith('#') ? tokens.colors.surface : '#121215'}
+                    value={tokens.colors.surface.startsWith('#') ? tokens.colors.surface : '#FFFFFF'}
                     onChange={(e) => onUpdateColor('surface', e.target.value)}
-                    className="w-7 h-7 rounded border border-zinc-700 bg-transparent cursor-pointer p-0"
+                    className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 bg-transparent cursor-pointer p-0"
                   />
                   <input
                     type="text"
                     value={tokens.colors.surface}
                     onChange={(e) => onUpdateColor('surface', e.target.value)}
-                    className="w-20 px-2 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono"
+                    className="w-20 px-2 py-1 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 font-mono"
                   />
                 </div>
               </div>
 
               {/* Accent */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Accent Color</span>
+                <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">Accent Color</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={tokens.colors.accent.startsWith('#') ? tokens.colors.accent : '#2563eb'}
+                    value={tokens.colors.accent.startsWith('#') ? tokens.colors.accent : '#FF6B4A'}
                     onChange={(e) => onUpdateColor('accent', e.target.value)}
-                    className="w-7 h-7 rounded border border-zinc-700 bg-transparent cursor-pointer p-0"
+                    className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 bg-transparent cursor-pointer p-0"
                   />
                   <input
                     type="text"
                     value={tokens.colors.accent}
                     onChange={(e) => onUpdateColor('accent', e.target.value)}
-                    className="w-20 px-2 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono"
+                    className="w-20 px-2 py-1 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 font-mono"
                   />
                 </div>
               </div>
 
               {/* Text Primary */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Text Primary</span>
+                <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">Text Primary</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={tokens.colors.textPrimary.startsWith('#') ? tokens.colors.textPrimary : '#fafafa'}
+                    value={tokens.colors.textPrimary.startsWith('#') ? tokens.colors.textPrimary : '#1A1A1A'}
                     onChange={(e) => onUpdateColor('textPrimary', e.target.value)}
-                    className="w-7 h-7 rounded border border-zinc-700 bg-transparent cursor-pointer p-0"
+                    className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 bg-transparent cursor-pointer p-0"
                   />
                   <input
                     type="text"
                     value={tokens.colors.textPrimary}
                     onChange={(e) => onUpdateColor('textPrimary', e.target.value)}
-                    className="w-20 px-2 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono"
+                    className="w-20 px-2 py-1 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 font-mono"
                   />
                 </div>
               </div>
 
               {/* Border */}
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-300">Border</span>
+                <span className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">Border</span>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={tokens.colors.border.startsWith('#') ? tokens.colors.border : '#27272a'}
+                    value={tokens.colors.border.startsWith('#') ? tokens.colors.border : '#E5E5E0'}
                     onChange={(e) => onUpdateColor('border', e.target.value)}
-                    className="w-7 h-7 rounded border border-zinc-700 bg-transparent cursor-pointer p-0"
+                    className="w-7 h-7 rounded border border-zinc-300 dark:border-zinc-700 bg-transparent cursor-pointer p-0"
                   />
                   <input
                     type="text"
                     value={tokens.colors.border}
                     onChange={(e) => onUpdateColor('border', e.target.value)}
-                    className="w-20 px-2 py-1 text-xs bg-zinc-900 border border-zinc-800 rounded text-zinc-300 font-mono"
+                    className="w-20 px-2 py-1 text-xs bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-zinc-800 dark:text-zinc-300 font-mono"
                   />
                 </div>
               </div>
@@ -388,22 +388,22 @@ export function EditorSidebar({
         {activeTab === 'layout' && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Layout & Geometry</h3>
-              <p className="text-xs text-zinc-500 mt-1">Control geometry, container width, and project presentation.</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Layout & Geometry</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Control geometry, container width, and project presentation.</p>
             </div>
 
             {/* Corner Radius */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Corner Radius</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Corner Radius</label>
               <div className="grid grid-cols-2 gap-2">
                 {RADIUS_PRESETS.map((r) => (
                   <button
                     key={r.label}
                     onClick={() => onUpdateRadius(r.value)}
-                    className={`py-2 px-3 text-xs rounded-lg border text-center transition-all ${
+                    className={`py-2 px-3 text-xs rounded-xl border text-center transition-all ${
                       tokens.spacing.radius === r.value
-                        ? 'border-blue-500 bg-blue-950/20 text-white font-medium'
-                        : 'border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200'
+                        ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 text-[#FF6B4A] font-semibold'
+                        : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 shadow-sm'
                     }`}
                   >
                     {r.label}
@@ -414,21 +414,21 @@ export function EditorSidebar({
 
             {/* Container Max Width */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Container Width</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Container Width</label>
               <div className="space-y-1.5">
                 {CONTAINER_PRESETS.map((c) => (
                   <button
                     key={c.label}
                     onClick={() => onUpdateContainerMax(c.value)}
-                    className={`w-full py-2 px-3 text-xs rounded-lg border text-left flex justify-between items-center transition-all ${
+                    className={`w-full py-2 px-3 text-xs rounded-xl border text-left flex justify-between items-center transition-all ${
                       tokens.spacing.containerMax === c.value
-                        ? 'border-blue-500 bg-blue-950/20 text-white font-medium'
-                        : 'border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200'
+                        ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 text-[#FF6B4A] font-semibold'
+                        : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 shadow-sm'
                     }`}
                   >
                     <span>{c.label}</span>
                     {tokens.spacing.containerMax === c.value && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B4A]" />
                     )}
                   </button>
                 ))}
@@ -437,14 +437,14 @@ export function EditorSidebar({
 
             {/* Project Layout Style */}
             <div className="space-y-2 pt-2">
-              <label className="text-xs font-medium text-zinc-300">Projects Display Style</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Projects Display Style</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => onSetProjectLayout('grid')}
-                  className={`py-2.5 px-3 text-xs rounded-lg border flex flex-col items-center gap-1 transition-all ${
+                  className={`py-2.5 px-3 text-xs rounded-xl border flex flex-col items-center gap-1 transition-all ${
                     projectLayout === 'grid'
-                      ? 'border-blue-500 bg-blue-950/20 text-white font-medium'
-                      : 'border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200'
+                      ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 text-[#FF6B4A] font-semibold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 shadow-sm'
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -455,10 +455,10 @@ export function EditorSidebar({
 
                 <button
                   onClick={() => onSetProjectLayout('list')}
-                  className={`py-2.5 px-3 text-xs rounded-lg border flex flex-col items-center gap-1 transition-all ${
+                  className={`py-2.5 px-3 text-xs rounded-xl border flex flex-col items-center gap-1 transition-all ${
                     projectLayout === 'list'
-                      ? 'border-blue-500 bg-blue-950/20 text-white font-medium'
-                      : 'border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200'
+                      ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 text-[#FF6B4A] font-semibold'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 shadow-sm'
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -475,22 +475,22 @@ export function EditorSidebar({
         {activeTab === 'sections' && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">Sections & Sequence</h3>
-              <p className="text-xs text-zinc-500 mt-1">Reorder page sections or toggle visibility instantly.</p>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Sections & Sequence</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Reorder page sections or toggle visibility instantly.</p>
             </div>
 
             {/* Hero Variant Selector */}
             <div className="space-y-2">
-              <label className="text-xs font-medium text-zinc-300">Hero Section Layout</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Hero Section Layout</label>
               <div className="grid grid-cols-2 gap-2">
                 {(['centered', 'split', 'fullscreen-image', 'minimal-text'] as HeroVariant[]).map((v) => (
                   <button
                     key={v}
                     onClick={() => onSetHeroVariant(v)}
-                    className={`p-2 text-xs rounded-lg border text-center capitalize transition-all ${
+                    className={`p-2.5 text-xs rounded-xl border text-center capitalize transition-all ${
                       heroVariant === v
-                        ? 'border-blue-500 bg-blue-950/20 text-white font-medium'
-                        : 'border-zinc-800 bg-zinc-900/60 text-zinc-400 hover:text-zinc-200'
+                        ? 'border-[#FF6B4A] bg-[#FF6B4A]/10 text-[#FF6B4A] font-semibold'
+                        : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/60 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 shadow-sm'
                     }`}
                   >
                     {v.replace('-', ' ')}
@@ -501,22 +501,22 @@ export function EditorSidebar({
 
             {/* Section Sequence Reordering */}
             <div className="space-y-2 pt-2">
-              <label className="text-xs font-medium text-zinc-300">Page Section Sequence</label>
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Page Section Sequence</label>
               <div className="space-y-2">
                 {sectionOrder.map((sec, idx) => {
                   const isHidden = hiddenSections.includes(sec);
                   return (
                     <div
                       key={sec}
-                      className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+                      className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
                         isHidden
-                          ? 'border-zinc-800/40 bg-zinc-900/20 opacity-50'
-                          : 'border-zinc-800 bg-zinc-900/70'
+                          ? 'border-zinc-200/50 dark:border-zinc-800/40 bg-zinc-100/50 dark:bg-zinc-900/20 opacity-50'
+                          : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/70 shadow-sm'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-zinc-500 w-4">{idx + 1}</span>
-                        <span className="text-xs font-semibold capitalize text-zinc-200">{sec}</span>
+                        <span className="text-xs font-mono text-zinc-400 w-4">{idx + 1}</span>
+                        <span className="text-xs font-bold capitalize text-zinc-900 dark:text-zinc-200">{sec}</span>
                       </div>
 
                       <div className="flex items-center gap-1">
@@ -524,7 +524,7 @@ export function EditorSidebar({
                         <button
                           onClick={() => onMoveSection(idx, 'up')}
                           disabled={idx === 0}
-                          className="p-1 text-zinc-400 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
+                          className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
                           title="Move Up"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -536,7 +536,7 @@ export function EditorSidebar({
                         <button
                           onClick={() => onMoveSection(idx, 'down')}
                           disabled={idx === sectionOrder.length - 1}
-                          className="p-1 text-zinc-400 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
+                          className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white disabled:opacity-20 disabled:cursor-not-allowed"
                           title="Move Down"
                         >
                           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -548,7 +548,7 @@ export function EditorSidebar({
                         <button
                           onClick={() => onToggleSectionVisibility(sec)}
                           className={`p-1 transition-colors ${
-                            isHidden ? 'text-zinc-600 hover:text-zinc-400' : 'text-blue-400 hover:text-blue-300'
+                            isHidden ? 'text-zinc-400 hover:text-zinc-600' : 'text-[#FF6B4A] hover:text-[#F04E27]'
                           }`}
                           title={isHidden ? 'Show Section' : 'Hide Section'}
                         >
