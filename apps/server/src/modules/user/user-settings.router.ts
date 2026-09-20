@@ -147,11 +147,12 @@ userSettingsRouter.delete('/account', async (req: AuthenticatedRequest, res: Res
     const assets = await prisma.asset.findMany({ where: { userId } });
     for (const asset of assets) {
       try {
-        if (asset.storageKey && fs.existsSync(asset.storageKey)) {
-          fs.unlinkSync(asset.storageKey);
+        const filePath = (asset as any).storageKey || asset.url;
+        if (filePath && fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
         }
       } catch (fileErr) {
-        console.warn('Could not delete file:', asset.storageKey, fileErr);
+        console.warn('Could not delete file for asset:', asset.id, fileErr);
       }
     }
 

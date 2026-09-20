@@ -70,16 +70,28 @@ export class ResumeParserService {
     if (typeof bufferOrText === 'string') {
       rawText = bufferOrText;
     } else if (Buffer.isBuffer(bufferOrText)) {
-      // Detect if PDF
+      // 1. Detect if PDF
       if (bufferOrText.slice(0, 4).toString() === '%PDF') {
         try {
           // Dynamic import of pdf-parse for ESM compatibility
-          const pdfParse = (await import('pdf-parse')).default || (await import('pdf-parse'));
-          const pdfData = await (pdfParse as any)(bufferOrText);
+          const pdfParseModule: any = await import('pdf-parse');
+          const pdfParse = pdfParseModule.default || pdfParseModule;
+          const pdfData = await pdfParse(bufferOrText);
           rawText = pdfData.text || '';
         } catch (pdfErr) {
           console.warn('PDF-parse failed, falling back to utf-8 text extract:', pdfErr);
           rawText = bufferOrText.toString('utf-8');
+        }
+      }
+      // 2. Detect if DOCX / ZIP archive (PK\x03\x04 magic bytes)
+      else if (bufferOrText[0] === 0x50 && bufferOrText[1] === 0x4b) {
+        try {
+          const mammoth = (await import('mammoth')).default || (await import('mammoth'));
+          const result = await mammoth.extractRawText({ buffer: bufferOrText });
+          rawText = result.value || '';
+        } catch (docxErr) {
+          console.warn('DOCX parse with mammoth failed, falling back:', docxErr);
+          rawText = '';
         }
       } else {
         rawText = bufferOrText.toString('utf-8');
@@ -109,9 +121,17 @@ export class ResumeParserService {
 
   private normalizeText(text: string): string {
     return text
+      .replace(/\0/g, '') // remove null bytes that break postgres
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ')
       .replace(/\r\n/g, '\n')
       .replace(/\r/g, '\n')
       .replace(/[\t ]+/g, ' ');
+  }
+
+  private isValidTextCandidate(str: string): boolean {
+    if (!str || str.startsWith('PK') || str.includes('word/') || str.includes('[Content_Types]')) return false;
+    const letterCount = (str.match(/[a-zA-Z]/g) || []).length;
+    return letterCount >= 2;
   }
 
   private extractContact(lines: string[], fullText: string): ParsedContact {
@@ -132,17 +152,18 @@ export class ResumeParserService {
     const githubMatch = fullText.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9-_]+)/i);
     if (githubMatch) contact.githubUrl = githubMatch[0];
 
-    // 4. Name extraction: usually first non-empty line that isn't a header or email
-    if (lines.length > 0) {
-      const candidate = lines[0];
+    // 4. Name extraction: usually first valid line that isn't a header or email
+    const validLines = lines.filter((l) => this.isValidTextCandidate(l));
+    if (validLines.length > 0) {
+      const candidate = validLines[0];
       if (candidate.length < 50 && !candidate.includes('@') && !candidate.toLowerCase().includes('resume') && !candidate.toLowerCase().includes('curriculum')) {
         contact.name = candidate;
       }
     }
 
-    // 5. Headline: usually 2nd line if short
-    if (lines.length > 1) {
-      const candidateHeadline = lines[1];
+    // 5. Headline: usually 2nd valid line if short
+    if (validLines.length > 1) {
+      const candidateHeadline = validLines[1];
       if (candidateHeadline.length < 70 && !candidateHeadline.includes('@') && !candidateHeadline.includes('http')) {
         contact.headline = candidateHeadline;
       }

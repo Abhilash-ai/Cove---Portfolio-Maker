@@ -69,24 +69,40 @@ resumeRouter.post(
         selectedSkills = []
       } = payload;
 
+      const cleanUtf8 = (val?: string | null): string | undefined => {
+        if (val === undefined || val === null) return undefined;
+        const cleaned = String(val)
+          .replace(/\0/g, '')
+          .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x9F]/g, ' ')
+          .trim();
+        return cleaned || undefined;
+      };
+
       await prisma.$transaction(async (tx) => {
         // 1. Update Profile & User details if selected
         const profileUpdate: Record<string, any> = {};
 
-        if (selectedContactFields.headline && contact?.headline) {
-          profileUpdate.headline = contact.headline;
+        const headline = cleanUtf8(contact?.headline);
+        const bio = cleanUtf8(contact?.bio);
+        const location = cleanUtf8(contact?.location);
+        const email = cleanUtf8(contact?.email);
+        const phone = cleanUtf8(contact?.phone);
+        const name = cleanUtf8(contact?.name);
+
+        if (selectedContactFields.headline && headline) {
+          profileUpdate.headline = headline;
         }
-        if (selectedContactFields.bio && contact?.bio) {
-          profileUpdate.bio = contact.bio;
+        if (selectedContactFields.bio && bio) {
+          profileUpdate.bio = bio;
         }
-        if (selectedContactFields.location && contact?.location) {
-          profileUpdate.location = contact.location;
+        if (selectedContactFields.location && location) {
+          profileUpdate.location = location;
         }
-        if (selectedContactFields.email && contact?.email) {
-          profileUpdate.contactEmail = contact.email;
+        if (selectedContactFields.email && email) {
+          profileUpdate.contactEmail = email;
         }
-        if (selectedContactFields.phone && contact?.phone) {
-          profileUpdate.contactPhone = contact.phone;
+        if (selectedContactFields.phone && phone) {
+          profileUpdate.contactPhone = phone;
         }
 
         if (Object.keys(profileUpdate).length > 0) {
@@ -102,15 +118,16 @@ resumeRouter.post(
         }
 
         // Update User Name if selected
-        if (selectedContactFields.name && contact?.name) {
+        if (selectedContactFields.name && name) {
           await tx.user.update({
             where: { id: callerId },
-            data: { name: contact.name.trim() }
+            data: { name }
           });
         }
 
         // 2. Add Social Links (LinkedIn, GitHub) if selected
-        if (selectedContactFields.linkedin && contact?.linkedinUrl) {
+        const linkedinUrl = cleanUtf8(contact?.linkedinUrl);
+        if (selectedContactFields.linkedin && linkedinUrl) {
           const exists = await tx.socialLink.findFirst({
             where: { userId: callerId, platform: 'LinkedIn' }
           });
@@ -119,14 +136,15 @@ resumeRouter.post(
               data: {
                 userId: callerId,
                 platform: 'LinkedIn',
-                url: contact.linkedinUrl,
+                url: linkedinUrl,
                 label: 'LinkedIn'
               }
             });
           }
         }
 
-        if (selectedContactFields.github && contact?.githubUrl) {
+        const githubUrl = cleanUtf8(contact?.githubUrl);
+        if (selectedContactFields.github && githubUrl) {
           const exists = await tx.socialLink.findFirst({
             where: { userId: callerId, platform: 'GitHub' }
           });
@@ -135,7 +153,7 @@ resumeRouter.post(
               data: {
                 userId: callerId,
                 platform: 'GitHub',
-                url: contact.githubUrl,
+                url: githubUrl,
                 label: 'GitHub'
               }
             });
@@ -144,29 +162,41 @@ resumeRouter.post(
 
         // 3. Add Selected Experiences
         for (const exp of selectedExperiences) {
+          const company = cleanUtf8(exp.company) || 'Company';
+          const position = cleanUtf8(exp.position) || 'Role';
+          const expLocation = cleanUtf8(exp.location) || null;
+          const description = cleanUtf8(exp.description) || null;
+          const highlights = Array.isArray(exp.highlights)
+            ? exp.highlights.map((h) => cleanUtf8(h)).filter((h): h is string => Boolean(h))
+            : [];
+
           await tx.experience.create({
             data: {
               userId: callerId,
-              company: exp.company || 'Company',
-              position: exp.position || 'Role',
-              location: exp.location || null,
+              company,
+              position,
+              location: expLocation,
               startDate: exp.startDate ? new Date(exp.startDate.length === 4 ? `${exp.startDate}-01-01` : exp.startDate) : new Date(),
               endDate: exp.endDate && !exp.isCurrent ? new Date(exp.endDate.length === 4 ? `${exp.endDate}-01-01` : exp.endDate) : null,
               isCurrent: exp.isCurrent,
-              description: exp.description || null,
-              highlights: exp.highlights || []
+              description,
+              highlights
             }
           });
         }
 
         // 4. Add Selected Educations
         for (const edu of selectedEducations) {
+          const institution = cleanUtf8(edu.institution) || 'University';
+          const degree = cleanUtf8(edu.degree) || 'Degree';
+          const fieldOfStudy = cleanUtf8(edu.fieldOfStudy) || 'Studies';
+
           await tx.education.create({
             data: {
               userId: callerId,
-              institution: edu.institution || 'University',
-              degree: edu.degree || 'Degree',
-              fieldOfStudy: edu.fieldOfStudy || 'Studies',
+              institution,
+              degree,
+              fieldOfStudy,
               startDate: new Date(),
               endDate: edu.endDate ? new Date(`${edu.endDate}-01-01`) : null
             }
@@ -181,16 +211,17 @@ resumeRouter.post(
         const existingNames = new Set(existingSkills.map((s) => s.name.toLowerCase()));
 
         for (const skill of selectedSkills) {
-          if (!existingNames.has(skill.name.toLowerCase())) {
+          const skillName = cleanUtf8(skill.name);
+          if (skillName && !existingNames.has(skillName.toLowerCase())) {
             await tx.skill.create({
               data: {
                 userId: callerId,
-                name: skill.name,
-                category: skill.category || 'General',
-                level: skill.level || 'Proficient'
+                name: skillName,
+                category: cleanUtf8(skill.category) || 'General',
+                level: cleanUtf8(skill.level) || 'Proficient'
               }
             });
-            existingNames.add(skill.name.toLowerCase());
+            existingNames.add(skillName.toLowerCase());
           }
         }
       });
