@@ -146,6 +146,12 @@ export default function App() {
           setIsLogin(true);
           setShowAuthScreen(true);
         }}
+        onSelectFeature={(feature) => {
+          if (feature === 'portfolio' || feature === 'website') {
+            setIsLogin(false);
+            setShowAuthScreen(true);
+          }
+        }}
       />
     );
   }

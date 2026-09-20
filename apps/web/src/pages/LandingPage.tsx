@@ -1,15 +1,20 @@
-import React from 'react';
-import { motion, type Variants } from 'framer-motion';
-import { Sparkles, ArrowRight, Layout, Globe, Presentation, CheckCircle2, ShieldCheck, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, type Variants, AnimatePresence } from 'framer-motion';
+import { Sparkles, ArrowRight, Layout, Globe, Presentation, CheckCircle2, ShieldCheck, Zap, X, Bell } from 'lucide-react';
 import { CoveLogo } from '../assets/CoveLogo.js';
 import { ThemeToggle } from '../components/common/ThemeToggle.js';
 
 interface LandingPageProps {
   onGetStarted: () => void;
   onSignIn: () => void;
+  onSelectFeature?: (feature: 'portfolio' | 'website' | 'deck') => void;
 }
 
-export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
+export function LandingPage({ onGetStarted, onSignIn, onSelectFeature }: LandingPageProps) {
+  const [waitlistModalOpen, setWaitlistModalOpen] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+
   // Staggered entrance variants for hero
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -33,36 +38,60 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
 
   const featureCards = [
     {
+      key: 'portfolio' as const,
       icon: Layout,
       tag: 'Core Experience',
       title: 'Portfolio Maker',
       description:
         'Craft stunning case studies with modular project timelines, masonry galleries, and adaptive typography. Highlight your role, process, and measurable impact.',
       highlight: 'Interactive layouts & visual editor',
+      actionText: 'Enter Portfolio Maker →',
       badge: 'Live',
       badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
     },
     {
+      key: 'website' as const,
       icon: Globe,
       tag: 'Personal Hub',
       title: 'Personal Website',
       description:
         'Instant public link with custom slug publishing, zero hosting setup, responsive mobile optimization, and automatic SEO tags so recruiters discover you.',
       highlight: 'Resume AI parser & instant slug',
+      actionText: 'Enter Website Flow →',
       badge: 'Live',
       badgeColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
     },
     {
+      key: 'deck' as const,
       icon: Presentation,
       tag: 'Next Up',
       title: 'Interactive Deck',
       description:
         'Turn your case studies into cinematic presentation decks. Built-in speaker notes, slide transitions, and one-click PDF export for critiques and interviews.',
       highlight: 'Pitch deck mode & PDF export',
+      actionText: 'Join Early Waitlist →',
       badge: 'Coming Soon',
       badgeColor: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
     },
   ];
+
+  function handleCardClick(cardKey: 'portfolio' | 'website' | 'deck') {
+    if (cardKey === 'portfolio') {
+      if (onSelectFeature) {
+        onSelectFeature('portfolio');
+      } else {
+        onGetStarted();
+      }
+    } else if (cardKey === 'website') {
+      if (onSelectFeature) {
+        onSelectFeature('website');
+      } else {
+        onGetStarted();
+      }
+    } else if (cardKey === 'deck') {
+      setWaitlistModalOpen(true);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#0A0A0C] text-[#1A1A1A] dark:text-[#F4F4F6] flex flex-col selection:bg-[#FF6B4A] selection:text-white transition-colors duration-200 overflow-x-hidden">
@@ -269,7 +298,7 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
               </motion.div>
             </div>
 
-            {/* 3 Feature Cards animating on scroll */}
+            {/* 3 Feature Cards animating on scroll with active click handlers */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {featureCards.map((card, idx) => {
                 const IconComponent = card.icon;
@@ -280,7 +309,16 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '-60px' }}
                     transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 hover:border-[#FF6B4A]/50 transition-all duration-300 shadow-soft hover:shadow-soft-lg group"
+                    onClick={() => handleCardClick(card.key)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCardClick(card.key);
+                      }
+                    }}
+                    className="flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200/80 dark:border-zinc-800 hover:border-[#FF6B4A]/60 hover:shadow-soft-lg transition-all duration-300 shadow-soft group cursor-pointer text-left"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
@@ -295,7 +333,7 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
                       <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                         {card.tag}
                       </span>
-                      <h3 className="text-xl font-bold text-zinc-900 dark:text-white mt-1 mb-2.5">
+                      <h3 className="text-xl font-bold text-zinc-900 dark:text-white mt-1 mb-2.5 group-hover:text-[#FF6B4A] transition-colors">
                         {card.title}
                       </h3>
                       <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
@@ -303,8 +341,11 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
                       </p>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center gap-2 text-xs font-semibold text-[#FF6B4A]">
-                      <span>{card.highlight}</span>
+                    <div className="pt-6 mt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-between text-xs font-semibold text-[#FF6B4A]">
+                      <span className="truncate">{card.highlight}</span>
+                      <span className="inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        {card.actionText}
+                      </span>
                     </div>
                   </motion.div>
                 );
@@ -312,6 +353,82 @@ export function LandingPage({ onGetStarted, onSignIn }: LandingPageProps) {
             </div>
           </div>
         </section>
+
+        {/* Interactive Deck Waitlist Modal */}
+        <AnimatePresence>
+          {waitlistModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.2 }}
+                className="w-full max-w-md bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    setWaitlistModalOpen(false);
+                    setWaitlistSubmitted(false);
+                  }}
+                  className="absolute top-5 right-5 p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-4">
+                  <Presentation className="w-6 h-6" />
+                </div>
+
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
+                  Interactive Deck — Coming Soon
+                </h3>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-2 leading-relaxed">
+                  Turn your case studies into presentation decks with built-in speaker notes, slide transitions, and one-click PDF export. Be first in line when early access opens!
+                </p>
+
+                {waitlistSubmitted ? (
+                  <div className="mt-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span>You&apos;re on the list! We&apos;ll notify you when early access opens.</span>
+                  </div>
+                ) : (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (waitlistEmail.trim()) {
+                        setWaitlistSubmitted(true);
+                      }
+                    }}
+                    className="mt-6 space-y-3"
+                  >
+                    <div>
+                      <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="you@domain.com"
+                        value={waitlistEmail}
+                        onChange={(e) => setWaitlistEmail(e.target.value)}
+                        className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-2.5 px-4 bg-[#FF6B4A] hover:bg-[#F04E27] text-white text-xs font-semibold rounded-xl transition shadow-soft flex items-center justify-center gap-2"
+                    >
+                      <Bell className="w-3.5 h-3.5" />
+                      <span>Join Early Access Waitlist</span>
+                    </button>
+                  </form>
+                )}
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
 
         {/* Ready to Launch Banner */}
         <section className="py-16 sm:py-20 px-4 sm:px-6 max-w-5xl mx-auto text-center">
