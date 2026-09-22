@@ -14,6 +14,7 @@ import { Experience } from '../primitives/Experience.js';
 import { Contact } from '../primitives/Contact.js';
 import { Footer } from '../primitives/Footer.js';
 import { CustomCursor } from '../interactions/CustomCursor.js';
+import { Template3DBoundary } from './Template3DBoundary.js';
 
 interface Props {
   portfolio: PortfolioSummary;
@@ -26,6 +27,7 @@ interface Props {
   hiddenSections?: string[];
   overrideTokens?: ThemeTokens;
   forcedTouchMode?: boolean;
+  simulateNoWebGL?: boolean;
 }
 
 export function PortfolioRenderer({
@@ -38,7 +40,8 @@ export function PortfolioRenderer({
   overrideSectionOrder,
   hiddenSections = [],
   overrideTokens,
-  forcedTouchMode = false
+  forcedTouchMode = false,
+  simulateNoWebGL = false
 }: Props) {
   const activeTokens = overrideTokens || template.tokens;
   const activeHeroVariant = overrideHeroVariant || template.heroVariant;
@@ -88,6 +91,22 @@ export function PortfolioRenderer({
         {sections.map((sec) => {
           switch (sec) {
             case 'hero':
+              if (template.is3D) {
+                return (
+                  <Template3DBoundary
+                    key="hero-3d"
+                    template={template}
+                    profile={profile}
+                    projects={projects}
+                    portfolio={portfolio}
+                    tokens={activeTokens}
+                    forcedTouchMode={forcedTouchMode}
+                    onContactClick={scrollToContact}
+                    simulateNoWebGL={simulateNoWebGL}
+                  />
+                );
+              }
+
               return (
                 <Hero
                   key="hero"

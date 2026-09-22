@@ -8,6 +8,7 @@ export const FOUNDATIONAL_TEMPLATES: TemplateDefinition[] = [
     category: 'minimal',
     description: 'Clean grotesque typography, expansive whitespace, and refined grid micro-interactions.',
     heroVariant: 'centered',
+    fallbackHeroVariant: 'centered',
     projectLayout: 'grid',
     tokens: MINIMAL_PRESET,
     interactionProfile: {
@@ -26,6 +27,7 @@ export const FOUNDATIONAL_TEMPLATES: TemplateDefinition[] = [
     category: 'editorial',
     description: 'Warm editorial serifs, two-column split narrative, and cursor-following list previews.',
     heroVariant: 'split',
+    fallbackHeroVariant: 'split',
     projectLayout: 'list',
     tokens: EDITORIAL_PRESET,
     interactionProfile: {
@@ -44,6 +46,7 @@ export const FOUNDATIONAL_TEMPLATES: TemplateDefinition[] = [
     category: 'studio',
     description: 'Immersive full-bleed header, electric blue accents, custom trailing cursor, and 3D card tilt.',
     heroVariant: 'fullscreen-image',
+    fallbackHeroVariant: 'fullscreen-image',
     projectLayout: 'grid',
     tokens: STUDIO_PRESET,
     interactionProfile: {

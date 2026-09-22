@@ -2,6 +2,7 @@ import { TemplateDefinition } from './templateTypes.js';
 import { EXPANDED_STYLE_PRESETS } from '@cove/shared';
 import { FOUNDATIONAL_TEMPLATES } from './foundationalTemplates.js';
 import { COMPATIBILITY_RULES, isPatternCombinationCompatible } from './compatibilityMatrix.js';
+import { ALL_3D_TEMPLATES } from './compatibilityMatrix3D.js';
 
 export const PRESET_KEYS = [
   'minimal',
@@ -72,6 +73,7 @@ function buildExpandedCatalog(): TemplateDefinition[] {
         category: category as any,
         description,
         heroVariant: combo.heroVariant,
+        fallbackHeroVariant: combo.heroVariant,
         projectLayout: combo.projectLayout,
         tokens,
         interactionProfile: interaction,
@@ -84,7 +86,17 @@ function buildExpandedCatalog(): TemplateDefinition[] {
     });
   }
 
+  // Append all 250 distinct 3D templates
+  ALL_3D_TEMPLATES.forEach((tpl3d) => {
+    if (existingIds.has(tpl3d.id)) {
+      throw new Error(`Duplicate template ID detected: ${tpl3d.id}`);
+    }
+    existingIds.add(tpl3d.id);
+    result.push(tpl3d);
+  });
+
   return result;
 }
 
 export const ALL_EXPANDED_TEMPLATES: TemplateDefinition[] = buildExpandedCatalog();
+export { ALL_3D_TEMPLATES };

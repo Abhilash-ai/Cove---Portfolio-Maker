@@ -4,7 +4,7 @@ import { ProjectLayout } from '../engine/templates/templateTypes.js';
 
 export type ViewportMode = 'desktop' | 'tablet' | 'mobile';
 
-export type EditorTab = 'templates' | 'typography' | 'colors' | 'layout' | 'sections';
+export type EditorTab = 'templates' | 'typography' | 'colors' | 'layout' | 'sections' | '3d';
 
 export type SaveStatus = 'saved' | 'saving' | 'unsaved';
 

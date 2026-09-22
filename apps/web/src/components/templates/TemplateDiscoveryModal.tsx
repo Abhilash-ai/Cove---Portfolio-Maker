@@ -206,11 +206,13 @@ export function TemplateDiscoveryModal({
       t.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = selectedCategory === 'all' || t.category.toLowerCase() === selectedCategory;
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      (selectedCategory === '3d' ? (t.is3D || t.category === '3d') : t.category.toLowerCase() === selectedCategory);
 
     const matchesInteraction =
       selectedInteraction === 'all' ||
-      (selectedInteraction === 'expressive' && t.category === 'studio') ||
+      (selectedInteraction === 'expressive' && (t.category === 'studio' || t.is3D)) ||
       (selectedInteraction === 'standard' && t.category === 'editorial') ||
       (selectedInteraction === 'subtle' && t.category === 'minimal');
 
@@ -284,7 +286,7 @@ export function TemplateDiscoveryModal({
             <span className="text-zinc-500 text-[11px] font-medium mr-1">Filter:</span>
 
             {/* Category */}
-            {['all', 'minimal', 'editorial', 'studio', 'brutalist', 'swiss', 'cinematic', 'monochrome', 'academic', 'luxury', 'playful'].map((cat) => (
+            {['all', '3d', 'minimal', 'editorial', 'studio', 'brutalist', 'swiss', 'cinematic', 'monochrome', 'academic', 'luxury', 'playful'].map((cat) => (
               <button
                 key={cat}
                 type="button"
@@ -455,9 +457,16 @@ export function TemplateDiscoveryModal({
                     <div>
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="text-sm font-semibold text-zinc-100">{t.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-zinc-100">{t.name}</h4>
+                            {t.is3D && (
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
+                                3D
+                              </span>
+                            )}
+                          </div>
                           <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-500">
-                            {t.category} archetype
+                            {t.is3D ? 'Interactive 3D Experience' : `${t.category} archetype`}
                           </span>
                         </div>
 
@@ -477,12 +486,28 @@ export function TemplateDiscoveryModal({
                       </p>
 
                       <div className="mt-3 text-[11px] text-zinc-500 space-y-1">
-                        <div>
-                          <strong className="text-zinc-400">Hero:</strong> {t.heroVariant}
-                        </div>
-                        <div>
-                          <strong className="text-zinc-400">Projects:</strong> {t.projectLayout}
-                        </div>
+                        {t.is3D && t.scene3DConfig ? (
+                          <>
+                            <div>
+                              <strong className="text-zinc-400">Scene:</strong> {t.scene3DConfig.archetype}
+                            </div>
+                            <div>
+                              <strong className="text-zinc-400">Material:</strong> {t.scene3DConfig.materialPreset}
+                            </div>
+                            <div>
+                              <strong className="text-zinc-400">Camera:</strong> {t.scene3DConfig.cameraBehavior}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <strong className="text-zinc-400">Hero:</strong> {t.heroVariant}
+                            </div>
+                            <div>
+                              <strong className="text-zinc-400">Projects:</strong> {t.projectLayout}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 

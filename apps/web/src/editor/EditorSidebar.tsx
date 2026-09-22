@@ -23,6 +23,7 @@ interface Props {
   onMoveSection: (index: number, dir: 'up' | 'down') => void;
   onToggleSectionVisibility: (sectionKey: string) => void;
   onOpenDiscovery?: () => void;
+  onUpdate3DConfig?: (config: { rotationSpeed?: number; cameraDistance?: number; materialPreset?: any }) => void;
 }
 
 const HEADING_FONTS = [
@@ -80,8 +81,11 @@ export function EditorSidebar({
   onMoveSection,
   onToggleSectionVisibility,
   onOpenDiscovery,
+  onUpdate3DConfig,
 }: Props) {
   const [activeTab, setActiveTab] = useState<EditorTab>('templates');
+  const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === templateId);
+  const is3D = Boolean(activeTemplate?.is3D);
 
   return (
     <aside className="w-80 sm:w-96 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full shrink-0 select-none z-20 text-zinc-900 dark:text-white transition-colors">
@@ -137,6 +141,18 @@ export function EditorSidebar({
         >
           Sections
         </button>
+        {is3D && (
+          <button
+            onClick={() => setActiveTab('3d')}
+            className={`flex-1 min-w-[64px] py-1.5 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1 ${
+              activeTab === '3d'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm'
+                : 'text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/30'
+            }`}
+          >
+            <span>✨</span> 3D
+          </button>
+        )}
       </div>
 
       {/* 2. Tab Content Area */}
@@ -568,6 +584,120 @@ export function EditorSidebar({
                   );
                 })}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: 3D SCENE CONTROLS */}
+        {activeTab === '3d' && is3D && activeTemplate?.scene3DConfig && (
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                3D Interactive Scene Controls
+              </h3>
+              <p className="text-xs text-zinc-500 mt-1">
+                Fine-tune real-time spatial presentation and lighting for this template.
+              </p>
+            </div>
+
+            {/* Scene Archetype & Behavior Info */}
+            <div className="p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">Archetype:</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200 font-mono">
+                  {activeTemplate.scene3DConfig.archetype}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">Camera Interaction:</span>
+                <span className="font-semibold text-zinc-800 dark:text-zinc-200 font-mono">
+                  {activeTemplate.scene3DConfig.cameraBehavior}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-zinc-500">2D Safe Fallback:</span>
+                <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">
+                  {activeTemplate.fallbackHeroVariant}
+                </span>
+              </div>
+            </div>
+
+            {/* Rotation Speed Control */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <label className="font-semibold text-zinc-700 dark:text-zinc-300">Rotation & Motion Speed</label>
+                <span className="text-zinc-400 font-mono text-[11px]">
+                  {(activeTemplate.scene3DConfig.rotationSpeed || 1.0).toFixed(1)}x
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0.2"
+                max="3.0"
+                step="0.1"
+                value={activeTemplate.scene3DConfig.rotationSpeed || 1.0}
+                onChange={(e) => {
+                  if (activeTemplate.scene3DConfig) {
+                    activeTemplate.scene3DConfig.rotationSpeed = parseFloat(e.target.value);
+                    onUpdate3DConfig?.({ rotationSpeed: activeTemplate.scene3DConfig.rotationSpeed });
+                  }
+                }}
+                className="w-full accent-[#FF6B4A]"
+              />
+            </div>
+
+            {/* Camera Distance Control */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <label className="font-semibold text-zinc-700 dark:text-zinc-300">Camera Distance & Depth</label>
+                <span className="text-zinc-400 font-mono text-[11px]">
+                  {(activeTemplate.scene3DConfig.cameraDistance || 6.0).toFixed(1)}
+                </span>
+              </div>
+              <input
+                type="range"
+                min="3.0"
+                max="12.0"
+                step="0.5"
+                value={activeTemplate.scene3DConfig.cameraDistance || 6.0}
+                onChange={(e) => {
+                  if (activeTemplate.scene3DConfig) {
+                    activeTemplate.scene3DConfig.cameraDistance = parseFloat(e.target.value);
+                    onUpdate3DConfig?.({ cameraDistance: activeTemplate.scene3DConfig.cameraDistance });
+                  }
+                }}
+                className="w-full accent-[#FF6B4A]"
+              />
+            </div>
+
+            {/* Material Preset Selector */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                Material & Lighting Preset
+              </label>
+              <select
+                value={activeTemplate.scene3DConfig.materialPreset}
+                onChange={(e) => {
+                  if (activeTemplate.scene3DConfig) {
+                    activeTemplate.scene3DConfig.materialPreset = e.target.value as any;
+                    onUpdate3DConfig?.({ materialPreset: e.target.value as any });
+                  }
+                }}
+                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-medium focus:outline-none focus:border-[#FF6B4A]"
+              >
+                <option value="matte-studio">Matte Studio (Diffuse Clay)</option>
+                <option value="glass-refractive">Glass Refractive (Frosted Dielectric)</option>
+                <option value="neon-emissive">Neon Emissive (Cyberpunk Bloom)</option>
+                <option value="soft-pastel-toon">Soft Pastel Toon (Cel-Shaded Anime)</option>
+                <option value="brushed-metal">Brushed Metal (Anisotropic)</option>
+                <option value="paper-craft-flat">Paper Craft Flat (Origami Facets)</option>
+                <option value="chrome-liquid">Chrome Liquid (Mirror Metal)</option>
+                <option value="warm-film-grain">Warm Film Grain (Tungsten Warmth)</option>
+                <option value="monochrome-wire">Monochrome Wire (Architectural Wire)</option>
+                <option value="gradient-mesh">Gradient Mesh (Surface Normal Glow)</option>
+                <option value="holographic-iridescent">Holographic Iridescent (Fresnel Fringe)</option>
+                <option value="clay-claymation">Clay Claymation (Tactile Stop-Motion)</option>
+              </select>
             </div>
           </div>
         )}
