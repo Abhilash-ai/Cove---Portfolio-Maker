@@ -236,73 +236,80 @@ export function EditorTopBar({
           )}
         </button>
 
-        {/* Export PDF button */}
-        {onExportPdf && (
-          <button
-            onClick={onExportPdf}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all shadow-sm"
-            title="Export as paginated PDF"
-          >
-            <FileText className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">PDF</span>
-          </button>
-        )}
+        {/* Secondary Utilities: Copilot, Critic, Preview, Export PDF */}
+        <div className="flex items-center gap-1.5">
+          {/* Cove Copilot Assistant button */}
+          {onOpenCopilot && (
+            <button
+              onClick={onOpenCopilot}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[#FF6B4A]/30 bg-[#FF6B4A]/10 text-[#FF6B4A] hover:bg-[#FF6B4A]/20 transition-all shadow-sm"
+              title="Open Cove Copilot AI Writing Assistant"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Copilot</span>
+            </button>
+          )}
 
-        {/* Cove Copilot Assistant button */}
-        {onOpenCopilot && (
-          <button
-            onClick={onOpenCopilot}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-[#FF6B4A]/30 bg-[#FF6B4A]/10 text-[#FF6B4A] hover:bg-[#FF6B4A]/20 transition-all shadow-sm"
-            title="Open Cove Copilot AI Writing Assistant"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Copilot</span>
-          </button>
-        )}
+          {/* AI Portfolio Critic button */}
+          {onOpenCritic && (
+            <button
+              onClick={onOpenCritic}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-300 hover:bg-violet-500/20 transition-all shadow-sm"
+              title="Open AI Portfolio Critic"
+            >
+              <Target className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Critic</span>
+            </button>
+          )}
 
-        {/* AI Portfolio Critic button */}
-        {onOpenCritic && (
+          {/* Preview Modal button */}
           <button
-            onClick={onOpenCritic}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-violet-500/30 bg-violet-500/10 text-violet-600 dark:text-violet-300 hover:bg-violet-500/20 transition-all shadow-sm"
-            title="Open AI Portfolio Critic"
+            onClick={onPreviewPublic}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-all border border-zinc-200 dark:border-zinc-700 shadow-sm"
+            title="Preview Portfolio"
           >
-            <Target className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Critic</span>
+            <Eye className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Preview</span>
           </button>
-        )}
 
-        {/* Live Site link */}
-        {portfolio?.slug && (
+          {/* Secondary Action: Export PDF button */}
+          {onExportPdf && (
+            <button
+              onClick={onExportPdf}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all shadow-sm"
+              title="Export as paginated PDF"
+            >
+              <FileText className="w-3.5 h-3.5 text-zinc-500" />
+              <span className="hidden xl:inline">Export PDF</span>
+            </button>
+          )}
+        </div>
+
+        <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-0.5" />
+
+        {/* Live Site link (if published) */}
+        {portfolio?.slug && portfolio.status === 'published' && (
           <a
             href={`/p/${portfolio.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 shadow-sm transition shrink-0"
             title="View Live Public URL"
           >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>Live</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3 h-3" />
           </a>
         )}
 
-        {/* Preview Modal button */}
-        <button
-          onClick={onPreviewPublic}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-all border border-zinc-200 dark:border-zinc-700 shadow-sm"
-        >
-          <Eye className="w-3.5 h-3.5" />
-          <span>Preview</span>
-        </button>
-
-        {/* Real Publish Button */}
+        {/* PRIMARY CTA: Real Publish Button */}
         <button
           onClick={handlePublish}
           disabled={publishing || !portfolio}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#FF6B4A] hover:bg-[#F04E27] text-white shadow-soft transition-all disabled:opacity-50"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-[#FF6B4A] to-[#F04E27] hover:from-[#F04E27] hover:to-[#D83A14] active:scale-[0.98] text-white shadow-soft hover:shadow-coral transition-all shrink-0 disabled:opacity-50 ring-2 ring-[#FF6B4A]/20"
           title="Publish live to public URL"
         >
-          <span>{publishing ? 'Publishing...' : 'Publish'}</span>
+          <span>{publishing ? 'Publishing...' : portfolio?.status === 'published' ? 'Republish Live' : 'Publish Live'}</span>
           <ExternalLink className="w-3.5 h-3.5" />
         </button>
       </div>

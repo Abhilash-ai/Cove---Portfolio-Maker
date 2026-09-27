@@ -2,7 +2,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JwtPayload } from '@cove/shared';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'cove-super-secret-jwt-key-for-development-382910';
+const rawJwtSecret = process.env.JWT_SECRET;
+if (!rawJwtSecret) {
+  throw new Error('FATAL: JWT_SECRET environment variable is not defined. Server refusing to start without a valid JWT_SECRET.');
+}
+const JWT_SECRET: string = rawJwtSecret;
 const JWT_EXPIRES_IN = '7d';
 
 export async function hashPassword(password: string): Promise<string> {
@@ -19,5 +23,5 @@ export function generateToken(payload: JwtPayload): string {
 }
 
 export function verifyToken(token: string): JwtPayload {
-  return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  return jwt.verify(token, JWT_SECRET) as unknown as JwtPayload;
 }

@@ -19,8 +19,12 @@ const __dirname = path.dirname(__filename);
 
 export const app = express();
 
+const corsAllowedOrigins: string[] = process.env.CORS_ALLOWED_ORIGINS
+  ? process.env.CORS_ALLOWED_ORIGINS.split(',').map((o) => o.trim()).filter(Boolean)
+  : ['http://localhost:5173', 'http://localhost:4173', 'http://127.0.0.1:5173', 'http://127.0.0.1:4173'];
+
 app.use(cors({
-  origin: true,
+  origin: corsAllowedOrigins,
   credentials: true
 }));
 app.use(express.json());

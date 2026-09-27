@@ -5,7 +5,7 @@ import { HeroVariant } from '../engine/primitives/Hero.js';
 import { ProjectLayout } from '../engine/templates/templateTypes.js';
 import { ViewportMode, SaveStatus } from './editorTypes.js';
 
-const API_BASE = 'http://localhost:4000/api/v1';
+const API_BASE = '/api/v1';
 
 interface CustomizerConfig {
   portfolioId?: string;

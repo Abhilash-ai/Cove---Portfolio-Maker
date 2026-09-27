@@ -84,8 +84,38 @@ export function EditorSidebar({
   onUpdate3DConfig,
 }: Props) {
   const [activeTab, setActiveTab] = useState<EditorTab>('templates');
+  const [templateCategory, setTemplateCategory] = useState<'website3d' | 'portfolio3d' | 'all' | 'light' | 'minimal' | 'editorial' | 'studio'>('website3d');
+  const [templateSearch, setTemplateSearch] = useState('');
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === templateId);
   const is3D = Boolean(activeTemplate?.is3D);
+
+  const filteredTemplates = SEEDED_TEMPLATES.filter((tpl) => {
+    if (templateSearch.trim()) {
+      const q = templateSearch.toLowerCase();
+      const match =
+        tpl.name.toLowerCase().includes(q) ||
+        tpl.description.toLowerCase().includes(q) ||
+        tpl.category.toLowerCase().includes(q) ||
+        (tpl.scene3DConfig?.archetype || '').toLowerCase().includes(q) ||
+        (tpl.scene3DConfig?.materialPreset || '').toLowerCase().includes(q);
+      if (!match) return false;
+    }
+    if (templateCategory === 'website3d') {
+      return Boolean(tpl.is3D && (tpl.id.startsWith('tpl-web-3d-') || tpl.id.startsWith('tpl-web3d-')));
+    }
+    if (templateCategory === 'portfolio3d') {
+      return Boolean(tpl.is3D && !tpl.id.startsWith('tpl-web-3d-') && !tpl.id.startsWith('tpl-web3d-'));
+    }
+    if (templateCategory === 'light') {
+      const bg = (tpl.tokens.colors.background || '').toLowerCase();
+      const surface = (tpl.tokens.colors.surface || '').toLowerCase();
+      return bg.startsWith('#f') || bg.startsWith('#e') || bg === '#ffffff' || surface.startsWith('#f');
+    }
+    if (templateCategory === 'minimal') return tpl.category === 'minimal';
+    if (templateCategory === 'editorial') return tpl.category === 'editorial';
+    if (templateCategory === 'studio') return tpl.category === 'studio';
+    return true;
+  });
 
   return (
     <aside className="w-80 sm:w-96 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col h-full shrink-0 select-none z-20 text-zinc-900 dark:text-white transition-colors">
@@ -164,7 +194,7 @@ export function EditorSidebar({
               <div>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Design Presets</h3>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                  Your portfolio content remains 100% untouched.
+                  Showing {filteredTemplates.length} templates
                 </p>
               </div>
             </div>
@@ -179,8 +209,53 @@ export function EditorSidebar({
               </button>
             )}
 
+            {/* Quick Category Filter Pills */}
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {[
+                { id: 'website3d', label: '🌐 Website 3D' },
+                { id: 'portfolio3d', label: '✨ Portfolio 3D' },
+                { id: 'light', label: '☀️ Light Themes' },
+                { id: 'all', label: 'All' },
+                { id: 'minimal', label: 'Minimal' },
+                { id: 'editorial', label: 'Editorial' },
+                { id: 'studio', label: 'Studio' },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setTemplateCategory(cat.id as any)}
+                  className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg transition-all ${
+                    templateCategory === cat.id
+                      ? 'bg-[#FF6B4A] text-white shadow-sm'
+                      : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white border border-zinc-200 dark:border-zinc-800'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Quick Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search templates (e.g. keynote, pricing, light)..."
+                value={templateSearch}
+                onChange={(e) => setTemplateSearch(e.target.value)}
+                className="w-full px-3 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-[#FF6B4A]"
+              />
+              {templateSearch && (
+                <button
+                  onClick={() => setTemplateSearch('')}
+                  className="absolute right-2.5 top-1.5 text-zinc-400 hover:text-zinc-600 text-xs"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
             <div className="space-y-3">
-              {SEEDED_TEMPLATES.map((tpl) => {
+              {filteredTemplates.slice(0, 50).map((tpl) => {
                 const isSelected = templateId === tpl.id;
                 return (
                   <div
@@ -192,18 +267,25 @@ export function EditorSidebar({
                         : 'border-zinc-200 dark:border-zinc-800 bg-[#FAFAF8] dark:bg-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 shadow-sm'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-bold text-zinc-900 dark:text-white">{tpl.name}</h4>
-                      <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
-                        {tpl.category}
-                      </span>
+                    <div className="flex items-center justify-between gap-1.5">
+                      <h4 className="text-sm font-bold text-zinc-900 dark:text-white truncate">{tpl.name}</h4>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {tpl.is3D && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30">
+                            {tpl.id.includes('web') ? '🌐 WEB 3D' : '✨ 3D'}
+                          </span>
+                        )}
+                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                          {tpl.scene3DConfig?.archetype ? tpl.scene3DConfig.archetype.replace('-3d', '') : tpl.category}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed">{tpl.description}</p>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed line-clamp-2">{tpl.description}</p>
                     <div className="mt-3 flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.background }} />
-                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.surface }} />
-                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.accent }} />
-                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 ml-auto font-mono">
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.background }} title={`Background: ${tpl.tokens.colors.background}`} />
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.surface }} title={`Surface: ${tpl.tokens.colors.surface}`} />
+                      <span className="w-3 h-3 rounded-full border border-black/10 dark:border-white/20" style={{ backgroundColor: tpl.tokens.colors.accent }} title={`Accent: ${tpl.tokens.colors.accent}`} />
+                      <span className="text-[11px] text-zinc-400 dark:text-zinc-500 ml-auto font-mono truncate max-w-[150px]">
                         {tpl.heroVariant} • {tpl.projectLayout}
                       </span>
                     </div>

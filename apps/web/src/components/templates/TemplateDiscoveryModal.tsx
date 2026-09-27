@@ -208,7 +208,11 @@ export function TemplateDiscoveryModal({
 
     const matchesCategory =
       selectedCategory === 'all' ||
-      (selectedCategory === '3d' ? (t.is3D || t.category === '3d') : t.category.toLowerCase() === selectedCategory);
+      (selectedCategory === 'website3d' ? Boolean(t.is3D && (t.id.startsWith('tpl-web-3d-') || t.id.startsWith('tpl-web3d-'))) :
+       selectedCategory === 'portfolio3d' ? Boolean(t.is3D && !t.id.startsWith('tpl-web-3d-') && !t.id.startsWith('tpl-web3d-')) :
+       selectedCategory === 'light' ? ((t.tokens.colors.background || '').toLowerCase().startsWith('#f') || (t.tokens.colors.background || '').toLowerCase().startsWith('#e') || t.tokens.colors.background === '#ffffff' || (t.tokens.colors.surface || '').toLowerCase().startsWith('#f')) :
+       selectedCategory === '3d' ? Boolean(t.is3D || t.category === '3d') :
+       t.category === selectedCategory);
 
     const matchesInteraction =
       selectedInteraction === 'all' ||
@@ -286,21 +290,34 @@ export function TemplateDiscoveryModal({
             <span className="text-zinc-500 text-[11px] font-medium mr-1">Filter:</span>
 
             {/* Category */}
-            {['all', '3d', 'minimal', 'editorial', 'studio', 'brutalist', 'swiss', 'cinematic', 'monochrome', 'academic', 'luxury', 'playful'].map((cat) => (
+            {[
+              { id: 'all', label: 'All' },
+              { id: 'website3d', label: '🌐 Website 3D (252)' },
+              { id: 'portfolio3d', label: '✨ Portfolio 3D (250)' },
+              { id: 'light', label: '☀️ Light Themes' },
+              { id: 'minimal', label: 'Minimal' },
+              { id: 'editorial', label: 'Editorial' },
+              { id: 'studio', label: 'Studio' },
+              { id: 'brutalist', label: 'Brutalist' },
+              { id: 'swiss', label: 'Swiss' },
+              { id: 'cinematic', label: 'Cinematic' },
+              { id: 'academic', label: 'Academic' },
+              { id: 'luxury', label: 'Luxury' },
+            ].map((cat) => (
               <button
-                key={cat}
+                key={cat.id}
                 type="button"
                 onClick={() => {
-                  setSelectedCategory(cat);
+                  setSelectedCategory(cat.id);
                   setVisibleCount(24);
                 }}
-                className={`px-3 py-1 rounded-lg border capitalize transition-all ${
-                  selectedCategory === cat
+                className={`px-3 py-1 rounded-lg border transition-all ${
+                  selectedCategory === cat.id
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm font-semibold'
                     : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
                 }`}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
 
