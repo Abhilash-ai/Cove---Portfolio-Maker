@@ -5,7 +5,9 @@ import { ResumeUploadModal } from '../resume/ResumeUploadModal.js';
 
 interface Props {
   token: string;
+  workspaceType?: 'portfolio' | 'website';
   onSelectPortfolio: (portfolio: PortfolioSummary) => void;
+  onManageProjects?: (portfolio: PortfolioSummary) => void;
   onOpenEditor?: (portfolio: PortfolioSummary) => void;
   activePortfolioId?: string;
   userName?: string;
@@ -13,7 +15,9 @@ interface Props {
 
 export function PortfolioManager({
   token,
+  workspaceType = 'portfolio',
   onSelectPortfolio,
+  onManageProjects,
   onOpenEditor,
   activePortfolioId,
   userName = 'Creator',
@@ -24,6 +28,7 @@ export function PortfolioManager({
 
   // New portfolio state & creation UI toggle
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedWorkspaceType, setSelectedWorkspaceType] = useState<'portfolio' | 'website'>(workspaceType);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [creating, setCreating] = useState(false);
@@ -40,9 +45,10 @@ export function PortfolioManager({
   const [editSections, setEditSections] = useState<string[]>([]);
 
   useEffect(() => {
+    setSelectedWorkspaceType(workspaceType);
     loadPortfolios();
     loadProfile();
-  }, []);
+  }, [workspaceType]);
 
   async function loadProfile() {
     try {
@@ -62,14 +68,18 @@ export function PortfolioManager({
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/v1/portfolios/mine', {
+      const res = await fetch(`/api/v1/portfolios/mine?workspaceType=${workspaceType}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setPortfolios(data.data.portfolios);
-        if (data.data.portfolios.length > 0 && !activePortfolioId) {
-          onSelectPortfolio(data.data.portfolios[0]);
+        const filtered = (data.data.portfolios as PortfolioSummary[]).filter((p) => {
+          const type = p.workspaceType || 'portfolio';
+          return type === workspaceType;
+        });
+        setPortfolios(filtered);
+        if (filtered.length > 0 && !activePortfolioId) {
+          onSelectPortfolio(filtered[0]);
         }
       } else {
         setError(data.error?.message || 'Failed to load portfolios');
@@ -93,7 +103,11 @@ export function PortfolioManager({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title, slug }),
+        body: JSON.stringify({
+          title,
+          slug,
+          workspaceType: selectedWorkspaceType,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.success) {
@@ -176,36 +190,74 @@ export function PortfolioManager({
     setEditSections(copy);
   }
 
+  const isWebsite = workspaceType === 'website';
+  const entityName = isWebsite ? 'Website' : 'Portfolio';
+  const entityNamePlural = isWebsite ? 'Websites' : 'Portfolios';
+  const tagline = isWebsite ? 'Build a website for anything.' : 'Showcase your work and career.';
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* First-Run Experience (When user has 0 portfolios) */}
+      {/* Workspace Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-[#FF6B4A]/10 text-[#FF6B4A] border border-[#FF6B4A]/20">
+              {isWebsite ? '🌐 WEBSITE WORKSPACE' : '✨ PORTFOLIO WORKSPACE'}
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">
+            {tagline}
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            {isWebsite
+              ? 'Build and publish full multi-section web experiences with 3D product heroes, interactive pricing, and live features.'
+              : 'Curate your career milestones, high-impact case studies, and interactive 3D portfolio archetypes.'}
+          </p>
+        </div>
+
+        {!showCreateForm && (
+          <button
+            onClick={() => setShowCreateForm(true)}
+            className="px-4 py-2 text-xs font-semibold text-white bg-[#FF6B4A] hover:bg-[#F04E27] rounded-xl shadow-soft hover:shadow-coral transition flex items-center justify-center gap-1.5 shrink-0 self-start sm:self-auto"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New {entityName}</span>
+          </button>
+        )}
+      </div>
+
+      {/* First-Run Experience (When user has 0 items in this workspace) */}
       {!loading && portfolios.length === 0 && !showCreateForm && (
         <div className="bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-3xl p-8 sm:p-12 shadow-soft transition-colors">
           <div className="max-w-2xl mx-auto text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#FF6B4A]/10 text-[#FF6B4A] border border-[#FF6B4A]/20 mb-4">
-              <span>First-Run Setup</span>
+              <span>{entityName} Setup</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-              Welcome to Cove, {userName}! 👋
+              Welcome to {entityName} Workspace, {userName}! 👋
             </h2>
             <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Let's create your personal showcase. Choose how you want to build your first portfolio:
+              {isWebsite
+                ? 'Create your first website project. Choose how you want to build:'
+                : "Let's create your personal showcase. Choose how you want to build your first portfolio:"}
             </p>
           </div>
 
           {/* Two Side-by-Side Primary Action Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {/* Card 1: Resume Upload */}
+            {/* Card 1: Resume / AI Structure Upload */}
             <div className="flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-[#FF6B4A]/50 transition-all duration-300 shadow-soft hover:shadow-soft-lg group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-[#FF6B4A]/10 text-[#FF6B4A] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                   <FileText className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2">
-                  Upload your resume
+                  {isWebsite ? 'AI Website Assistant' : 'Upload your resume'}
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Have an existing resume? Upload your PDF or paste text to automatically extract experience, skills, and projects with AI.
+                  {isWebsite
+                    ? 'Generate website sections, hero copy, feature matrices, and testimonials automatically with AI Copilot.'
+                    : 'Have an existing resume? Upload your PDF or paste text to automatically extract experience, skills, and projects with AI.'}
                 </p>
               </div>
 
@@ -215,8 +267,8 @@ export function PortfolioManager({
                   onClick={() => setShowResumeModal(true)}
                   className="w-full py-3 px-4 rounded-xl bg-[#FF6B4A] hover:bg-[#F04E27] text-white text-xs sm:text-sm font-semibold shadow-soft hover:shadow-coral transition-all active:scale-95 flex items-center justify-center gap-2"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>Upload Resume</span>
+                  <Sparkles className="w-4 h-4" />
+                  <span>{isWebsite ? 'AI Assistant' : 'Upload Resume'}</span>
                 </button>
               </div>
             </div>
@@ -225,13 +277,13 @@ export function PortfolioManager({
             <div className="flex flex-col justify-between p-6 sm:p-8 rounded-2xl bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 hover:border-[#FF6B4A]/50 transition-all duration-300 shadow-soft hover:shadow-soft-lg group">
               <div>
                 <div className="w-12 h-12 rounded-xl bg-[#FF6B4A]/10 text-[#FF6B4A] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-6 h-6" />
+                  <Plus className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2">
                   Start from scratch
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                  Set up a clean, blank portfolio canvas with your choice of title and custom URL slug. Add projects and sections as you go.
+                  Set up a clean canvas with custom title and URL slug. Choose from {isWebsite ? 'Website 3D archetypes' : 'Portfolio 3D & 2D templates'}.
                 </p>
               </div>
 
@@ -250,16 +302,16 @@ export function PortfolioManager({
         </div>
       )}
 
-      {/* Creation Box (Shown if user clicks to create or already has portfolios and wants another) */}
+      {/* Creation Box */}
       {showCreateForm && (
         <div className="bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-soft transition-colors">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
-                Create New Portfolio
+                Create New {entityName}
               </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Each portfolio gets its own projects, customized sections, and public slug.
+                Each project gets its own custom workspace, templates, sections, and live slug.
               </p>
             </div>
             {portfolios.length > 0 && (
@@ -279,15 +331,44 @@ export function PortfolioManager({
             </div>
           )}
 
+          {/* Up-Front Workspace Type Picker */}
+          <div className="flex items-center gap-2 mb-4 p-2 rounded-xl bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 w-fit">
+            <span className="text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider px-2">
+              Workspace Type:
+            </span>
+            <button
+              type="button"
+              onClick={() => setSelectedWorkspaceType('portfolio')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                selectedWorkspaceType === 'portfolio'
+                  ? 'bg-[#FF6B4A] text-white shadow-soft'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              ✨ Portfolio
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedWorkspaceType('website')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                selectedWorkspaceType === 'website'
+                  ? 'bg-[#FF6B4A] text-white shadow-soft'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              🌐 Website
+            </button>
+          </div>
+
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                Portfolio Title
+                {selectedWorkspaceType === 'website' ? 'Website Title' : 'Portfolio Title'}
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Design Showcase 2026"
+                placeholder={selectedWorkspaceType === 'website' ? 'e.g. Acme Studio Landing' : 'e.g. Design Showcase 2026'}
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);
@@ -304,7 +385,7 @@ export function PortfolioManager({
               <input
                 type="text"
                 required
-                placeholder="e.g. alex-showcase"
+                placeholder={selectedWorkspaceType === 'website' ? 'e.g. acme-studio' : 'e.g. alex-showcase'}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-xs bg-[#FAFAF8] dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-white font-mono focus:outline-none focus:border-[#FF6B4A] focus:ring-1 focus:ring-[#FF6B4A]"
@@ -333,19 +414,21 @@ export function PortfolioManager({
         </div>
       )}
 
-      {/* Existing Portfolios List */}
+      {/* Existing Items List */}
       {(portfolios.length > 0 || (!loading && showCreateForm)) && (
         <div className="bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-soft transition-colors">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6 gap-3">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <span>Your Portfolios</span>
+                <span>Your {entityNamePlural}</span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono">
                   {portfolios.length}
                 </span>
               </h3>
               <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Manage your live showcases, customize projects, and configure templates.
+                {isWebsite
+                  ? 'Manage your live website deployments, customize multi-section pages, and apply Website 3D templates.'
+                  : 'Manage your live showcases, customize projects, and configure templates.'}
               </p>
             </div>
 
@@ -354,8 +437,8 @@ export function PortfolioManager({
                 onClick={() => setShowResumeModal(true)}
                 className="px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-xl transition flex items-center gap-1.5"
               >
-                <FileText className="w-3.5 h-3.5 text-[#FF6B4A]" />
-                <span>Import Resume</span>
+                <Sparkles className="w-3.5 h-3.5 text-[#FF6B4A]" />
+                <span>{isWebsite ? 'AI Assistant' : 'Import Resume'}</span>
               </button>
               {!showCreateForm && (
                 <button
@@ -363,7 +446,7 @@ export function PortfolioManager({
                   className="px-3 py-1.5 text-xs font-semibold text-white bg-[#FF6B4A] hover:bg-[#F04E27] rounded-xl shadow-soft transition flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>New Portfolio</span>
+                  <span>New {entityName}</span>
                 </button>
               )}
               <button
@@ -496,6 +579,9 @@ export function PortfolioManager({
                             >
                               {p.status}
                             </span>
+                            <span className="px-2.5 py-0.5 text-[10px] font-mono font-medium rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">
+                              {p.workspaceType === 'website' ? '🌐 Website' : '✨ Portfolio'}
+                            </span>
                             {isSelected && (
                               <span className="px-2.5 py-0.5 text-[10px] font-medium rounded-full bg-[#FF6B4A]/10 text-[#FF6B4A] border border-[#FF6B4A]/20">
                                 Active Workspace
@@ -523,6 +609,14 @@ export function PortfolioManager({
                           >
                             {isSelected ? 'Managing' : 'Select'}
                           </button>
+                          {onManageProjects && (
+                            <button
+                              onClick={() => onManageProjects(p)}
+                              className="px-2.5 py-1.5 text-xs bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-xl transition"
+                            >
+                              Projects ({p.projectCount || 0})
+                            </button>
+                          )}
                           {onOpenEditor && (
                             <button
                               onClick={() => onOpenEditor(p)}

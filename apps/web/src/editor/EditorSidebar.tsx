@@ -24,6 +24,7 @@ interface Props {
   onToggleSectionVisibility: (sectionKey: string) => void;
   onOpenDiscovery?: () => void;
   onUpdate3DConfig?: (config: { rotationSpeed?: number; cameraDistance?: number; materialPreset?: any }) => void;
+  workspaceType?: 'portfolio' | 'website' | 'deck';
 }
 
 const HEADING_FONTS = [
@@ -82,9 +83,10 @@ export function EditorSidebar({
   onToggleSectionVisibility,
   onOpenDiscovery,
   onUpdate3DConfig,
+  workspaceType,
 }: Props) {
   const [activeTab, setActiveTab] = useState<EditorTab>('templates');
-  const [templateCategory, setTemplateCategory] = useState<'website3d' | 'portfolio3d' | 'all' | 'light' | 'minimal' | 'editorial' | 'studio'>('website3d');
+  const [templateCategory, setTemplateCategory] = useState<'website3d' | 'portfolio3d' | 'all' | 'light' | 'minimal' | 'editorial' | 'studio'>(() => (workspaceType === 'website' ? 'website3d' : 'portfolio3d'));
   const [templateSearch, setTemplateSearch] = useState('');
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === templateId);
   const is3D = Boolean(activeTemplate?.is3D);

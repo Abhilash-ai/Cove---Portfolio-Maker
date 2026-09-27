@@ -132,12 +132,15 @@ export interface ProjectDto {
   updatedAt: string;
 }
 
+export type WorkspaceType = 'portfolio' | 'website' | 'deck';
+
 export interface PortfolioSummary {
   id: string;
   userId: string;
   title: string;
   slug: string;
   status: PortfolioStatus;
+  workspaceType: WorkspaceType;
   sectionOrder: string[];
   customTokens?: any;
   activeTemplateId?: string | null;

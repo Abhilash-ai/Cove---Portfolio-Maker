@@ -171,6 +171,7 @@ export function DesignEngineCanvas({ portfolio, token }: Props) {
     title: 'Architectural & Spatial Studio',
     slug: 'studio-demo',
     status: 'draft',
+    workspaceType: 'portfolio',
     sectionOrder: ['hero', 'projects', 'skills', 'experience', 'contact'],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()

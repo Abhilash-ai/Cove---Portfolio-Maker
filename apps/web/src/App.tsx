@@ -3,7 +3,7 @@ import { PortfolioSummary, AuthenticatedUser } from '@cove/shared';
 import { PortfolioManager } from './components/crud/PortfolioManager.js';
 import { ProjectManager } from './components/crud/ProjectManager.js';
 import { ProfileEditor } from './components/crud/ProfileEditor.js';
-import { DesignEngineCanvas } from './components/preview/DesignEngineCanvas.js';
+import { PresentationWorkspace } from './components/presentation/PresentationWorkspace.js';
 import { VisualEditor } from './editor/VisualEditor.js';
 import { PublicPortfolioPage } from './pages/PublicPortfolioPage.js';
 import { LandingPage } from './pages/LandingPage.js';
@@ -13,7 +13,9 @@ import { UserSettingsModal } from './components/settings/UserSettingsModal.js';
 import { CoveLogo } from './assets/CoveLogo.js';
 import { ThemeToggle } from './components/common/ThemeToggle.js';
 import { CoveCopilotModal } from './components/copilot/CoveCopilotModal.js';
-import { Settings, Shield, LogOut, ArrowLeft, Sparkles } from 'lucide-react';
+import { Settings, Shield, LogOut, ArrowLeft, Sparkles, BarChart2 } from 'lucide-react';
+
+export type WorkspaceTab = 'profile' | 'portfolio' | 'website' | 'deck' | 'projects' | 'visual-editor' | 'analytics';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
@@ -29,8 +31,8 @@ export default function App() {
     return searchParams.get('p');
   });
 
-  // Tab State: 'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'
-  const [activeTab, setActiveTab] = useState<'portfolios' | 'projects' | 'profile' | 'design-engine' | 'visual-editor' | 'analytics'>('portfolios');
+  // Top-Level Product Workspaces: 'profile' | 'portfolio' | 'website' | 'deck'
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>('portfolio');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -109,11 +111,15 @@ export default function App() {
     setToken(null);
     setCurrentUser(null);
     setActivePortfolio(null);
-    setActiveTab('portfolios');
+    setActiveTab('portfolio');
     setShowAuthScreen(false);
   }
 
   function handleSelectPortfolio(p: PortfolioSummary) {
+    setActivePortfolio(p);
+  }
+
+  function handleManageProjects(p: PortfolioSummary) {
     setActivePortfolio(p);
     setActiveTab('projects');
   }
@@ -164,7 +170,7 @@ export default function App() {
       <VisualEditor
         portfolioId={activePortfolio?.id}
         token={token}
-        onBack={() => setActiveTab('portfolios')}
+        onBack={() => setActiveTab(activePortfolio?.workspaceType === 'website' ? 'website' : 'portfolio')}
       />
     );
   }
@@ -182,29 +188,6 @@ export default function App() {
             <div className="flex items-center gap-3">
               <nav className="flex items-center gap-1 bg-[#FAFAF8] dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 p-1 rounded-xl shadow-soft">
                 <button
-                  onClick={() => setActiveTab('portfolios')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
-                    activeTab === 'portfolios'
-                      ? 'bg-[#FF6B4A] text-white shadow-soft'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
-                  }`}
-                >
-                  Portfolios
-                </button>
-                <button
-                  onClick={() => {
-                    if (activePortfolio) setActiveTab('projects');
-                  }}
-                  disabled={!activePortfolio}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition disabled:opacity-40 ${
-                    activeTab === 'projects'
-                      ? 'bg-[#FF6B4A] text-white shadow-soft'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
-                  }`}
-                >
-                  Projects {activePortfolio && `(${activePortfolio.title})`}
-                </button>
-                <button
                   onClick={() => setActiveTab('profile')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
                     activeTab === 'profile'
@@ -215,37 +198,34 @@ export default function App() {
                   Profile
                 </button>
                 <button
-                  onClick={() => setActiveTab('visual-editor')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition border ${
-                    activeTab === 'visual-editor'
-                      ? 'bg-[#FF6B4A] text-white border-[#FF6B4A] shadow-soft'
-                      : 'text-[#FF6B4A] border-[#FF6B4A]/30 bg-[#FF6B4A]/5 hover:bg-[#FF6B4A]/10'
-                  }`}
-                >
-                  🎨 Editor
-                </button>
-                <button
-                  onClick={() => {
-                    if (activePortfolio) setActiveTab('analytics');
-                  }}
-                  disabled={!activePortfolio}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition disabled:opacity-40 ${
-                    activeTab === 'analytics'
-                      ? 'bg-[#FF6B4A] text-white shadow-soft'
-                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
-                  }`}
-                >
-                  📊 Analytics
-                </button>
-                <button
-                  onClick={() => setActiveTab('design-engine')}
+                  onClick={() => setActiveTab('portfolio')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
-                    activeTab === 'design-engine'
+                    activeTab === 'portfolio'
                       ? 'bg-[#FF6B4A] text-white shadow-soft'
                       : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
                   }`}
                 >
-                  Canvas
+                  Portfolio
+                </button>
+                <button
+                  onClick={() => setActiveTab('website')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                    activeTab === 'website'
+                      ? 'bg-[#FF6B4A] text-white shadow-soft'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                  }`}
+                >
+                  Website
+                </button>
+                <button
+                  onClick={() => setActiveTab('deck')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                    activeTab === 'deck'
+                      ? 'bg-[#FF6B4A] text-white shadow-soft'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                  }`}
+                >
+                  PPT
                 </button>
               </nav>
 
@@ -258,6 +238,20 @@ export default function App() {
                   <Sparkles className="w-3.5 h-3.5 text-violet-500 animate-pulse" />
                   <span>AI Copilot</span>
                 </button>
+                {activePortfolio && (
+                  <button
+                    onClick={() => setActiveTab('analytics')}
+                    className={`px-2.5 py-1.5 text-xs font-medium rounded-xl border transition flex items-center gap-1 shadow-soft ${
+                      activeTab === 'analytics'
+                        ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 border-transparent'
+                        : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border-[#E5E5E0] dark:border-zinc-800 bg-white dark:bg-zinc-900'
+                    }`}
+                    title={`View analytics for ${activePortfolio.title}`}
+                  >
+                    <BarChart2 className="w-3.5 h-3.5 text-[#FF6B4A]" />
+                    <span>Analytics</span>
+                  </button>
+                )}
                 {currentUser.role === 'ADMIN' && (
                   <button
                     onClick={() => setShowAdminModal(true)}
@@ -305,34 +299,74 @@ export default function App() {
       <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full">
         {currentUser && token ? (
           <div>
-            {activeTab === 'portfolios' && (
+            {activeTab === 'profile' && <ProfileEditor token={token} />}
+
+            {activeTab === 'portfolio' && (
               <PortfolioManager
                 token={token}
+                workspaceType="portfolio"
                 onSelectPortfolio={handleSelectPortfolio}
+                onManageProjects={handleManageProjects}
                 onOpenEditor={handleOpenEditor}
                 activePortfolioId={activePortfolio?.id}
                 userName={currentUser.name || undefined}
               />
             )}
 
-            {activeTab === 'projects' && activePortfolio && (
-              <ProjectManager portfolio={activePortfolio} token={token} />
-            )}
-
-            {activeTab === 'profile' && <ProfileEditor token={token} />}
-
-            {activeTab === 'analytics' && activePortfolio && (
-              <AnalyticsDashboard
-                portfolio={activePortfolio}
+            {activeTab === 'website' && (
+              <PortfolioManager
                 token={token}
-                onRefreshPortfolio={() => {
-                  fetchCurrentUser(token);
-                }}
+                workspaceType="website"
+                onSelectPortfolio={handleSelectPortfolio}
+                onManageProjects={handleManageProjects}
+                onOpenEditor={handleOpenEditor}
+                activePortfolioId={activePortfolio?.id}
+                userName={currentUser.name || undefined}
               />
             )}
 
-            {activeTab === 'design-engine' && (
-              <DesignEngineCanvas portfolio={activePortfolio} token={token} />
+            {activeTab === 'deck' && <PresentationWorkspace />}
+
+            {activeTab === 'projects' && activePortfolio && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                  <button
+                    onClick={() => setActiveTab(activePortfolio.workspaceType === 'website' ? 'website' : 'portfolio')}
+                    className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition shadow-soft"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back to {activePortfolio.workspaceType === 'website' ? 'Websites' : 'Portfolios'}</span>
+                  </button>
+                  <span className="text-xs font-mono text-zinc-500">
+                    Active: <strong className="text-zinc-900 dark:text-white">{activePortfolio.title}</strong>
+                  </span>
+                </div>
+                <ProjectManager portfolio={activePortfolio} token={token} />
+              </div>
+            )}
+
+            {activeTab === 'analytics' && activePortfolio && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                  <button
+                    onClick={() => setActiveTab(activePortfolio.workspaceType === 'website' ? 'website' : 'portfolio')}
+                    className="text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition shadow-soft"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>Back to {activePortfolio.workspaceType === 'website' ? 'Websites' : 'Portfolios'}</span>
+                  </button>
+                  <span className="text-xs font-mono text-zinc-500">
+                    Analytics: <strong className="text-zinc-900 dark:text-white">{activePortfolio.title}</strong>
+                  </span>
+                </div>
+                <AnalyticsDashboard
+                  portfolio={activePortfolio}
+                  token={token}
+                  onRefreshPortfolio={() => {
+                    fetchCurrentUser(token);
+                  }}
+                />
+              </div>
             )}
           </div>
         ) : (

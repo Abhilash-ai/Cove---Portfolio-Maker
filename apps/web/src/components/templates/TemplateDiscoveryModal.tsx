@@ -19,6 +19,7 @@ const DEMO_PORTFOLIO: PortfolioSummary = {
   title: 'Design & Engineering Showcase',
   slug: 'demo',
   status: 'published',
+  workspaceType: 'portfolio',
   sectionOrder: ['hero', 'projects', 'experience', 'skills', 'contact'],
   activeTemplateId: 'foundational-minimal',
   createdAt: new Date().toISOString(),
@@ -113,7 +114,11 @@ export function TemplateDiscoveryModal({
   onClose
 }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    if (portfolio?.workspaceType === 'website') return 'website3d';
+    if (portfolio?.workspaceType === 'portfolio') return 'portfolio3d';
+    return 'all';
+  });
   const [selectedProfession, setSelectedProfession] = useState('all');
   const [selectedInteraction, setSelectedInteraction] = useState('all');
   const [visibleCount, setVisibleCount] = useState(24);

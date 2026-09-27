@@ -148,6 +148,7 @@ export function EditorCanvas({
     title: 'Elena Rostova — Portfolio',
     slug: 'elena-rostova',
     status: 'draft',
+    workspaceType: 'portfolio',
     sectionOrder,
     projectCount: resolvedProjects.length,
     createdAt: new Date().toISOString(),

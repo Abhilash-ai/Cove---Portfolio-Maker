@@ -189,9 +189,14 @@ export function ProfileEditor({ token }: Props) {
     <div className="bg-white dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-soft transition-colors max-w-5xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-5 mb-6 gap-4">
         <div>
-          <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Creator Profile</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-[#FF6B4A]/10 text-[#FF6B4A] border border-[#FF6B4A]/20">
+              👤 PROFILE WORKSPACE
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white">Build your professional identity.</h2>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
-            Manage your full professional details, skills, experience, and links
+            Shared identity data, credentials, and skills automatically synced across your Portfolio, Website, and PPT workspaces.
           </p>
         </div>
         <div className="flex items-center gap-3">

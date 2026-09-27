@@ -11,9 +11,15 @@ const DEFAULT_SECTION_ORDER = ['hero', 'projects', 'skills', 'experience', 'abou
 portfolioRouter.get('/mine', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const callerId = req.user!.id;
+    const requestedType = req.query.workspaceType as string | undefined;
+
+    const whereClause: any = { userId: callerId };
+    if (requestedType && ['portfolio', 'website', 'deck'].includes(requestedType)) {
+      whereClause.workspaceType = requestedType;
+    }
 
     const portfolios = await prisma.portfolio.findMany({
-      where: { userId: callerId },
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
       include: {
         _count: {
@@ -31,6 +37,7 @@ portfolioRouter.get('/mine', async (req: AuthenticatedRequest, res: Response): P
           title: p.title,
           slug: p.slug,
           status: p.status,
+          workspaceType: p.workspaceType || 'portfolio',
           sectionOrder: (p.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
           customTokens: p.customTokens,
           activeTemplateId: p.activeTemplateId,
@@ -50,12 +57,16 @@ portfolioRouter.get('/mine', async (req: AuthenticatedRequest, res: Response): P
 portfolioRouter.post('/', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const callerId = req.user!.id;
-    const { title, slug, sectionOrder } = req.body;
+    const { title, slug, sectionOrder, workspaceType } = req.body;
 
     if (!title || !slug) {
       res.status(400).json({ success: false, error: { code: 'INVALID_INPUT', message: 'Title and slug are required' } });
       return;
     }
+
+    const validWorkspaceType = ['portfolio', 'website', 'deck'].includes(workspaceType)
+      ? workspaceType
+      : 'portfolio';
 
     const normalizedSlug = String(slug).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '-');
     const existingSlug = await prisma.portfolio.findUnique({
@@ -73,6 +84,7 @@ portfolioRouter.post('/', async (req: AuthenticatedRequest, res: Response): Prom
         title: title.trim(),
         slug: normalizedSlug,
         status: 'draft',
+        workspaceType: validWorkspaceType,
         sectionOrder: Array.isArray(sectionOrder) ? sectionOrder : DEFAULT_SECTION_ORDER
       }
     });
@@ -86,6 +98,7 @@ portfolioRouter.post('/', async (req: AuthenticatedRequest, res: Response): Prom
           title: portfolio.title,
           slug: portfolio.slug,
           status: portfolio.status,
+          workspaceType: portfolio.workspaceType,
           sectionOrder: (portfolio.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
           createdAt: portfolio.createdAt.toISOString(),
           updatedAt: portfolio.updatedAt.toISOString()
@@ -136,6 +149,7 @@ portfolioRouter.get('/:id', async (req: AuthenticatedRequest, res: Response): Pr
           title: portfolio.title,
           slug: portfolio.slug,
           status: portfolio.status,
+          workspaceType: portfolio.workspaceType || 'portfolio',
           sectionOrder: (portfolio.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
           customTokens: portfolio.customTokens,
           activeTemplateId: portfolio.activeTemplateId,
@@ -189,7 +203,7 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
   try {
     const callerId = req.user!.id;
     const { id } = req.params;
-    const { title, slug, status, sectionOrder, customTokens, activeTemplateId } = req.body;
+    const { title, slug, status, sectionOrder, customTokens, activeTemplateId, workspaceType } = req.body;
 
     const existing = await prisma.portfolio.findUnique({ where: { id } });
     if (!existing) {
@@ -218,6 +232,7 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
         title: title !== undefined ? title.trim() : undefined,
         slug: normalizedSlug !== undefined ? normalizedSlug : undefined,
         status: status === 'published' || status === 'draft' ? status : undefined,
+        workspaceType: workspaceType && ['portfolio', 'website', 'deck'].includes(workspaceType) ? workspaceType : undefined,
         sectionOrder: Array.isArray(sectionOrder) ? sectionOrder : undefined,
         customTokens: customTokens !== undefined ? customTokens : undefined,
         activeTemplateId: activeTemplateId !== undefined ? activeTemplateId : undefined,
@@ -234,6 +249,7 @@ portfolioRouter.put('/:id', async (req: AuthenticatedRequest, res: Response): Pr
           title: updated.title,
           slug: updated.slug,
           status: updated.status,
+          workspaceType: updated.workspaceType || 'portfolio',
           sectionOrder: (updated.sectionOrder as string[]) || DEFAULT_SECTION_ORDER,
           customTokens: updated.customTokens,
           activeTemplateId: updated.activeTemplateId,

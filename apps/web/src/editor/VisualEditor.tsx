@@ -68,6 +68,7 @@ export function VisualEditor({ portfolioId, token, onBack }: Props) {
           onMoveSection={store.moveSection}
           onToggleSectionVisibility={store.toggleSectionVisibility}
           onOpenDiscovery={() => setShowDiscovery(true)}
+          workspaceType={store.portfolio?.workspaceType}
         />
 
         <EditorCanvas
