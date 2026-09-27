@@ -70,8 +70,6 @@ export function SceneArchetypes({
       return <OrbitCameraShowcase materials={materials} projects={displayProjects} onFocusPoint={onFocusPoint} />;
     case '3d-card-flip-casestudy':
       return <CardFlipCaseStudy materials={materials} projects={displayProjects} onFocusPoint={onFocusPoint} />;
-    case 'tunnel-scroll':
-      return <TunnelScroll materials={materials} rotationSpeed={rotationSpeed} projects={displayProjects} />;
     case 'isometric-diorama':
       return <IsometricDiorama materials={materials} projects={displayProjects} onFocusPoint={onFocusPoint} />;
     case 'morphing-geometry-hero':

@@ -28,7 +28,6 @@ export type SceneArchetype3D =
   | 'particle-field-hero'
   | 'orbit-camera-showcase'
   | '3d-card-flip-casestudy'
-  | 'tunnel-scroll'
   | 'isometric-diorama'
   | 'morphing-geometry-hero'
   | 'interactive-sphere-cloud'
