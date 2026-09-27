@@ -42,11 +42,19 @@ export interface ParsedCertification {
   issueDate?: string | null;
 }
 
+export interface ParsedProject {
+  title: string;
+  shortDescription?: string | null;
+  tools?: string[];
+  role?: string | null;
+}
+
 export interface ParsedResumeDto {
   contact: ParsedContact;
   experiences: ParsedExperience[];
   educations: ParsedEducation[];
   skills: ParsedSkill[];
+  projects: ParsedProject[];
   certifications: ParsedCertification[];
   rawText: string;
 }
@@ -66,5 +74,6 @@ export interface ResumeMergePayload {
   selectedExperiences: ParsedExperience[];
   selectedEducations: ParsedEducation[];
   selectedSkills: ParsedSkill[];
+  selectedProjects?: ParsedProject[];
   selectedCertifications: ParsedCertification[];
 }

@@ -1,9 +1,10 @@
 import { ensurePostgresRunning } from '../db-server.js';
 import { PrismaClient } from '@prisma/client';
 import { ALL_EXPANDED_TEMPLATES } from '../../../web/src/engine/templates/expandedTemplates.js';
+import { ALL_COVE_TEMPLATES } from '../../../web/src/engine/templates/templateRegistry.js';
 
 async function main() {
-  console.log('--- Cove: Seeding Expanded Interactive Templates (123 archetypes) ---');
+  console.log('--- Cove: Seeding Templates (Distinct & Expanded Archetypes) ---');
 
   await ensurePostgresRunning(5433);
 
@@ -16,10 +17,11 @@ async function main() {
   });
 
   await prisma.$connect();
-  console.log(`Discovered ${ALL_EXPANDED_TEMPLATES.length} templates in catalog.`);
+  const allTemplates = [...ALL_EXPANDED_TEMPLATES, ...ALL_COVE_TEMPLATES];
+  console.log(`Discovered ${allTemplates.length} templates in total catalog.`);
 
   let inserted = 0;
-  for (const tpl of ALL_EXPANDED_TEMPLATES) {
+  for (const tpl of allTemplates) {
     await prisma.template.upsert({
       where: { id: tpl.id },
       update: {
@@ -37,8 +39,8 @@ async function main() {
     inserted++;
   }
 
-  // Prune orphan templates that are not in the new 123 catalog, if unreferenced
-  const validIds = new Set(ALL_EXPANDED_TEMPLATES.map((t) => t.id));
+  // Prune orphan templates that are not in valid set, if unreferenced
+  const validIds = new Set(allTemplates.map((t) => t.id));
   const allInDb = await prisma.template.findMany({ select: { id: true } });
   const orphanIds = allInDb.filter((t) => !validIds.has(t.id)).map((t) => t.id);
 

@@ -5,7 +5,11 @@ import { ProjectManager } from './components/crud/ProjectManager.js';
 import { ProfileEditor } from './components/crud/ProfileEditor.js';
 import { PresentationWorkspace } from './components/presentation/PresentationWorkspace.js';
 import { VisualEditor } from './editor/VisualEditor.js';
+import { WebsiteEditor } from './editor/WebsiteEditor.js';
 import { PublicPortfolioPage } from './pages/PublicPortfolioPage.js';
+import { PublicWebsitePage } from './pages/PublicWebsitePage.js';
+import { CoveHome } from './pages/CoveHome.js';
+import { ResumeUploadModal } from './components/resume/ResumeUploadModal.js';
 import { LandingPage } from './pages/LandingPage.js';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard.js';
 import { AdminDashboardModal } from './components/admin/AdminDashboardModal.js';
@@ -15,7 +19,7 @@ import { ThemeToggle } from './components/common/ThemeToggle.js';
 import { CoveCopilotModal } from './components/copilot/CoveCopilotModal.js';
 import { Settings, Shield, LogOut, ArrowLeft, Sparkles, BarChart2 } from 'lucide-react';
 
-export type WorkspaceTab = 'profile' | 'portfolio' | 'website' | 'deck' | 'projects' | 'visual-editor' | 'analytics';
+export type WorkspaceTab = 'home' | 'profile' | 'portfolio' | 'website' | 'deck' | 'projects' | 'visual-editor' | 'website-editor' | 'analytics';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('cove_token'));
@@ -31,12 +35,22 @@ export default function App() {
     return searchParams.get('p');
   });
 
-  // Top-Level Product Workspaces: 'profile' | 'portfolio' | 'website' | 'deck'
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>('portfolio');
+  // Detect public website slug from URL e.g. /w/:slug or ?w=:slug
+  const [publicWebsiteSlug, setPublicWebsiteSlug] = useState<string | null>(() => {
+    const pathname = window.location.pathname;
+    const match = pathname.match(/^\/w\/([a-zA-Z0-9-_]+)/);
+    if (match) return match[1];
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get('w');
+  });
+
+  // Top-Level Product Workspaces: 'home' | 'profile' | 'portfolio' | 'website' | 'deck'
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>('home');
   const [activePortfolio, setActivePortfolio] = useState<PortfolioSummary | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showCopilotModal, setShowCopilotModal] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
 
   // Landing vs Auth view state for logged-out visitors
   const [showAuthScreen, setShowAuthScreen] = useState(false);
@@ -111,7 +125,7 @@ export default function App() {
     setToken(null);
     setCurrentUser(null);
     setActivePortfolio(null);
-    setActiveTab('portfolio');
+    setActiveTab('home');
     setShowAuthScreen(false);
   }
 
@@ -126,10 +140,14 @@ export default function App() {
 
   function handleOpenEditor(p: PortfolioSummary) {
     setActivePortfolio(p);
-    setActiveTab('visual-editor');
+    if (p.workspaceType === 'website') {
+      setActiveTab('website-editor');
+    } else {
+      setActiveTab('visual-editor');
+    }
   }
 
-  // 1. If public portfolio route is active, render public viewer
+  // 1a. If public portfolio route is active, render public viewer
   if (publicSlug) {
     return (
       <PublicPortfolioPage
@@ -137,6 +155,19 @@ export default function App() {
         onGoHome={() => {
           window.history.pushState({}, '', '/');
           setPublicSlug(null);
+        }}
+      />
+    );
+  }
+
+  // 1b. If public website route is active, render public website viewer
+  if (publicWebsiteSlug) {
+    return (
+      <PublicWebsitePage
+        slug={publicWebsiteSlug}
+        onGoHome={() => {
+          window.history.pushState({}, '', '/');
+          setPublicWebsiteSlug(null);
         }}
       />
     );
@@ -164,13 +195,24 @@ export default function App() {
     );
   }
 
-  // 3. If in Visual Editor mode, render full-screen IDE experience
+  // 3a. If in Portfolio Visual Editor mode, render full-screen IDE experience
   if (currentUser && token && activeTab === 'visual-editor') {
     return (
       <VisualEditor
         portfolioId={activePortfolio?.id}
         token={token}
-        onBack={() => setActiveTab(activePortfolio?.workspaceType === 'website' ? 'website' : 'portfolio')}
+        onBack={() => setActiveTab('portfolio')}
+      />
+    );
+  }
+
+  // 3b. If in Website Editor mode, render dedicated website builder
+  if (currentUser && token && activeTab === 'website-editor') {
+    return (
+      <WebsiteEditor
+        portfolioId={activePortfolio?.id}
+        token={token}
+        onBack={() => setActiveTab('website')}
       />
     );
   }
@@ -187,6 +229,16 @@ export default function App() {
           {currentUser ? (
             <div className="flex items-center gap-3">
               <nav className="flex items-center gap-1 bg-[#FAFAF8] dark:bg-zinc-900 border border-[#E5E5E0] dark:border-zinc-800 p-1 rounded-xl shadow-soft">
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                    activeTab === 'home'
+                      ? 'bg-[#FF6B4A] text-white shadow-soft'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+                  }`}
+                >
+                  Home
+                </button>
                 <button
                   onClick={() => setActiveTab('profile')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
@@ -299,6 +351,20 @@ export default function App() {
       <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full">
         {currentUser && token ? (
           <div>
+            {activeTab === 'home' && (
+              <CoveHome
+                token={token}
+                userName={currentUser.name || undefined}
+                userEmail={currentUser.email}
+                onNavigateTab={(tab) => setActiveTab(tab)}
+                onOpenEditor={handleOpenEditor}
+                onOpenResumeUpload={() => setShowResumeModal(true)}
+                onCreateNewItem={(type) => {
+                  setActiveTab(type);
+                }}
+              />
+            )}
+
             {activeTab === 'profile' && <ProfileEditor token={token} />}
 
             {activeTab === 'portfolio' && (
@@ -325,7 +391,7 @@ export default function App() {
               />
             )}
 
-            {activeTab === 'deck' && <PresentationWorkspace />}
+            {activeTab === 'deck' && <PresentationWorkspace token={token} />}
 
             {activeTab === 'projects' && activePortfolio && (
               <div className="space-y-4">
@@ -506,6 +572,19 @@ export default function App() {
             userEmail={currentUser?.email}
             userName={currentUser?.name || undefined}
             onLogout={handleLogout}
+          />
+        )}
+
+        {/* Global Resume Upload & Parse Modal */}
+        {showResumeModal && token && (
+          <ResumeUploadModal
+            token={token}
+            currentProfile={null}
+            onClose={() => setShowResumeModal(false)}
+            onSuccess={() => {
+              setShowResumeModal(false);
+              setActiveTab('profile');
+            }}
           />
         )}
 

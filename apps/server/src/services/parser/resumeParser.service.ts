@@ -4,6 +4,7 @@ import {
   ParsedExperience,
   ParsedEducation,
   ParsedSkill,
+  ParsedProject,
   ParsedCertification
 } from '@cove/shared';
 
@@ -107,6 +108,7 @@ export class ResumeParserService {
     const experiences = this.extractExperiences(sections['experience'] || '');
     const educations = this.extractEducations(sections['education'] || '');
     const skills = this.extractSkills(cleanText);
+    const projects = this.extractProjects(sections['projects'] || '');
     const certifications = this.extractCertifications(sections['certifications'] || '');
 
     return {
@@ -114,6 +116,7 @@ export class ResumeParserService {
       experiences,
       educations,
       skills,
+      projects,
       certifications,
       rawText: cleanText
     };
@@ -330,6 +333,51 @@ export class ResumeParserService {
     }
 
     return matchedSkills;
+  }
+
+  private extractProjects(projectText: string): ParsedProject[] {
+    const projects: ParsedProject[] = [];
+    if (!projectText.trim()) return projects;
+
+    const paragraphs = projectText.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+
+    for (const para of paragraphs) {
+      const lines = para.split('\n').map((l) => l.trim()).filter(Boolean);
+      if (lines.length === 0) continue;
+
+      const titleLine = lines[0].replace(/^[•\-*]\s*/, '').trim();
+      if (!titleLine || titleLine.length > 80) continue;
+
+      let title = titleLine;
+      let role = 'Lead / Creator';
+      const tools: string[] = [];
+
+      // Extract tools from parenthesis or bracket e.g. "Portfolio Maker (React, TypeScript)"
+      const toolsMatch = titleLine.match(/[\(\[]([^\)\]]+)[\)\]]/);
+      if (toolsMatch) {
+        title = titleLine.replace(toolsMatch[0], '').trim();
+        const extracted = toolsMatch[1].split(/[,|/]/).map((t) => t.trim()).filter(Boolean);
+        tools.push(...extracted);
+      }
+
+      // Check for tools in the body
+      for (const sk of SKILLS_TAXONOMY) {
+        if (para.toLowerCase().includes(sk.name.toLowerCase()) && !tools.includes(sk.name)) {
+          tools.push(sk.name);
+        }
+      }
+
+      const description = lines.slice(1).join(' ').slice(0, 300);
+
+      projects.push({
+        title,
+        shortDescription: description || 'Key case study extracted from resume.',
+        tools: tools.slice(0, 6),
+        role
+      });
+    }
+
+    return projects.slice(0, 6);
   }
 
   private extractCertifications(certText: string): ParsedCertification[] {

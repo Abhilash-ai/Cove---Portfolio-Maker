@@ -1,5 +1,6 @@
 import { TemplateDefinition } from './templateTypes.js';
-import { ALL_EXPANDED_TEMPLATES } from './expandedTemplates.js';
-export { FOUNDATIONAL_TEMPLATES } from './foundationalTemplates.js';
+import { ALL_COVE_TEMPLATES, DISTINCT_PORTFOLIO_TEMPLATES, DISTINCT_WEBSITE_TEMPLATES } from './templateRegistry.js';
 
-export const SEEDED_TEMPLATES: TemplateDefinition[] = ALL_EXPANDED_TEMPLATES;
+export { DISTINCT_PORTFOLIO_TEMPLATES, DISTINCT_WEBSITE_TEMPLATES };
+export const SEEDED_TEMPLATES: TemplateDefinition[] = ALL_COVE_TEMPLATES;
+export const FOUNDATIONAL_TEMPLATES = DISTINCT_PORTFOLIO_TEMPLATES;

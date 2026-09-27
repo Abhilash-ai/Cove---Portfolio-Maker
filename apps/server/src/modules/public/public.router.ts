@@ -213,6 +213,57 @@ publicRouter.get('/p/:slug', async (req: Request, res: Response): Promise<void> 
   }
 });
 
+// 1b. GET /api/v1/public/w/:slug - Public published website
+publicRouter.get('/w/:slug', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { slug } = req.params;
+    const normalizedSlug = String(slug).toLowerCase().trim();
+
+    const website = await prisma.portfolio.findUnique({
+      where: { slug: normalizedSlug },
+    });
+
+    if (!website || website.status !== 'published') {
+      res.status(404).json({
+        success: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: 'Website not found or is currently private/unpublished',
+        },
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        website: {
+          id: website.id,
+          userId: website.userId,
+          title: website.title,
+          slug: website.slug,
+          status: website.status,
+          workspaceType: website.workspaceType,
+          customTokens: website.customTokens,
+          activeTemplateId: website.activeTemplateId,
+          createdAt: website.createdAt.toISOString(),
+          updatedAt: website.updatedAt.toISOString(),
+        },
+        seo: {
+          metaTitle: `${website.title} — Official Website`,
+          metaDescription: 'Published with Cove Website Studio',
+          canonicalUrl: `/w/${website.slug}`,
+          ogType: 'website',
+          publishedTime: website.updatedAt.toISOString(),
+        }
+      }
+    });
+  } catch (err: any) {
+    console.error('Fetch public website error:', err);
+    res.status(500).json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Failed to load website' } });
+  }
+});
+
 // GET /api/v1/public/sitemap.xml - Standard SEO XML Sitemap for all published sites
 publicRouter.get('/sitemap.xml', async (req: Request, res: Response): Promise<void> => {
   try {

@@ -66,7 +66,8 @@ resumeRouter.post(
         contact,
         selectedExperiences = [],
         selectedEducations = [],
-        selectedSkills = []
+        selectedSkills = [],
+        selectedProjects = []
       } = payload;
 
       const cleanUtf8 = (val?: string | null): string | undefined => {
@@ -222,6 +223,29 @@ resumeRouter.post(
               }
             });
             existingNames.add(skillName.toLowerCase());
+          }
+        }
+
+        // 6. Add Selected Projects directly to user's projects & portfolio
+        const defaultPortfolio = await tx.portfolio.findFirst({
+          where: { userId: callerId, workspaceType: 'portfolio' },
+          orderBy: { createdAt: 'desc' }
+        });
+
+        for (const proj of selectedProjects) {
+          const title = cleanUtf8(proj.title);
+          if (title) {
+            await tx.project.create({
+              data: {
+                userId: callerId,
+                portfolioId: defaultPortfolio?.id || null,
+                title,
+                shortDescription: cleanUtf8(proj.shortDescription) || null,
+                role: cleanUtf8(proj.role) || 'Lead',
+                tools: Array.isArray(proj.tools) ? proj.tools : [],
+                sortOrder: 0
+              }
+            });
           }
         }
       });

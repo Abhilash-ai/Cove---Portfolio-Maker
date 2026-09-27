@@ -59,6 +59,13 @@ Master of Architecture (M.Arch)
 
 Technical Skills:
 Parametric Design, Rhino, Grasshopper, Three.js, TypeScript, React, WebGL, Docker, Python, BIM, Sustainable Architecture
+
+Projects:
+Spatial Pavilion (Three.js, WebGL)
+Pioneered a carbon-neutral floating exhibition pavilion in Oslo fjord.
+
+Generative Facade Toolkit (Python, Grasshopper)
+Developed real-time envelope optimization algorithm reducing material usage.
 `;
 
 async function run() {
@@ -122,6 +129,11 @@ async function run() {
     assert(skillNames.includes('Parametric Design'), 'Missing skill Parametric Design');
     console.log(`  -> PASS: Extracted ${parsed.skills.length} matching taxonomy skills`);
 
+    // Verify Projects Extraction
+    assert(parsed.projects && parsed.projects.length >= 2, `Expected >= 2 projects, got ${parsed.projects?.length}`);
+    assert(parsed.projects[0].title.includes('Spatial Pavilion'), `Project title mismatch: ${parsed.projects[0].title}`);
+    console.log(`  -> PASS: Extracted ${parsed.projects.length} case study projects`);
+
     // 3. Test Granular Diff & Merge Application
     console.log('[3/5] Testing POST /api/v1/resume/apply with selective merge payload ...');
     const mergePayload: ResumeMergePayload = {
@@ -138,6 +150,7 @@ async function run() {
       selectedExperiences: [parsed.experiences[0]], // Only select the 1st experience
       selectedEducations: parsed.educations,
       selectedSkills: parsed.skills.slice(0, 4), // Select first 4 skills
+      selectedProjects: parsed.projects,
       selectedCertifications: [],
     };
 
