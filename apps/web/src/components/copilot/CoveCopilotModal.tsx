@@ -5,7 +5,7 @@ interface Props {
   token: string;
   contextTitle?: string;
   initialText: string;
-  contextType?: 'project' | 'profile' | 'portfolio';
+  contextType?: 'project' | 'profile' | 'portfolio' | 'website';
   metadata?: {
     title?: string;
     category?: string;
@@ -26,7 +26,12 @@ export function CoveCopilotModal({
   onApply,
   onClose
 }: Props) {
-  const [activeCommand, setActiveCommand] = useState<CopilotCommand>('make_professional');
+  const [activeMode, setActiveMode] = useState<'portfolio' | 'website'>(
+    contextType === 'website' ? 'website' : 'portfolio'
+  );
+  const [activeCommand, setActiveCommand] = useState<CopilotCommand>(
+    contextType === 'website' ? 'build_website_structure' : 'make_professional'
+  );
   const [inputText, setInputText] = useState(initialText);
   const [proposedText, setProposedText] = useState('');
   const [editableProposal, setEditableProposal] = useState('');
@@ -37,13 +42,23 @@ export function CoveCopilotModal({
   const [error, setError] = useState<string | null>(null);
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
 
-  const COMMANDS: { id: CopilotCommand; label: string; icon: string; desc: string }[] = [
+  const PORTFOLIO_COMMANDS: { id: CopilotCommand; label: string; icon: string; desc: string }[] = [
     { id: 'make_professional', label: 'Make More Professional', icon: '✨', desc: 'Elevate tone to authoritative active voice and executive vocabulary.' },
     { id: 'make_shorter', label: 'Make Shorter & Punchier', icon: '✂️', desc: 'Prune fluff and condense to high-impact essentials.' },
     { id: 'suggest_title', label: 'Suggest Better Title', icon: '💡', desc: 'Generate evocative, memorable project titles.' },
     { id: 'turn_case_study', label: 'Turn into Case Study', icon: '📐', desc: 'Structure into Challenge, Approach, Implementation & Outcome.' },
     { id: 'which_images', label: 'Media Curation Advice', icon: '🖼️', desc: 'Recommend Hero vs Process vs Detail framing for assets.' },
   ];
+
+  const WEBSITE_COMMANDS: { id: CopilotCommand; label: string; icon: string; desc: string }[] = [
+    { id: 'build_website_structure', label: 'Build Website Blueprint', icon: '🏛️', desc: 'Propose full 6-section blueprint with draft copy and SEO baseline.' },
+    { id: 'generate_hero_taglines', label: 'Generate Hero Taglines', icon: '⚡', desc: 'Formulate 4 high-converting hero taglines and value propositions.' },
+    { id: 'persuasive_rewrite', label: 'Persuasive Copy Rewrite', icon: '🎯', desc: 'Rewrite section copy using Problem-Agitate-Solve framework.' },
+    { id: 'generate_faq', label: 'Generate High-Intent FAQ', icon: '❓', desc: 'Anticipate customer questions and generate clear Q&A pairs.' },
+    { id: 'generate_meta_seo', label: 'Generate Meta SEO', icon: '🔍', desc: 'Produce Google search title, meta description, and keywords.' },
+  ];
+
+  const currentCommands = activeMode === 'website' ? WEBSITE_COMMANDS : PORTFOLIO_COMMANDS;
 
   async function handleRunCommand(cmd: CopilotCommand) {
     setActiveCommand(cmd);
@@ -97,7 +112,10 @@ export function CoveCopilotModal({
     // Apply to parent
     onApply(finalContent, {
       caseStudy: copilotOutput?.caseStudy,
-      imageRecommendations: copilotOutput?.imageRecommendations
+      imageRecommendations: copilotOutput?.imageRecommendations,
+      websiteStructure: copilotOutput?.websiteStructure,
+      taglines: copilotOutput?.taglines,
+      faqs: copilotOutput?.faqs
     });
 
     // Notify user
@@ -173,13 +191,45 @@ export function CoveCopilotModal({
 
         {/* Body content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Mode Switcher Tabs */}
+          <div className="flex items-center gap-2 border-b border-stone-800 pb-3">
+            <button
+              type="button"
+              onClick={() => {
+                setActiveMode('portfolio');
+                setActiveCommand('make_professional');
+              }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                activeMode === 'portfolio'
+                  ? 'bg-stone-100 text-stone-900 font-semibold shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200 hover:bg-stone-800/60'
+              }`}
+            >
+              🎨 Portfolio Mode
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveMode('website');
+                setActiveCommand('build_website_structure');
+              }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                activeMode === 'website'
+                  ? 'bg-indigo-600 text-white font-semibold shadow-sm'
+                  : 'text-stone-400 hover:text-stone-200 hover:bg-stone-800/60'
+              }`}
+            >
+              🌐 Website Architect Mode
+            </button>
+          </div>
+
           {/* Command Selector Pills */}
           <div>
             <label className="block text-xs font-medium text-stone-400 uppercase tracking-wider mb-2.5">
-              Select Editorial Action
+              Select {activeMode === 'website' ? 'Website Blueprint & Copywriting' : 'Editorial'} Action
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-              {COMMANDS.map((cmd) => (
+              {currentCommands.map((cmd) => (
                 <button
                   key={cmd.id}
                   type="button"
@@ -258,6 +308,47 @@ export function CoveCopilotModal({
                         {t}
                       </button>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Website Blueprint Proposal (if command was build_website_structure) */}
+              {copilotOutput.websiteStructure && (
+                <div className="p-4 rounded-xl bg-indigo-950/20 border border-indigo-500/40 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-indigo-300 flex items-center gap-1.5">
+                      🏛️ Proposed Website Blueprint ({copilotOutput.websiteStructure.siteType.toUpperCase()})
+                    </span>
+                    <span className="text-[11px] text-stone-400">
+                      {copilotOutput.websiteStructure.sectionOrder.length} Cohesive Sections
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    {copilotOutput.websiteStructure.sections.map((sec, idx) => (
+                      <div key={idx} className="p-2.5 rounded-lg bg-stone-900/80 border border-stone-800 text-xs space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold">
+                            {idx + 1}. {sec.sectionKey}
+                          </span>
+                        </div>
+                        <p className="font-medium text-stone-200 truncate">{sec.title}</p>
+                        {sec.subtitle && (
+                          <p className="text-[11px] text-stone-400 line-clamp-2">{sec.subtitle}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-2 border-t border-indigo-900/40 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400">
+                    <div>
+                      <span className="text-stone-300 font-medium">SEO Title: </span>
+                      {copilotOutput.websiteStructure.metaTitle}
+                    </div>
+                    <div>
+                      <span className="text-stone-300 font-medium">CTA: </span>
+                      <span className="text-indigo-400">{copilotOutput.websiteStructure.callToAction}</span>
+                    </div>
                   </div>
                 </div>
               )}

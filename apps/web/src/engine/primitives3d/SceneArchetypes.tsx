@@ -76,6 +76,18 @@ export function SceneArchetypes({
       return <MorphingGeometryHero materials={materials} rotationSpeed={rotationSpeed} />;
     case 'interactive-sphere-cloud':
       return <InteractiveSphereCloud materials={materials} projects={displayProjects} onFocusPoint={onFocusPoint} />;
+    case 'product-showcase-3d':
+      return <ProductShowcase3D materials={materials} tokens={tokens} rotationSpeed={rotationSpeed} onFocusPoint={onFocusPoint} />;
+    case 'team-space-3d':
+      return <TeamSpace3D materials={materials} projects={displayProjects} onFocusPoint={onFocusPoint} />;
+    case 'floating-pricing-cards':
+      return <FloatingPricingCards materials={materials} tokens={tokens} onFocusPoint={onFocusPoint} />;
+    case 'interactive-logo-cloud-3d':
+      return <InteractiveLogoCloud3D materials={materials} rotationSpeed={rotationSpeed} onFocusPoint={onFocusPoint} />;
+    case 'service-orbit':
+      return <ServiceOrbit materials={materials} rotationSpeed={rotationSpeed} onFocusPoint={onFocusPoint} />;
+    case 'testimonial-carousel-3d':
+      return <TestimonialCarousel3D materials={materials} rotationSpeed={rotationSpeed} onFocusPoint={onFocusPoint} />;
     case 'wireframe-terrain-wire':
     default:
       return <WireframeTerrainWire materials={materials} projects={displayProjects} />;
@@ -657,3 +669,546 @@ function WireframeTerrainWire({
     </group>
   );
 }
+
+/* 13. Product Showcase 3D
+ * Inspiration & Traceability:
+ * - Godly.website (Keynote & Linear hardware launch heroes): High-precision product pedestal
+ *   with an elevated display monolith, floating accent halo rings, and interactive feature hotspots.
+ */
+function ProductShowcase3D({
+  materials,
+  tokens,
+  rotationSpeed = 1.0,
+  onFocusPoint
+}: {
+  materials: any;
+  tokens: ThemeTokens;
+  rotationSpeed?: number;
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  const ringRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.08;
+      groupRef.current.rotation.y += delta * 0.25 * rotationSpeed;
+    }
+    if (ringRef.current) {
+      ringRef.current.rotation.z += delta * 0.4;
+    }
+  });
+
+  return (
+    <group position={[0, -0.2, 0]}>
+      {/* Pedestal Stage */}
+      <mesh position={[0, -1.3, 0]} material={materials.primaryMaterial}>
+        <cylinderGeometry args={[2.2, 2.5, 0.25, 32]} />
+      </mesh>
+      <mesh position={[0, -1.16, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.wireframeMaterial}>
+        <torusGeometry args={[2.25, 0.03, 16, 64]} />
+      </mesh>
+
+      {/* Floating Product Core */}
+      <group ref={groupRef} position={[0, 0.1, 0]}>
+        {/* Core Showcase Monolith */}
+        <mesh material={materials.primaryMaterial}>
+          <boxGeometry args={[1.6, 2.1, 0.16]} />
+        </mesh>
+        {/* Visual Inset Screen / Accent Panel */}
+        <mesh position={[0, 0.1, 0.09]} material={materials.accentMaterial}>
+          <boxGeometry args={[1.35, 1.7, 0.02]} />
+        </mesh>
+        {/* Wireframe Edge Detail */}
+        <mesh material={materials.wireframeMaterial}>
+          <boxGeometry args={[1.62, 2.12, 0.18]} />
+        </mesh>
+
+        {/* Orbiting Accent Halo */}
+        <mesh ref={ringRef} rotation={[Math.PI / 4, 0, 0]} material={materials.accentMaterial}>
+          <torusGeometry args={[1.7, 0.025, 16, 64]} />
+        </mesh>
+
+        {/* Interactive Feature Hotspots */}
+        {[
+          { pos: [-1.1, 0.7, 0.3] as [number, number, number], label: 'Display' },
+          { pos: [1.1, 0.2, 0.4] as [number, number, number], label: 'Interface' },
+          { pos: [0, -0.7, 0.7] as [number, number, number], label: 'Architecture' }
+        ].map((hotspot, idx) => (
+          <group
+            key={idx}
+            position={hotspot.pos}
+            onClick={(e) => {
+              e.stopPropagation();
+              onFocusPoint?.(hotspot.pos);
+            }}
+          >
+            <mesh material={materials.accentMaterial}>
+              <sphereGeometry args={[0.1, 16, 16]} />
+            </mesh>
+            <mesh material={materials.glowMaterial}>
+              <sphereGeometry args={[0.18, 16, 16]} />
+            </mesh>
+          </group>
+        ))}
+      </group>
+    </group>
+  );
+}
+
+/* 14. Team Space 3D
+ * Inspiration & Traceability:
+ * - Design Spells (Virtual Studio Podiums & Team Presence): Interactive 3D spatial podiums
+ *   arranged in a gentle arc, celebrating team members and leadership roles with hover elevation.
+ */
+function TeamSpace3D({
+  materials,
+  projects,
+  onFocusPoint
+}: {
+  materials: any;
+  projects: ProjectDto[];
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const items = [
+    { title: 'Core Architecture', role: 'Design Engineering' },
+    { title: 'Creative Direction', role: 'Brand Systems' },
+    { title: '3D Interaction', role: 'Spatial Computing' },
+    { title: 'Product Strategy', role: 'Technical Leadership' }
+  ];
+
+  return (
+    <group position={[0, -0.3, 0]}>
+      {items.map((member, i) => {
+        const count = items.length;
+        const startAngle = -Math.PI / 3.2;
+        const endAngle = Math.PI / 3.2;
+        const angle = count > 1 ? startAngle + (i / (count - 1)) * (endAngle - startAngle) : 0;
+        const radius = 3.6;
+        const x = Math.sin(angle) * radius;
+        const z = -Math.cos(angle) * radius + radius - 1.2;
+        const isHovered = hoveredIdx === i;
+
+        return (
+          <group
+            key={i}
+            position={[x, isHovered ? 0.35 : 0, z]}
+            rotation={[0, -angle, 0]}
+            onPointerOver={() => setHoveredIdx(i)}
+            onPointerOut={() => setHoveredIdx(null)}
+            onClick={() => onFocusPoint?.([x, 0, z])}
+          >
+            {/* Podium Base */}
+            <mesh position={[0, -1.0, 0]} material={materials.primaryMaterial}>
+              <cylinderGeometry args={[0.55, 0.65, 0.2, 24]} />
+            </mesh>
+            <mesh position={[0, -0.89, 0]} rotation={[Math.PI / 2, 0, 0]} material={materials.wireframeMaterial}>
+              <torusGeometry args={[0.58, 0.02, 16, 32]} />
+            </mesh>
+
+            {/* Avatar Sculpture */}
+            <mesh position={[0, -0.2, 0]} material={i % 2 === 0 ? materials.primaryMaterial : materials.accentMaterial}>
+              <icosahedronGeometry args={[0.35, 1]} />
+            </mesh>
+            <mesh position={[0, -0.2, 0]} material={materials.wireframeMaterial}>
+              <icosahedronGeometry args={[0.38, 0]} />
+            </mesh>
+
+            {/* Floating Role Nameplate */}
+            <mesh position={[0, -0.65, 0.3]} material={materials.primaryMaterial}>
+              <boxGeometry args={[0.85, 0.28, 0.04]} />
+            </mesh>
+            <mesh position={[0, -0.65, 0.32]} material={materials.accentMaterial}>
+              <boxGeometry args={[0.65, 0.06, 0.02]} />
+            </mesh>
+
+            {isHovered && (
+              <mesh position={[0, -1.05, 0]} material={materials.glowMaterial}>
+                <cylinderGeometry args={[0.8, 0.8, 0.05, 24]} />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+/* 15. Floating Pricing Cards
+ * Inspiration & Traceability:
+ * - Supahero.io & Godly (Spatial SaaS Tiers): 3D plan cards (Starter, Pro, Enterprise) floating
+ *   at staggered depth with dynamic hover tilt, glowing featured tier, and tier badge monoliths.
+ */
+function FloatingPricingCards({
+  materials,
+  tokens,
+  onFocusPoint
+}: {
+  materials: any;
+  tokens: ThemeTokens;
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const tiers = [
+    { name: 'Starter', price: '$29', pos: [-2.3, -0.15, -0.4] as [number, number, number], rot: [0, 0.16, 0] as [number, number, number], featured: false },
+    { name: 'Pro', price: '$79', pos: [0, 0.15, 0.2] as [number, number, number], rot: [0, 0, 0] as [number, number, number], featured: true },
+    { name: 'Enterprise', price: '$199', pos: [2.3, -0.15, -0.4] as [number, number, number], rot: [0, -0.16, 0] as [number, number, number], featured: false }
+  ];
+
+  return (
+    <group position={[0, 0, 0]}>
+      {tiers.map((tier, i) => {
+        const isHovered = hoveredIdx === i;
+        const scale = tier.featured ? 1.08 : 0.95;
+
+        return (
+          <group
+            key={tier.name}
+            position={[tier.pos[0], tier.pos[1] + (isHovered ? 0.25 : 0), tier.pos[2]]}
+            rotation={tier.rot}
+            scale={[scale, scale, scale]}
+            onPointerOver={() => setHoveredIdx(i)}
+            onPointerOut={() => setHoveredIdx(null)}
+            onClick={() => onFocusPoint?.(tier.pos)}
+          >
+            {/* Card Body */}
+            <mesh material={tier.featured ? materials.primaryMaterial : materials.primaryMaterial}>
+              <boxGeometry args={[1.5, 2.2, 0.08]} />
+            </mesh>
+
+            {/* Glowing / Wireframe Border */}
+            <mesh material={tier.featured ? materials.accentMaterial : materials.wireframeMaterial}>
+              <boxGeometry args={[1.54, 2.24, 0.07]} />
+            </mesh>
+
+            {/* Header Badge */}
+            <mesh position={[0, 0.75, 0.06]} material={tier.featured ? materials.accentMaterial : materials.primaryMaterial}>
+              <boxGeometry args={[0.9, 0.22, 0.04]} />
+            </mesh>
+
+            {/* Price Monolith */}
+            <mesh position={[0, 0.35, 0.06]} material={materials.accentMaterial}>
+              <boxGeometry args={[1.1, 0.18, 0.03]} />
+            </mesh>
+
+            {/* Feature Line Bars */}
+            <mesh position={[0, -0.05, 0.06]} material={materials.wireframeMaterial}>
+              <boxGeometry args={[1.1, 0.06, 0.02]} />
+            </mesh>
+            <mesh position={[0, -0.25, 0.06]} material={materials.wireframeMaterial}>
+              <boxGeometry args={[0.95, 0.06, 0.02]} />
+            </mesh>
+            <mesh position={[0, -0.45, 0.06]} material={materials.wireframeMaterial}>
+              <boxGeometry args={[1.05, 0.06, 0.02]} />
+            </mesh>
+
+            {/* Action CTA Monolith */}
+            <mesh position={[0, -0.75, 0.06]} material={tier.featured ? materials.accentMaterial : materials.wireframeMaterial}>
+              <boxGeometry args={[1.15, 0.24, 0.04]} />
+            </mesh>
+
+            {tier.featured && (
+              <mesh position={[0, -1.2, 0]} material={materials.glowMaterial}>
+                <cylinderGeometry args={[1.1, 1.1, 0.04, 32]} />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+/* 16. Interactive Logo Cloud 3D
+ * Inspiration & Traceability:
+ * - Godly.website (Agency Trust Spheres): Dynamic 3D constellation of brand and partner logo
+ *   tiles floating on a spherical orbital shell with smooth continuous planetary rotation.
+ */
+function InteractiveLogoCloud3D({
+  materials,
+  rotationSpeed = 1.0,
+  onFocusPoint
+}: {
+  materials: any;
+  rotationSpeed?: number;
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  // 12 nodes distributed on Fibonacci sphere
+  const logoNodes = useMemo(() => {
+    const nodes: { pos: [number, number, number]; rot: [number, number, number] }[] = [];
+    const count = 12;
+    const phi = Math.PI * (3 - Math.sqrt(5)); // Golden angle
+    const radius = 3.0;
+
+    for (let i = 0; i < count; i++) {
+      const y = 1 - (i / (count - 1)) * 2;
+      const radiusAtY = Math.sqrt(1 - y * y);
+      const theta = phi * i;
+
+      const x = Math.cos(theta) * radiusAtY * radius;
+      const z = Math.sin(theta) * radiusAtY * radius;
+      const py = y * radius * 0.85;
+
+      nodes.push({
+        pos: [x, py, z],
+        rot: [0, -theta, 0]
+      });
+    }
+    return nodes;
+  }, []);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * 0.25 * rotationSpeed;
+      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.08;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, 0]}>
+      {logoNodes.map((node, i) => (
+        <group
+          key={i}
+          position={node.pos}
+          rotation={node.rot}
+          onClick={(e) => {
+            e.stopPropagation();
+            onFocusPoint?.(node.pos);
+          }}
+        >
+          {/* Logo Tile Slate */}
+          <mesh material={materials.primaryMaterial}>
+            <boxGeometry args={[0.85, 0.55, 0.05]} />
+          </mesh>
+          {/* Accent Border Rim */}
+          <mesh material={materials.wireframeMaterial}>
+            <boxGeometry args={[0.88, 0.58, 0.04]} />
+          </mesh>
+          {/* Brand Monogram Insignia */}
+          <mesh position={[0, 0, 0.035]} material={materials.accentMaterial}>
+            <octahedronGeometry args={[0.15, 0]} />
+          </mesh>
+        </group>
+      ))}
+    </group>
+  );
+}
+
+/* 17. Service Orbit
+ * Inspiration & Traceability:
+ * - Design Spells (Core Capability Ecosystems): Central core node with dual concentric orbital
+ *   rings carrying service capsules and micro-satellites at differing angular speeds.
+ */
+function ServiceOrbit({
+  materials,
+  rotationSpeed = 1.0,
+  onFocusPoint
+}: {
+  materials: any;
+  rotationSpeed?: number;
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const innerOrbitRef = useRef<THREE.Group>(null);
+  const outerOrbitRef = useRef<THREE.Group>(null);
+  const coreRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state, delta) => {
+    if (innerOrbitRef.current) {
+      innerOrbitRef.current.rotation.z += delta * 0.45 * rotationSpeed;
+    }
+    if (outerOrbitRef.current) {
+      outerOrbitRef.current.rotation.z -= delta * 0.3 * rotationSpeed;
+    }
+    if (coreRef.current) {
+      coreRef.current.rotation.y += delta * 0.3;
+      coreRef.current.rotation.x += delta * 0.2;
+    }
+  });
+
+  const innerRadius = 2.0;
+  const outerRadius = 3.3;
+
+  return (
+    <group position={[0, 0, 0]}>
+      {/* Central Core Service Node */}
+      <mesh ref={coreRef} material={materials.primaryMaterial}>
+        <icosahedronGeometry args={[0.8, 1]} />
+      </mesh>
+      <mesh material={materials.wireframeMaterial}>
+        <icosahedronGeometry args={[0.88, 0]} />
+      </mesh>
+      <mesh material={materials.glowMaterial}>
+        <sphereGeometry args={[1.05, 16, 16]} />
+      </mesh>
+
+      {/* Inner Orbit Track */}
+      <group rotation={[Math.PI / 3, 0.3, 0]}>
+        <mesh material={materials.wireframeMaterial}>
+          <torusGeometry args={[innerRadius, 0.02, 16, 64]} />
+        </mesh>
+        <group ref={innerOrbitRef}>
+          {[0, 1, 2].map((idx) => {
+            const angle = (idx / 3) * Math.PI * 2;
+            const x = Math.cos(angle) * innerRadius;
+            const y = Math.sin(angle) * innerRadius;
+            return (
+              <group
+                key={idx}
+                position={[x, y, 0]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFocusPoint?.([x, y, 0]);
+                }}
+              >
+                <mesh material={materials.accentMaterial}>
+                  <sphereGeometry args={[0.22, 16, 16]} />
+                </mesh>
+                <mesh material={materials.wireframeMaterial}>
+                  <torusGeometry args={[0.3, 0.02, 8, 24]} />
+                </mesh>
+              </group>
+            );
+          })}
+        </group>
+      </group>
+
+      {/* Outer Orbit Track */}
+      <group rotation={[-Math.PI / 4, -0.4, 0]}>
+        <mesh material={materials.wireframeMaterial}>
+          <torusGeometry args={[outerRadius, 0.02, 16, 64]} />
+        </mesh>
+        <group ref={outerOrbitRef}>
+          {[0, 1, 2, 3].map((idx) => {
+            const angle = (idx / 4) * Math.PI * 2;
+            const x = Math.cos(angle) * outerRadius;
+            const y = Math.sin(angle) * outerRadius;
+            return (
+              <group
+                key={idx}
+                position={[x, y, 0]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onFocusPoint?.([x, y, 0]);
+                }}
+              >
+                <mesh material={materials.primaryMaterial}>
+                  <boxGeometry args={[0.35, 0.35, 0.35]} />
+                </mesh>
+                <mesh material={materials.accentMaterial} position={[0, 0, 0.2]}>
+                  <sphereGeometry args={[0.08, 12, 12]} />
+                </mesh>
+              </group>
+            );
+          })}
+        </group>
+      </group>
+    </group>
+  );
+}
+
+/* 18. Testimonial Carousel 3D
+ * Inspiration & Traceability:
+ * - Godly.website (Curved Testimonial Amphitheater): Cylindrical carousel of 3D quote plates
+ *   spaced around the viewer, gently rotating with rating stars and author badge podiums.
+ */
+function TestimonialCarousel3D({
+  materials,
+  rotationSpeed = 1.0,
+  onFocusPoint
+}: {
+  materials: any;
+  rotationSpeed?: number;
+  onFocusPoint?: (pt: [number, number, number]) => void;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  const testimonials = [
+    { initial: 'ER', company: 'NeuralGrid' },
+    { initial: 'MV', company: 'AeroLab' },
+    { initial: 'SC', company: 'PulseFlow' },
+    { initial: 'DK', company: 'Synthetix' },
+    { initial: 'AJ', company: 'Horizon' }
+  ];
+
+  const radius = 3.6;
+
+  useFrame((state, delta) => {
+    if (groupRef.current && hoveredIdx === null) {
+      groupRef.current.rotation.y += delta * 0.18 * rotationSpeed;
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, 0]}>
+      {testimonials.map((t, i) => {
+        const count = testimonials.length;
+        const angle = (i / count) * Math.PI * 2;
+        const x = Math.sin(angle) * radius;
+        const z = Math.cos(angle) * radius;
+        const isHovered = hoveredIdx === i;
+
+        return (
+          <group
+            key={i}
+            position={[x, isHovered ? 0.2 : 0, z]}
+            rotation={[0, angle, 0]}
+            onPointerOver={() => setHoveredIdx(i)}
+            onPointerOut={() => setHoveredIdx(null)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onFocusPoint?.([x, 0, z]);
+            }}
+          >
+            {/* Quote Slate */}
+            <mesh material={materials.primaryMaterial}>
+              <boxGeometry args={[1.7, 1.25, 0.06]} />
+            </mesh>
+            <mesh material={materials.wireframeMaterial}>
+              <boxGeometry args={[1.74, 1.29, 0.05]} />
+            </mesh>
+
+            {/* Header Accent Bar */}
+            <mesh position={[0, 0.42, 0.04]} material={materials.accentMaterial}>
+              <boxGeometry args={[1.5, 0.12, 0.02]} />
+            </mesh>
+
+            {/* Rating Star Tokens (5 gems) */}
+            {[-0.4, -0.2, 0, 0.2, 0.4].map((starX, sIdx) => (
+              <mesh key={sIdx} position={[starX, 0.15, 0.04]} material={materials.accentMaterial}>
+                <octahedronGeometry args={[0.045, 0]} />
+              </mesh>
+            ))}
+
+            {/* Body Quote Mock Lines */}
+            <mesh position={[0, -0.1, 0.04]} material={materials.wireframeMaterial}>
+              <boxGeometry args={[1.3, 0.04, 0.02]} />
+            </mesh>
+            <mesh position={[0, -0.24, 0.04]} material={materials.wireframeMaterial}>
+              <boxGeometry args={[1.1, 0.04, 0.02]} />
+            </mesh>
+
+            {/* Author Avatar Badge */}
+            <mesh position={[-0.45, -0.42, 0.05]} material={materials.accentMaterial}>
+              <sphereGeometry args={[0.1, 16, 16]} />
+            </mesh>
+            <mesh position={[0.1, -0.42, 0.05]} material={materials.primaryMaterial}>
+              <boxGeometry args={[0.75, 0.14, 0.02]} />
+            </mesh>
+
+            {isHovered && (
+              <mesh position={[0, -0.7, 0]} material={materials.glowMaterial}>
+                <cylinderGeometry args={[0.9, 0.9, 0.04, 24]} />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+

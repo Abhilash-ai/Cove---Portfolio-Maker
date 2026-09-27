@@ -165,11 +165,34 @@ export type CopilotCommand =
   | 'make_shorter'
   | 'suggest_title'
   | 'turn_case_study'
-  | 'which_images';
+  | 'which_images'
+  | 'build_website_structure'
+  | 'generate_hero_taglines'
+  | 'persuasive_rewrite'
+  | 'generate_faq'
+  | 'generate_meta_seo';
+
+export interface WebsiteSectionDraft {
+  sectionKey: string;
+  title: string;
+  subtitle?: string;
+  content: Record<string, any>;
+}
+
+export interface WebsiteStructureProposal {
+  siteType: 'saas' | 'agency' | 'ecommerce' | 'creator' | 'service';
+  headline: string;
+  tagline: string;
+  callToAction: string;
+  sectionOrder: string[];
+  sections: WebsiteSectionDraft[];
+  metaTitle: string;
+  metaDescription: string;
+}
 
 export interface CopilotInput {
   command: CopilotCommand;
-  contextType: 'project' | 'profile' | 'portfolio';
+  contextType: 'project' | 'profile' | 'portfolio' | 'website';
   text: string;
   metadata?: {
     title?: string;
@@ -184,6 +207,9 @@ export interface CopilotOutput {
   command: CopilotCommand;
   suggestion: string;
   titles?: string[];
+  taglines?: string[];
+  faqs?: { question: string; answer: string }[];
+  websiteStructure?: WebsiteStructureProposal;
   caseStudy?: {
     problem: string;
     approach: string;

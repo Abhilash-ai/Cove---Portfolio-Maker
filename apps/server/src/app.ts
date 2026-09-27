@@ -37,6 +37,12 @@ app.get('/api/v1/health', (_req, res) => {
   });
 });
 
+// Sitemap endpoint
+app.get('/sitemap.xml', (req, res, next) => {
+  req.url = '/sitemap.xml';
+  publicRouter(req, res, next);
+});
+
 // Mount module routers
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/public', publicRouter);

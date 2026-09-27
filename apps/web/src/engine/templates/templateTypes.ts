@@ -31,7 +31,14 @@ export type SceneArchetype3D =
   | 'isometric-diorama'
   | 'morphing-geometry-hero'
   | 'interactive-sphere-cloud'
-  | 'wireframe-terrain-wire';
+  | 'wireframe-terrain-wire'
+  // Website-specific 3D Scene Archetypes:
+  | 'product-showcase-3d'
+  | 'team-space-3d'
+  | 'floating-pricing-cards'
+  | 'interactive-logo-cloud-3d'
+  | 'service-orbit'
+  | 'testimonial-carousel-3d';
 
 export type MaterialPreset3D =
   | 'matte-studio'

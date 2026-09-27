@@ -3,6 +3,7 @@ import { EXPANDED_STYLE_PRESETS } from '@cove/shared';
 import { FOUNDATIONAL_TEMPLATES } from './foundationalTemplates.js';
 import { COMPATIBILITY_RULES, isPatternCombinationCompatible } from './compatibilityMatrix.js';
 import { ALL_3D_TEMPLATES } from './compatibilityMatrix3D.js';
+import { ALL_WEBSITE_3D_TEMPLATES } from './compatibilityMatrixWebsite3D.js';
 
 export const PRESET_KEYS = [
   'minimal',
@@ -95,8 +96,17 @@ function buildExpandedCatalog(): TemplateDefinition[] {
     result.push(tpl3d);
   });
 
+  // Append all 252 distinct Website 3D templates
+  ALL_WEBSITE_3D_TEMPLATES.forEach((tplWeb3d) => {
+    if (existingIds.has(tplWeb3d.id)) {
+      throw new Error(`Duplicate template ID detected: ${tplWeb3d.id}`);
+    }
+    existingIds.add(tplWeb3d.id);
+    result.push(tplWeb3d);
+  });
+
   return result;
 }
 
 export const ALL_EXPANDED_TEMPLATES: TemplateDefinition[] = buildExpandedCatalog();
-export { ALL_3D_TEMPLATES };
+export { ALL_3D_TEMPLATES, ALL_WEBSITE_3D_TEMPLATES };

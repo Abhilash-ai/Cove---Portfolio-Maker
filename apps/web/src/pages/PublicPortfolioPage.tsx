@@ -31,6 +31,18 @@ export function PublicPortfolioPage({ slug, onGoHome }: Props) {
             setPortfolio(json.data.portfolio);
             setProjects(json.data.projects || []);
             setProfile(json.data.profile || null);
+
+            // Apply automatic SEO metadata to document
+            if (json.data.seo) {
+              document.title = json.data.seo.metaTitle;
+              let metaDesc = document.querySelector('meta[name="description"]');
+              if (!metaDesc) {
+                metaDesc = document.createElement('meta');
+                metaDesc.setAttribute('name', 'description');
+                document.head.appendChild(metaDesc);
+              }
+              metaDesc.setAttribute('content', json.data.seo.metaDescription);
+            }
           }
 
           // Non-blocking analytics pageview beacon

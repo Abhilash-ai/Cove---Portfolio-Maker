@@ -12,6 +12,9 @@ import { ProjectFeaturedGrid } from '../primitives/ProjectFeaturedGrid.js';
 import { Skills } from '../primitives/Skills.js';
 import { Experience } from '../primitives/Experience.js';
 import { Contact } from '../primitives/Contact.js';
+import { Pricing } from '../primitives/Pricing.js';
+import { Testimonial } from '../primitives/Testimonial.js';
+import { FAQ } from '../primitives/FAQ.js';
 import { Footer } from '../primitives/Footer.js';
 import { CustomCursor } from '../interactions/CustomCursor.js';
 import { Template3DBoundary } from './Template3DBoundary.js';
@@ -183,6 +186,15 @@ export function PortfolioRenderer({
 
             case 'experience':
               return <Experience key="experience" profile={profile} tokens={activeTokens} />;
+
+            case 'pricing':
+              return <Pricing key="pricing" tokens={activeTokens} />;
+
+            case 'testimonials':
+              return <Testimonial key="testimonials" tokens={activeTokens} />;
+
+            case 'faq':
+              return <FAQ key="faq" tokens={activeTokens} />;
 
             case 'contact':
               return (

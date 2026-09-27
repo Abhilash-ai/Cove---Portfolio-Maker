@@ -198,11 +198,53 @@ publicRouter.get('/p/:slug', async (req: Request, res: Response): Promise<void> 
           updatedAt: pr.updatedAt.toISOString(),
         })),
         profile: fullProfile,
+        seo: {
+          metaTitle: `${portfolio.title || pUser.name} — Official Website & Showcase`,
+          metaDescription: pProfile?.bio || pProfile?.headline || `${pUser.name}'s professional work, services, and digital showcase.`,
+          canonicalUrl: `/p/${portfolio.slug}`,
+          ogType: 'website',
+          publishedTime: portfolio.updatedAt.toISOString(),
+        }
       },
     });
   } catch (err: any) {
     console.error('Fetch public portfolio error:', err);
     res.status(500).json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Failed to load portfolio' } });
+  }
+});
+
+// GET /api/v1/public/sitemap.xml - Standard SEO XML Sitemap for all published sites
+publicRouter.get('/sitemap.xml', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const published = await prisma.portfolio.findMany({
+      where: { status: 'published' },
+      select: { slug: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host') || 'localhost:4000';
+    const baseUrl = `${protocol}://${host}`;
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    for (const site of published) {
+      xml += `  <url>\n`;
+      xml += `    <loc>${baseUrl}/p/${site.slug}</loc>\n`;
+      xml += `    <lastmod>${site.updatedAt.toISOString().slice(0, 10)}</lastmod>\n`;
+      xml += `    <changefreq>weekly</changefreq>\n`;
+      xml += `    <priority>0.8</priority>\n`;
+      xml += `  </url>\n`;
+    }
+
+    xml += `</urlset>`;
+
+    res.header('Content-Type', 'application/xml');
+    res.status(200).send(xml);
+  } catch (err: any) {
+    console.error('Sitemap generation error:', err);
+    res.status(500).send('Error generating sitemap');
   }
 });
 
