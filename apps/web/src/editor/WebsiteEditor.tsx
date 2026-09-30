@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { PortfolioSummary, ThemeTokens, EXPANDED_STYLE_PRESETS } from '@cove/shared';
 import { WebsiteRenderer } from '../engine/renderer/WebsiteRenderer.js';
 import { DISTINCT_WEBSITE_TEMPLATES, WebsiteTemplateDefinition } from '../engine/templates/templateRegistry.js';
@@ -702,10 +703,10 @@ export function WebsiteEditor({ websiteId, portfolioId, token, onBack }: Props) 
         </main>
       </div>
 
-      {/* 3. Published Confirmation Modal (Default Light) */}
-      {publishedUrl && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-zinc-950 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center text-zinc-900 dark:text-white transition-colors">
+      {/* 3. Published Confirmation Modal (Default Light & Portaled to body) */}
+      {publishedUrl && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-950 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-center text-zinc-900 dark:text-white transition-colors animate-in zoom-in-95 duration-200">
             <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
               <Check className="w-6 h-6" />
             </div>
@@ -747,7 +748,8 @@ export function WebsiteEditor({ websiteId, portfolioId, token, onBack }: Props) 
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

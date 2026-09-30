@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ViewportMode, SaveStatus } from './editorTypes.js';
 import { PortfolioSummary } from '@cove/shared';
 import { ArrowLeft, Monitor, Tablet, Smartphone, Undo2, Redo2, Eye, FileText, Sparkles, Target, ExternalLink, Check, Copy, X } from 'lucide-react';
@@ -314,10 +315,10 @@ export function EditorTopBar({
         </button>
       </div>
 
-      {/* Published Live URL Modal Dialog */}
-      {publishedUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-200">
+      {/* Published Live URL Modal Dialog (Portaled to body to avoid backdrop-filter stacking context) */}
+      {publishedUrl && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
@@ -371,7 +372,8 @@ export function EditorTopBar({
               </a>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {publishError && (
