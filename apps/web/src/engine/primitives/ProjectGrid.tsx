@@ -27,8 +27,49 @@ export function ProjectGrid({ projects, tokens, forcedTouchMode = false }: Props
 
   if (projects.length === 0) {
     return (
-      <section id="work" className="py-20 px-6 max-w-7xl mx-auto text-center">
-        <p className="text-zinc-500 font-mono text-xs">No projects populated yet.</p>
+      <section id="work" className="py-20 px-6 max-w-7xl mx-auto">
+        <div
+          className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 border-b pb-4"
+          style={{ borderColor: tokens.colors.border }}
+        >
+          <div>
+            <span className="text-xs font-mono uppercase tracking-widest" style={{ color: tokens.colors.accent }}>
+              Selected Index
+            </span>
+            <h2
+              className="text-3xl font-bold mt-1"
+              style={{ fontFamily: tokens.typography.fontHeading, color: tokens.colors.textPrimary }}
+            >
+              Featured Works
+            </h2>
+          </div>
+        </div>
+
+        <div
+          className="border-2 border-dashed rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-4 max-w-xl mx-auto transition-all"
+          style={{ borderColor: tokens.colors.border, backgroundColor: `${tokens.colors.surface}80` }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold"
+            style={{ backgroundColor: `${tokens.colors.accent}15`, color: tokens.colors.accent }}
+          >
+            +
+          </div>
+          <div>
+            <h3 className="text-base font-bold" style={{ color: tokens.colors.textPrimary }}>
+              Add Your First Project
+            </h3>
+            <p className="text-xs mt-1 max-w-sm mx-auto" style={{ color: tokens.colors.textSecondary }}>
+              Showcase case studies, high-resolution imagery, deliverables, and technical outcomes.
+            </p>
+          </div>
+          <span
+            className="px-4 py-2 rounded-xl text-xs font-semibold shadow-sm inline-block"
+            style={{ backgroundColor: tokens.colors.accent, color: '#FFFFFF' }}
+          >
+            + Add Project
+          </span>
+        </div>
       </section>
     );
   }

@@ -26,10 +26,63 @@ export function WebsiteRenderer({
     DISTINCT_WEBSITE_TEMPLATES.find((t) => t.id === templateId || t.id === website.activeTemplateId) ||
     DISTINCT_WEBSITE_TEMPLATES[0];
 
+  const defaultContent = template.defaultContent;
+  const userContent = website.customTokens?.websiteContent || {};
+  const override = overrideContent || {};
+
   const content = {
-    ...template.defaultContent,
-    ...website.customTokens?.websiteContent,
-    ...overrideContent,
+    navbar: {
+      ...defaultContent.navbar,
+      ...userContent.navbar,
+      ...override.navbar,
+      links: override.navbar?.links || userContent.navbar?.links || defaultContent.navbar?.links || [],
+    },
+    hero: {
+      ...defaultContent.hero,
+      ...userContent.hero,
+      ...override.hero,
+    },
+    features: defaultContent.features ? {
+      ...defaultContent.features,
+      ...userContent.features,
+      ...override.features,
+      items: override.features?.items || userContent.features?.items || defaultContent.features?.items || [],
+    } : null,
+    services: defaultContent.services ? {
+      ...defaultContent.services,
+      ...userContent.services,
+      ...override.services,
+      items: override.services?.items || userContent.services?.items || defaultContent.services?.items || [],
+    } : null,
+    pricing: defaultContent.pricing ? {
+      ...defaultContent.pricing,
+      ...userContent.pricing,
+      ...override.pricing,
+      tiers: override.pricing?.tiers || userContent.pricing?.tiers || defaultContent.pricing?.tiers || [],
+    } : null,
+    testimonials: defaultContent.testimonials ? {
+      ...defaultContent.testimonials,
+      ...userContent.testimonials,
+      ...override.testimonials,
+      quotes: override.testimonials?.quotes || userContent.testimonials?.quotes || defaultContent.testimonials?.quotes || [],
+    } : null,
+    faq: defaultContent.faq ? {
+      ...defaultContent.faq,
+      ...userContent.faq,
+      ...override.faq,
+      items: override.faq?.items || userContent.faq?.items || defaultContent.faq?.items || [],
+    } : null,
+    cta: defaultContent.cta ? {
+      ...defaultContent.cta,
+      ...userContent.cta,
+      ...override.cta,
+    } : null,
+    footer: {
+      ...defaultContent.footer,
+      ...userContent.footer,
+      ...override.footer,
+      columns: override.footer?.columns || userContent.footer?.columns || defaultContent.footer?.columns || [],
+    },
   };
 
   const colors = overrideTokens?.colors || template.tokens.colors;

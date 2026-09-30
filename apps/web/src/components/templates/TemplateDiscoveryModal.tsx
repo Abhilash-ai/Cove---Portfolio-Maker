@@ -240,19 +240,19 @@ export function TemplateDiscoveryModal({
     : null;
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="relative w-full max-w-5xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 overflow-y-auto">
+      <div className="relative w-full max-w-5xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] transition-colors">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-zinc-800 bg-zinc-900/60 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-lg shadow-inner">
+            <div className="w-9 h-9 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 dark:border-indigo-500/30 flex items-center justify-center font-bold text-lg shadow-inner">
               ✨
             </div>
             <div>
-              <h2 className="text-zinc-100 text-base font-bold tracking-tight">
+              <h2 className="text-zinc-900 dark:text-zinc-100 text-base font-bold tracking-tight">
                 Template Discovery & AI Recommender
               </h2>
-              <p className="text-zinc-400 text-xs">
+              <p className="text-zinc-500 dark:text-zinc-400 text-xs">
                 Explore interaction archetypes personalized to your work and projects
               </p>
             </div>
@@ -260,23 +260,23 @@ export function TemplateDiscoveryModal({
 
           <button
             onClick={onClose}
-            className="text-zinc-400 hover:text-zinc-200 text-sm p-1.5 rounded-lg hover:bg-zinc-800 transition"
+            className="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 text-sm p-1.5 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-800 transition"
           >
             ✕
           </button>
         </div>
 
         {/* Search & Filter Controls */}
-        <div className="p-5 border-b border-zinc-800/80 bg-zinc-900/30 space-y-3">
+        <div className="p-5 border-b border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/30 space-y-3">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
-              <span className="absolute left-3.5 top-2.5 text-zinc-500 text-xs">🔍</span>
+              <span className="absolute left-3.5 top-2.5 text-zinc-400 text-xs">🔍</span>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search templates by style, personality, or profession..."
-                className="w-full pl-9 pr-4 py-2 bg-zinc-900 border border-zinc-700/70 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
+                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/70 rounded-xl text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:border-indigo-500"
               />
             </div>
 
@@ -319,20 +319,20 @@ export function TemplateDiscoveryModal({
                 className={`px-3 py-1 rounded-lg border transition-all ${
                   selectedCategory === cat.id
                     ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm font-semibold'
-                    : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-zinc-200'
+                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/60'
                 }`}
               >
                 {cat.label}
               </button>
             ))}
 
-            <div className="h-4 w-px bg-zinc-800 mx-1" />
+            <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800 mx-1" />
 
             {/* Profession */}
             <select
               value={selectedProfession}
               onChange={(e) => setSelectedProfession(e.target.value)}
-              className="px-2.5 py-1 bg-zinc-900 text-zinc-300 border border-zinc-800 rounded-lg text-xs focus:outline-none focus:border-indigo-500"
+              className="px-2.5 py-1 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs focus:outline-none focus:border-indigo-500"
             >
               <option value="all">All Disciplines</option>
               <option value="architect">Architecture & Spatial</option>
@@ -345,7 +345,7 @@ export function TemplateDiscoveryModal({
             <select
               value={selectedInteraction}
               onChange={(e) => setSelectedInteraction(e.target.value)}
-              className="px-2.5 py-1 bg-zinc-900 text-zinc-300 border border-zinc-800 rounded-lg text-xs focus:outline-none focus:border-indigo-500"
+              className="px-2.5 py-1 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs focus:outline-none focus:border-indigo-500"
             >
               <option value="all">All Motions</option>
               <option value="subtle">Subtle Motion</option>
@@ -472,15 +472,15 @@ export function TemplateDiscoveryModal({
                     onClick={() => setPreviewTemplateId(t.id)}
                     className={`p-4 rounded-xl border flex flex-col justify-between transition-all cursor-pointer ${
                       isCurrent
-                        ? 'bg-zinc-900/90 border-indigo-500 shadow-md ring-1 ring-indigo-500/50'
-                        : 'bg-zinc-900/40 border-zinc-800 hover:bg-zinc-900/80 hover:border-zinc-700'
+                        ? 'bg-indigo-50/60 dark:bg-zinc-900/90 border-indigo-500 shadow-md ring-1 ring-indigo-500/50'
+                        : 'bg-white dark:bg-zinc-900/40 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900/80 hover:border-zinc-300 dark:hover:border-zinc-700'
                     }`}
                   >
                     <div>
                       <div className="flex items-start justify-between">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="text-sm font-semibold text-zinc-100">{t.name}</h4>
+                            <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{t.name}</h4>
                             {t.is3D && (
                               <span className="px-1.5 py-0.5 rounded text-[9px] font-bold tracking-wider uppercase bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
                                 3D
@@ -579,12 +579,12 @@ export function TemplateDiscoveryModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 border-t border-zinc-800 bg-zinc-950 flex items-center justify-between text-xs text-zinc-500">
+        <div className="px-6 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between text-xs text-zinc-500">
           <span>Zero content loss guarantee: switching templates preserves all projects, bio, and media.</span>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+            className="px-4 py-1.5 rounded-lg bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-300 transition"
           >
             Close
           </button>

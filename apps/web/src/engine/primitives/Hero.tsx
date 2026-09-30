@@ -37,10 +37,10 @@ export function Hero({
   const heroMediaScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
   const heroFadeOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.25]);
 
-  const displayName = profile?.name || 'Anonymous Creator';
-  const headline = profile?.headline || 'Spatial Designer & Computational Architect';
-  const bio = profile?.bio || 'Designing enduring spaces, systems, and structures at the intersection of human scale and digital precision.';
-  const location = profile?.location || 'Stockholm, Sweden';
+  const displayName = profile?.name || portfolio?.title || 'Your Name';
+  const headline = profile?.headline || 'Add your professional headline';
+  const bio = profile?.bio || 'Add a summary about your work, skills, and background.';
+  const location = profile?.location || '';
   const available = profile?.availableForWork ?? true;
 
   // 1. SPLIT VARIANT

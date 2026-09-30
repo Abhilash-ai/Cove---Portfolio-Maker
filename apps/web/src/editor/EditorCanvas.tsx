@@ -140,13 +140,34 @@ export function EditorCanvas({
 }: Props) {
   const activeTemplate = SEEDED_TEMPLATES.find((t) => t.id === templateId) || SEEDED_TEMPLATES[0];
 
-  const resolvedProfile = profile || MOCK_PROFILE;
-  const resolvedProjects = projects && projects.length > 0 ? projects : MOCK_PROJECTS;
+  const resolvedProfile = profile || {
+    id: 'user-profile',
+    userId: portfolio?.userId || 'user',
+    name: portfolio?.title || 'Your Name',
+    email: '',
+    headline: 'Add your professional headline',
+    bio: 'Add your background summary, experience, and accomplishments.',
+    location: '',
+    photoUrl: '',
+    contactEmail: '',
+    contactPhone: '',
+    availableForWork: true,
+    updatedAt: new Date().toISOString(),
+    skills: [],
+    experiences: [],
+    educations: [],
+    certifications: [],
+    achievements: [],
+    publications: [],
+    socialLinks: [],
+  };
+
+  const resolvedProjects = projects || [];
   const resolvedPortfolio: PortfolioSummary = portfolio || {
     id: 'preview-id',
     userId: 'preview-user',
-    title: 'Elena Rostova — Portfolio',
-    slug: 'elena-rostova',
+    title: 'Your Portfolio',
+    slug: 'portfolio',
     status: 'draft',
     workspaceType: 'portfolio',
     sectionOrder,
